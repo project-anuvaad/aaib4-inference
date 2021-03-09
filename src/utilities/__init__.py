@@ -1,0 +1,1 @@
+MODULE_CONTEXT = {'metadata':{'module':'AAI4B-NMT-INFERENCE'}}

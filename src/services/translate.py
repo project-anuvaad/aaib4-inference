@@ -135,13 +135,13 @@ class OpenNMTTranslateService:
 
                     i['src'], is_missing_stop_punc = special_case_handler.handle_a_sentence_wo_stop(src_language,i['src'])
 
-                    if i['id'] == 6:
+                    if i['id'] in [100,101,  110]:
                         "hi-en_exp-2 05-05-20"
                         i['src'] = sentence_processor.indic_tokenizer(i['src'])
                         translation,scores,input_sw,output_sw = encode_translate_decode(i)
                         translation = sentence_processor.moses_detokenizer(translation)
                 
-                    elif i['id'] == 56:
+                    elif i['id'] == 101:
                         "09/12/19-Exp-5.6:" 
                         i['src'] = sentence_processor.moses_tokenizer(i['src'])
                         translation,scores,input_sw,output_sw = encode_translate_decode(i)                      

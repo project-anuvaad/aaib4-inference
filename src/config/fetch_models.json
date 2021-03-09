@@ -1,0 +1,31 @@
+{
+    "data": [
+        
+        {
+          "source_language_code": "hi",
+          "target_language_code": "en",
+          "model_id": 100,
+          "model_name": "Fairseq AAI4B Model",
+          "is_primary": false,
+          "description": "Fairseq AAI4B Model",
+          "created_on": "2020-02-19T06:03:19.162Z",
+          "status": "ACTIVE",
+          "source_language_name":"Hindi",
+          "target_language_name":"English",
+          "model_path": "src/nmt_models/hi-en"
+        },
+        {
+          "source_language_code": "bn",
+          "target_language_code": "en",
+          "model_id": 101,
+          "model_name": "Fairseq AAI4B Model",
+          "is_primary": false,
+          "description": "Fairseq AAI4B Model",
+          "created_on": "2020-02-19T06:03:19.162Z",
+          "status": "ACTIVE",
+          "source_language_name":"Bengali",
+          "target_language_name":"English",
+          "model_path": "src/nmt_models/hi-en"
+        }
+      ]
+}

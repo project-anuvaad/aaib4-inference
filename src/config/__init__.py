@@ -4,7 +4,7 @@ import os
 ## app configuration variables
 DEBUG = False
 API_URL_PREFIX = ""
-HOST = '0.0.0.0'
+HOST = "0.0.0.0"
 PORT = 5001
 
 ENABLE_CORS = True
@@ -14,3 +14,6 @@ APP_BASE_PATH = "src/"
 
 ## Module name
 MODULE_NAME = "/aai4b-nmt-inference"
+
+## fetch model details
+FETCH_MODEL_CONFG = os.path.join(APP_BASE_PATH, "config/fetch_models.json")

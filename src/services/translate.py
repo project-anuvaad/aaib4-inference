@@ -2,7 +2,7 @@ from models import CustomResponse, Status
 from anuvaad_auditor.loghandler import log_info, log_exception
 from utilities import MODULE_CONTEXT
 import os
-import json 
+import json
 import sys
 import re
 import utilities.sentencepiece_util as sp
@@ -11,7 +11,7 @@ import config
 import datetime
 
 
-class TranslateService:  
+class TranslateService:
     @staticmethod
     def interactive_translation(inputs):
         out = {}
@@ -22,20 +22,20 @@ class TranslateService:
         tp_tokenizer = None
 
         try:
-            for i in inputs:  
+            for i in inputs:
                 sentence_id.append(i.get("s_id") or "NA")
                 if  any(v not in i for v in ['src','id']):
                     log_info("either id or src missing in some input",MODULE_CONTEXT)
                     out = CustomResponse(Status.ID_OR_SRC_MISSING.value, inputs)
                     return out
 
-                log_info("input sentence:{}".format(i['src']),MODULE_CONTEXT) 
-                i_src.append(i['src'])   
-                i['src'] = i['src'].strip() 
+                log_info("input sentence:{}".format(i['src']),MODULE_CONTEXT)
+                i_src.append(i['src'])
+                i['src'] = i['src'].strip()
 
-                i['src_lang'], i['tgt_lang'] = misc.get_src_tgt_langauge(i['id'])
-                i['src'] = misc.convert_digits_preprocess(i['src_lang'],i['src'])
-  
+                i['src_lang'], i['tgt_lang'] = .get_src_tgt_langauge(i['id'])
+                i['src'] = .convert_digits_preprocess(i['src_lang'],i['src'])
+
                 if special_case_handler.special_case_fits(i['src']):
                     log_info("sentence fits in special case, returning accordingly and not going to model",MODULE_CONTEXT)
                     translation = special_case_handler.handle_special_cases(i['src'],i['id'])
@@ -43,7 +43,7 @@ class TranslateService:
                     tag_tgt,tag_src = translation,i['src']
 
                 else:
-                    tag_src = i['src'] 
+                    tag_src = i['src']
 
                     if i['id'] == 56:
                         "english-hindi"
@@ -53,17 +53,17 @@ class TranslateService:
                         translation = [sentence_processor.indic_detokenizer(i) for i in translation]
                     elif i['id'] == 8:
                         "tamil-english"
-                        tp_tokenizer = sentence_processor.moses_tokenizer 
+                        tp_tokenizer = sentence_processor.moses_tokenizer
                         i['src'] = sentence_processor.indic_tokenizer(i['src'])
                         translation = encode_itranslate_decode(i,num_map,tp_tokenizer)
-                        translation = [sentence_processor.moses_detokenizer(i) for i in translation]                        
+                        translation = [sentence_processor.moses_detokenizer(i) for i in translation]
 
                     else:
                         log_info("unsupported model id: {} for given input".format(i['id']),MODULE_CONTEXT)
-                        raise Exception("Unsupported Model ID - id: {} for given input".format(i['id']))      
+                        raise Exception("Unsupported Model ID - id: {} for given input".format(i['id']))
 
                     tag_tgt = translation
-                log_info("interactive translation-experiment-{} output: {}".format(i['id'],translation),MODULE_CONTEXT)  
+                log_info("interactive translation-experiment-{} output: {}".format(i['id'],translation),MODULE_CONTEXT)
                 tgt.append(translation)
                 tagged_tgt.append(tag_tgt)
                 tagged_src.append(tag_src)
@@ -75,8 +75,8 @@ class TranslateService:
         except Exception as e:
             status = Status.SYSTEM_ERR.value
             status['why'] = str(e)
-            log_exception("Unexpected error:%s and %s"% (e,sys.exc_info()[0]),MODULE_CONTEXT,e) 
-            out = CustomResponse(status, inputs)  
+            log_exception("Unexpected error:%s and %s"% (e,sys.exc_info()[0]),MODULE_CONTEXT,e)
+            out = CustomResponse(status, inputs)
 
         return out
 
@@ -100,38 +100,38 @@ class OpenNMTTranslateService:
                 s0_src,s0_tgt,save = "NA","NA",False
                 if all(v in i for v in ['s_id','n_id']):
                     s_id = [i['s_id']]
-                    n_id = [i['n_id']]  
-                    
+                    n_id = [i['n_id']]
+
                 if  any(v not in i for v in ['src','id']):
                     log_info("either id or src missing in some input",MODULE_CONTEXT)
                     out = CustomResponse(Status.ID_OR_SRC_MISSING.value, inputs)
                     return out
-               
+
                 if any(v in i for v in ['s0_src','s0_tgt','save']):
                     s0_src,s0_tgt,save = handle_custome_input(i,s0_src,s0_tgt,save)
-                    
-                i_s0_src.append(s0_src),i_s0_tgt.append(s0_tgt),i_save.append(save)    
 
-                log_info("input sentences:{}".format(i['src']),MODULE_CONTEXT) 
-                i_src.append(i['src'])   
+                i_s0_src.append(s0_src),i_s0_tgt.append(s0_tgt),i_save.append(save)
+
+                log_info("input sentences:{}".format(i['src']),MODULE_CONTEXT)
+                i_src.append(i['src'])
                 i['src'] = i['src'].strip()
 
-                src_language, tgt_language = misc.get_src_tgt_langauge(i['id'])
+                src_language, tgt_language = .get_src_tgt_langauge(i['id'])
                 if src_language == 'English' and i['src'].isupper():
                     i['src'] = i['src'].title()
-                i['src'] = misc.convert_digits_preprocess(src_language,i['src'])
+                i['src'] = .convert_digits_preprocess(src_language,i['src'])
 
                 if special_case_handler.special_case_fits(i['src']):
                     log_info("sentence fits in special case, returning accordingly and not going to model",MODULE_CONTEXT)
                     translation = special_case_handler.handle_special_cases(i['src'],i['id'])
-                    scores = [1] 
+                    scores = [1]
                     input_sw,output_sw,tag_tgt,tag_src = "","",translation,i['src']
 
                 else:
                     log_info("translating using NMT-model:{}".format(i['id']),MODULE_CONTEXT)
                     prefix, i['src'] = special_case_handler.prefix_handler(i['src'])
                     i['src'],date_original,url_original,num_array,num_map = tagger_util.tag_number_date_url(i['src'])
-                    tag_src = (prefix +" "+ i['src']).lstrip() 
+                    tag_src = (prefix +" "+ i['src']).lstrip()
 
                     i['src'], is_missing_stop_punc = special_case_handler.handle_a_sentence_wo_stop(src_language,i['src'])
 
@@ -140,18 +140,18 @@ class OpenNMTTranslateService:
                         i['src'] = sentence_processor.indic_tokenizer(i['src'])
                         translation,scores,input_sw,output_sw = encode_translate_decode(i)
                         translation = sentence_processor.moses_detokenizer(translation)
-                
+
                     elif i['id'] == 101:
-                        "09/12/19-Exp-5.6:" 
+                        "09/12/19-Exp-5.6:"
                         i['src'] = sentence_processor.moses_tokenizer(i['src'])
-                        translation,scores,input_sw,output_sw = encode_translate_decode(i)                      
-                        translation = sentence_processor.indic_detokenizer(translation)                                                        
+                        translation,scores,input_sw,output_sw = encode_translate_decode(i)
+                        translation = sentence_processor.indic_detokenizer(translation)
                     else:
                         log_info("Unsupported model id: {} for given input".format(i['id']),MODULE_CONTEXT)
-                        raise Exception("Unsupported Model ID - id: {} for given input".format(i['id']))      
+                        raise Exception("Unsupported Model ID - id: {} for given input".format(i['id']))
 
-                    tag_tgt = translation  
-                log_info("translate_function-experiment-{} output: {}".format(i['id'],translation),MODULE_CONTEXT) 
+                    tag_tgt = translation
+                log_info("translate_function-experiment-{} output: {}".format(i['id'],translation),MODULE_CONTEXT)
                 tgt.append(translation)
                 pred_score.append(scores)
                 sentence_id.append(s_id[0]), node_id.append(n_id[0])
@@ -170,15 +170,15 @@ class OpenNMTTranslateService:
             status = Status.SEVER_MODEL_ERR.value
             status['why'] = str(e)
             log_exception("ServerModelError error in TRANSLATE_UTIL-translate_func: {} and {}".format(e,sys.exc_info()[0]),MODULE_CONTEXT,e)
-            out = CustomResponse(status, inputs)  
+            out = CustomResponse(status, inputs)
         except Exception as e:
             status = Status.SYSTEM_ERR.value
             status['why'] = str(e)
-            log_exception("Unexpected error:%s and %s"% (e,sys.exc_info()[0]),MODULE_CONTEXT,e) 
-            out = CustomResponse(status, inputs)    
+            log_exception("Unexpected error:%s and %s"% (e,sys.exc_info()[0]),MODULE_CONTEXT,e)
+            out = CustomResponse(status, inputs)
 
         return out
-     
+
 def encode_itranslate_decode(i,num_map,tp_tokenizer,num_hypotheses=3):
     try:
         log_info("Inside encode_itranslate_decode function",MODULE_CONTEXT)
@@ -188,8 +188,8 @@ def encode_itranslate_decode(i,num_map,tp_tokenizer,num_hypotheses=3):
         i_final = format_converter(i['src'])
 
         if 'target_prefix' in i and len(i['target_prefix']) > 0 and i['target_prefix'].isspace() == False:
-            log_info("target prefix: {}".format(i['target_prefix']),MODULE_CONTEXT) 
-            i['target_prefix'] = misc.convert_digits_preprocess(i['tgt_lang'],i['target_prefix'])
+            log_info("target prefix: {}".format(i['target_prefix']),MODULE_CONTEXT)
+            i['target_prefix'] = .convert_digits_preprocess(i['tgt_lang'],i['target_prefix'])
             i['target_prefix'] = replace_num_target_prefix(i,num_map)
             if tp_tokenizer is not None:
                 i['target_prefix'] = tp_tokenizer(i['target_prefix'])
@@ -200,12 +200,12 @@ def encode_itranslate_decode(i,num_map,tp_tokenizer,num_hypotheses=3):
         else:
             m_out = translator.translate_batch([i_final],beam_size = 5,num_hypotheses=num_hypotheses,replace_unknowns=True)
 
-        translation = multiple_hypothesis_decoding(m_out[0],sp_decoder)    
+        translation = multiple_hypothesis_decoding(m_out[0],sp_decoder)
         return translation
-        
+
     except Exception as e:
         log_exception("Unexpexcted error in encode_itranslate_decode: {} and {}".format(e,sys.exc_info()[0]),MODULE_CONTEXT,e)
-        raise    
+        raise
 
 def encode_translate_decode(i):
     try:
@@ -226,11 +226,11 @@ def encode_translate_decode(i):
     except ServerModelError as e:
         log_exception("ServerModelError error in encode_translate_decode: {} and {}".format(e,sys.exc_info()[0]),MODULE_CONTEXT,e)
         raise
-        
+
     except Exception as e:
         log_exception("Unexpexcted error in encode_translate_decode: {} and {}".format(e,sys.exc_info()[0]),MODULE_CONTEXT,e)
-        raise        
-        
+        raise
+
 def format_converter(input):
     inp_1 = input.split(', ')
     inp_2 = [inpt+',' if inpt != inp_1[-1] else inpt for inpt in inp_1 ]
@@ -245,14 +245,14 @@ def get_model_path(model_id):
         final_path =  os.path.join(model_root, path[0][0])
         s_encoder = os.path.join(model_root, path[0][1])
         s_decoder = os.path.join(model_root, path[0][2])
-        return final_path,s_encoder,s_decoder    
+        return final_path,s_encoder,s_decoder
 
 def replace_num_target_prefix(i_,num_map):
     num_tp = re.findall(patterns['p12']['regex'],i_['target_prefix'])
     try:
         for pair_dict in num_map:
             if pair_dict['no.'] in num_tp:
-                replacement_tag = pair_dict['tag']   
+                replacement_tag = pair_dict['tag']
                 i_['target_prefix'] = i_['target_prefix'].replace(pair_dict['no.'],replacement_tag,1)
 
         log_info("target_prefix after replacing numbers with tag: {}".format(i_['target_prefix']),MODULE_CONTEXT)
@@ -271,18 +271,18 @@ def multiple_hypothesis_decoding(hypotheses,sp_decoder):
         return translations
     except Exception as e:
         log_exception("Error in interactive translation-multiple_hypothesis_decoding:{}".format(e),MODULE_CONTEXT,e)
-        raise  
-       
-       
+        raise
+
+
 def handle_custome_input(i,s0_src,s0_tgt,save):
     '''
     Meant for translate_anuvaad api to support save operation in UI
     '''
     if 'save' in i:
         save = i["save"]
-    if "s0_src" in i:  
-        s0_src = i["s0_src"]       
-    if "s0_tgt" in i:      
-        s0_tgt = i["s0_tgt"] 
-        
-    return s0_src,s0_tgt,save       
+    if "s0_src" in i:
+        s0_src = i["s0_src"]
+    if "s0_tgt" in i:
+        s0_tgt = i["s0_tgt"]
+
+    return s0_src,s0_tgt,save

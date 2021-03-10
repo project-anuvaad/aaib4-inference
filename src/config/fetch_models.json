@@ -1,31 +1,52 @@
 {
-    "data": [
-        
-        {
-          "source_language_code": "hi",
-          "target_language_code": "en",
-          "model_id": 100,
-          "model_name": "Fairseq AAI4B Model",
-          "is_primary": false,
-          "description": "Fairseq AAI4B Model",
-          "created_on": "2020-02-19T06:03:19.162Z",
-          "status": "ACTIVE",
-          "source_language_name":"Hindi",
-          "target_language_name":"English",
-          "model_path": "src/nmt_models/hi-en"
-        },
-        {
-          "source_language_code": "bn",
-          "target_language_code": "en",
-          "model_id": 101,
-          "model_name": "Fairseq AAI4B Model",
-          "is_primary": false,
-          "description": "Fairseq AAI4B Model",
-          "created_on": "2020-02-19T06:03:19.162Z",
-          "status": "ACTIVE",
-          "source_language_name":"Bengali",
-          "target_language_name":"English",
-          "model_path": "src/nmt_models/hi-en"
-        }
-      ]
+  "models": [
+    {
+      "source_language_code": "hi",
+      "target_language_code": "en",
+      "model_id": 100,
+      "model_name": "Fairseq AAI4B Model",
+      "is_primary": false,
+      "description": "Fairseq AAI4B Model",
+      "created_on": "2020-02-19T06:03:19.162Z",
+      "status": "ACTIVE",
+      "source_language_name": "Hindi",
+      "target_language_name": "English",
+      "model_path": "src/nmt_models/all-v1_WAT_model_checkpoint_best.pt",
+      "dict_path": "src/nmt_models/dictionaries",
+      "src_vocab_path": "src/nmt_models/vocab/vocab.SRC",
+      "bpe_codes_path": "src/nmt_models/vocab/bpe_codes.32k.SRC_TGT"
+    },
+    {
+      "source_language_code": "bn",
+      "target_language_code": "en",
+      "model_id": 101,
+      "model_name": "Fairseq AAI4B Model",
+      "is_primary": false,
+      "description": "Fairseq AAI4B Model",
+      "created_on": "2020-02-19T06:03:19.162Z",
+      "status": "ACTIVE",
+      "source_language_name": "Bengali",
+      "target_language_name": "English",
+      "model_path": "src/nmt_models/all-v1_WAT_model_checkpoint_best.pt",
+      "dict_path": "src/nmt_models/dictionaries",
+      "src_vocab_path": "src/nmt_models/vocab/vocab.SRC",
+      "bpe_codes_path": "src/nmt_models/vocab/bpe_codes.32k.SRC_TGT"
+    },
+    {
+      "source_language_code": "ta",
+      "target_language_code": "en",
+      "model_id": 102,
+      "model_name": "Fairseq AAI4B Model",
+      "is_primary": false,
+      "description": "Fairseq AAI4B Model",
+      "created_on": "2020-02-19T06:03:19.162Z",
+      "status": "ACTIVE",
+      "source_language_name": "Tamil",
+      "target_language_name": "English",
+      "model_path": "src/nmt_models/all-v1_WAT_model_checkpoint_best.pt",
+      "dict_path": "src/nmt_models/dictionaries",
+      "src_vocab_path": "src/nmt_models/vocab/vocab.SRC",
+      "bpe_codes_path": "src/nmt_models/vocab/bpe_codes.32k.SRC_TGT"
+    }
+  ]
 }

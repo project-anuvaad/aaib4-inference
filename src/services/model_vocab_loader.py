@@ -17,6 +17,7 @@ from fairseq.token_generation_constraints import pack_constraints, unpack_constr
 from fairseq_cli.generate import get_symbols_to_strip_from_output
 
 import codecs
+
 from tools.apply_bpe import BPE, read_vocabulary
 
 
@@ -80,14 +81,23 @@ def make_batches(
 
 
 class Translator:
-    def __init__(self, data_dir, checkpoint_path):
+    def __init__(self, data_dir, checkpoint_path, constrained_decoding=False):
 
+        self.constrained_decoding = constrained_decoding
         self.parser = options.get_generation_parser(interactive=True)
-        self.parser.set_defaults(
-            path=checkpoint_path,
-            remove_bpe="subword_nmt",
-            num_wokers=-1,
-        )
+        if self.constrained_decoding:
+            self.parser.set_defaults(
+                path=checkpoint_path,
+                remove_bpe="subword_nmt",
+                num_wokers=-1,
+                constraints="ordered",
+            )
+        else:
+            self.parser.set_defaults(
+                path=checkpoint_path,
+                remove_bpe="subword_nmt",
+                num_wokers=-1,
+            )
         args = options.parse_args_and_arch(self.parser, input_args=[data_dir])
         # we are explictly setting src_lang and tgt_lang here
         # generally the data_dir we pass contains {split}-{src_lang}-{tgt_lang}.*.idx files from
@@ -181,6 +191,10 @@ class Translator:
         return x
 
     def translate(self, inputs, constraints=None):
+        if self.constrained_decoding and constraints is None:
+            raise ValueError("Constraints cant be None in constrained decoding mode")
+        if not self.constrained_decoding and constraints is not None:
+            raise ValueError("Cannot pass constraints during normal translation")
         if constraints:
             constrained_decoding = True
             modified_inputs = []

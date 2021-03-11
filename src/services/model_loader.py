@@ -55,8 +55,14 @@ class Loadmodels:
         # since its a joint trained model, we initialize one model for all
         # ids
         translator = Translator(dict_path, model_path)
+        constrained_translator = Translator(
+            dict_path, model_path, constrained_decoding=True
+        )
         for i, _ in enumerate(ids):
-            loaded_models[ids[i]] = translator
+            if ids[i] in range(100, 103):
+                loaded_models[ids[i]] = translator
+            elif ids[i] in range(103, 106):
+                loaded_models[ids[i]] = constrained_translator
             log_info("Model Loaded: {}".format(ids[i]), MODULE_CONTEXT)
         return loaded_models
 

@@ -121,13 +121,13 @@ class FairseqAutoCompleteTranslateService:
                 log_info("input sentences:{}".format(i["src"]), MODULE_CONTEXT)
                 i_src.append(i["src"])
 
-                if i["id"] == 100:
+                if i["id"] == 103:
                     "hindi-english"
                     translation = encode_itranslate_decode(i, "hi", "en")
-                elif i["id"] == 101:
+                elif i["id"] == 104:
                     "bengali-english"
                     translation = encode_itranslate_decode(i, "bn", "en")
-                elif i["id"] == 102:
+                elif i["id"] == 105:
                     "tamil-english"
                     translation = encode_itranslate_decode(i, "ta", "en")
                 else:
@@ -195,6 +195,9 @@ class FairseqAutoCompleteTranslateService:
 
 def encode_itranslate_decode(i, src_lang, tgt_lang):
     try:
+        i["src"] = [i["src"]]
+        i["target_prefix"] = [i["target_prefix"]]
+
         translator = load_models.loaded_models[i["id"]]
         source_bpe = load_models.bpes[i["id"]][0]
         target_bpe = load_models.bpes[i["id"]][1]
@@ -221,8 +224,8 @@ def encode_itranslate_decode(i, src_lang, tgt_lang):
 
 def encode_translate_decode(i, src_lang, tgt_lang):
     try:
-        i['src'] = [i['src']]
-        print(i['src'])
+        i["src"] = [i["src"]]
+        print(i["src"])
         log_info("Inside encode_translate_decode function", MODULE_CONTEXT)
         translator = load_models.loaded_models[i["id"]]
         source_bpe = load_models.bpes[i["id"]][0]
@@ -253,6 +256,7 @@ def encode_translate_decode(i, src_lang, tgt_lang):
             e,
         )
         raise
+
 
 def apply_bpe(sents, bpe):
     return [bpe.process_line(sent) for sent in sents]

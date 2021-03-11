@@ -120,6 +120,7 @@ class FairseqAutoCompleteTranslateService:
 
                 log_info("input sentences:{}".format(i["src"]), MODULE_CONTEXT)
                 i_src.append(i["src"])
+                tag_src = i["src"]
 
                 if i["id"] == 103:
                     "hindi-english"

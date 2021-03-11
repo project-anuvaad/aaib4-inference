@@ -264,8 +264,8 @@ class Translator:
         return final_translations
 
 
-def load_vocab(src_vocab_path, bpe_codes_path):
-    vocabulary = read_vocabulary(codecs.open(src_vocab_path, encoding="utf-8"), 5)
+def load_vocab(vocab_path, bpe_codes_path):
+    vocabulary = read_vocabulary(codecs.open(vocab_path, encoding="utf-8"), 5)
     bpe = BPE(
         codecs.open(bpe_codes_path, encoding="utf-8"),
         -1,

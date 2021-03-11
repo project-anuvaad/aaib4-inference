@@ -12,7 +12,7 @@ import datetime
 from services import load_models
 
 
-class FairseqAutocompleteTranslateService:
+class FairseqTranslateService:
     @staticmethod
     def interactive_translation(inputs):
         out = {}
@@ -54,13 +54,13 @@ class FairseqAutocompleteTranslateService:
 
                 if i["id"] == 100:
                     "hindi-english"
-                    translation = encode_itranslate_decode(i, "hi", "en")
+                    translation = encode_translate_decode(i, "hi", "en")
                 elif i["id"] == 101:
                     "bengali-english"
-                    translation = encode_itranslate_decode(i, "bn", "en")
+                    translation = encode_translate_decode(i, "bn", "en")
                 elif i["id"] == 102:
                     "tamil-english"
-                    translation = encode_itranslate_decode(i, "ta", "en")
+                    translation = encode_translate_decode(i, "ta", "en")
 
                 else:
                     log_info(
@@ -104,7 +104,7 @@ class FairseqAutocompleteTranslateService:
         return out
 
 
-class FairseqTranslateService:
+class FairseqAutoCompleteTranslateService:
     @staticmethod
     def translate_func(inputs):
 
@@ -165,7 +165,7 @@ class FairseqTranslateService:
                 # log_info(
                 #     "translating using NMT-model:{}".format(i["id"]), MODULE_CONTEXT
                 # )
-                # prefix, i["src"] = special_case_handler.prefix_handler(i["src"])
+                prefix, i["src"] = special_case_handler.prefix_handler(i["src"])
                 # (
                 #     i["src"],
                 #     date_original,
@@ -173,7 +173,7 @@ class FairseqTranslateService:
                 #     num_array,
                 #     num_map,
                 # ) = tagger_util.tag_number_date_url(i["src"])
-                # tag_src = (prefix + " " + i["src"]).lstrip()
+                tag_src = (prefix + " " + i["src"]).lstrip()
 
                 # (
                 #     i["src"],
@@ -207,13 +207,13 @@ class FairseqTranslateService:
 
                 if i["id"] == 100:
                     "hindi-english"
-                    translation = encode_translate_decode(i, "hi", "en")
+                    translation = encode_itranslate_decode(i, prefix, "hi", "en")
                 elif i["id"] == 101:
                     "bengali-english"
-                    translation = encode_translate_decode(i, "bn", "en")
+                    translation = encode_itranslate_decode(i, prefix, "bn", "en")
                 elif i["id"] == 102:
                     "tamil-english"
-                    translation = encode_translate_decode(i, "ta", "en")
+                    translation = encode_itranslate_decode(i, prefix, "ta", "en")
                 else:
                     log_info(
                         "Unsupported model id: {} for given input".format(i["id"]),
@@ -231,19 +231,19 @@ class FairseqTranslateService:
                     MODULE_CONTEXT,
                 )
                 tgt.append(translation)
-                pred_score.append(scores)
+                # pred_score.append(scores)
                 sentence_id.append(s_id[0]), node_id.append(n_id[0])
-                input_subwords.append(input_sw), output_subwords.append(output_sw)
+                # input_subwords.append(input_sw), output_subwords.append(output_sw)
                 tagged_tgt.append(tag_tgt), tagged_src.append(tag_src)
                 i_tmx_phrases.append(i.get("tmx_phrases", []))
 
             out["response_body"] = [
                 {
                     "tgt": tgt[i],
-                    "pred_score": pred_score[i],
+                    # "pred_score": pred_score[i],
                     "s_id": sentence_id[i],
-                    "input_subwords": input_subwords[i],
-                    "output_subwords": output_subwords[i],
+                    # "input_subwords": input_subwords[i],
+                    # "output_subwords": output_subwords[i],
                     "n_id": node_id[i],
                     "src": i_src[i],
                     "tagged_tgt": tagged_tgt[i],
@@ -278,45 +278,56 @@ class FairseqTranslateService:
         return out
 
 
-def encode_itranslate_decode(i, num_map, tp_tokenizer, num_hypotheses=3):
+def encode_itranslate_decode(i, prefix, src_lang, tgt_lang):
     try:
-        log_info("Inside encode_itranslate_decode function", MODULE_CONTEXT)
-        model_path, sp_encoder, sp_decoder = get_model_path(i["id"])
+        # log_info("Inside encode_itranslate_decode function", MODULE_CONTEXT)
+        # model_path, sp_encoder, sp_decoder = get_model_path(i["id"])
+        # translator = load_models.loaded_models[i["id"]]
+        # i["src"] = str(sp.encode_line(sp_encoder, i["src"]))
+        # i_final = format_converter(i["src"])
+
+        # if (
+        #     "target_prefix" in i
+        #     and len(i["target_prefix"]) > 0
+        #     and i["target_prefix"].isspace() == False
+        # ):
+        #     log_info("target prefix: {}".format(i["target_prefix"]), MODULE_CONTEXT)
+        #     i["target_prefix"] = misc.convert_digits_preprocess(
+        #         i["tgt_lang"], i["target_prefix"]
+        #     )
+        #     i["target_prefix"] = replace_num_target_prefix(i, num_map)
+        #     if tp_tokenizer is not None:
+        #         i["target_prefix"] = tp_tokenizer(i["target_prefix"])
+        #     i["target_prefix"] = str(sp.encode_line(sp_decoder, i["target_prefix"]))
+        #     tp_final = format_converter(i["target_prefix"])
+        #     tp_final[-1] = tp_final[-1].replace("]", ",")
+        #     m_out = translator.translate_batch(
+        #         [i_final],
+        #         beam_size=5,
+        #         target_prefix=[tp_final],
+        #         num_hypotheses=num_hypotheses,
+        #         replace_unknowns=True,
+        #     )
+        # else:
+        #     m_out = translator.translate_batch(
+        #         [i_final],
+        #         beam_size=5,
+        #         num_hypotheses=num_hypotheses,
+        #         replace_unknowns=True,
+        #     )
+
+        # translation = multiple_hypothesis_decoding(m_out[0], sp_decoder)
         translator = load_models.loaded_models[i["id"]]
-        i["src"] = str(sp.encode_line(sp_encoder, i["src"]))
-        i_final = format_converter(i["src"])
-
-        if (
-            "target_prefix" in i
-            and len(i["target_prefix"]) > 0
-            and i["target_prefix"].isspace() == False
-        ):
-            log_info("target prefix: {}".format(i["target_prefix"]), MODULE_CONTEXT)
-            i["target_prefix"] = misc.convert_digits_preprocess(
-                i["tgt_lang"], i["target_prefix"]
-            )
-            i["target_prefix"] = replace_num_target_prefix(i, num_map)
-            if tp_tokenizer is not None:
-                i["target_prefix"] = tp_tokenizer(i["target_prefix"])
-            i["target_prefix"] = str(sp.encode_line(sp_decoder, i["target_prefix"]))
-            tp_final = format_converter(i["target_prefix"])
-            tp_final[-1] = tp_final[-1].replace("]", ",")
-            m_out = translator.translate_batch(
-                [i_final],
-                beam_size=5,
-                target_prefix=[tp_final],
-                num_hypotheses=num_hypotheses,
-                replace_unknowns=True,
-            )
-        else:
-            m_out = translator.translate_batch(
-                [i_final],
-                beam_size=5,
-                num_hypotheses=num_hypotheses,
-                replace_unknowns=True,
-            )
-
-        translation = multiple_hypothesis_decoding(m_out[0], sp_decoder)
+        source_bpe = load_models.bpes[i["id"]][0]
+        target_bpe = load_models.bpes[i["id"]][1]
+        i["src"] = sentence_processor.preprocess(i["src"], src_lang)
+        i["src"] = apply_bpe(i["src"], source_bpe)
+        # apply bpe to constraints with target bpe
+        prefix = apply_bpe(prefix, target_bpe)
+        # log_info("BPE encoded sent: %s" % i["src"], MODULE_CONTEXT)
+        i_final = sentence_processor.apply_lang_tags(i["src"], src_lang, tgt_lang)
+        translation = translator.translate(i_final, constraints=prefix)
+        translation = sentence_processor.postprocess(translation, tgt_lang)
         return translation
 
     except Exception as e:
@@ -334,9 +345,10 @@ def encode_translate_decode(i, src_lang, tgt_lang):
     try:
         log_info("Inside encode_translate_decode function", MODULE_CONTEXT)
         translator = load_models.loaded_models[i["id"]]
-        bpe = load_models.bpes[i["id"]]
+        source_bpe = load_models.bpes[i["id"]][0]
+        # target_bpe = load_models.bpes[i["id"]][1]
         i["src"] = sentence_processor.preprocess(i["src"], src_lang)
-        i["src"] = apply_bpe(i["src"], bpe)
+        i["src"] = apply_bpe(i["src"], source_bpe)
         log_info("BPE encoded sent: %s" % i["src"], MODULE_CONTEXT)
         i_final = sentence_processor.apply_lang_tags(i["src"], src_lang, tgt_lang)
         translation = translator.translate(i_final)

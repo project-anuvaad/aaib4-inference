@@ -14,6 +14,7 @@
       "model_path": "src/nmt_models/all-v1_WAT_model_checkpoint_best.pt",
       "dict_path": "src/nmt_models/dictionaries",
       "src_vocab_path": "src/nmt_models/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/vocab/vocab.TGT",
       "bpe_codes_path": "src/nmt_models/vocab/bpe_codes.32k.SRC_TGT"
     },
     {
@@ -30,6 +31,7 @@
       "model_path": "src/nmt_models/all-v1_WAT_model_checkpoint_best.pt",
       "dict_path": "src/nmt_models/dictionaries",
       "src_vocab_path": "src/nmt_models/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/vocab/vocab.TGT",
       "bpe_codes_path": "src/nmt_models/vocab/bpe_codes.32k.SRC_TGT"
     },
     {
@@ -46,6 +48,7 @@
       "model_path": "src/nmt_models/all-v1_WAT_model_checkpoint_best.pt",
       "dict_path": "src/nmt_models/dictionaries",
       "src_vocab_path": "src/nmt_models/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/vocab/vocab.TGT",
       "bpe_codes_path": "src/nmt_models/vocab/bpe_codes.32k.SRC_TGT"
     }
   ]

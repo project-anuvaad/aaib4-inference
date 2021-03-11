@@ -18,6 +18,7 @@ class Loadmodels:
             self.model_path,
             self.dict_path,
             self.src_vocab_path,
+            self.tgt_vocab_path,
             self.bpe_codes_path,
             self.ids,
         ) = self.get_paths()
@@ -25,9 +26,10 @@ class Loadmodels:
             self.model_path, self.dict_path, self.ids
         )
         self.bpes = {}
-        bpe = load_vocab(self.src_vocab_path, self.bpe_codes_path)
+        source_bpe = load_vocab(self.src_vocab_path, self.bpe_codes_path)
+        target_bpe = load_vocab(self.tgt_vocab_path, self.bpe_codes_path)
         for _id in self.ids:
-            self.bpes[_id] = bpe
+            self.bpes[_id] = [source_bpe, target_bpe]
 
     def get_paths(self):
         with open(config.FETCH_MODEL_CONFG) as f:
@@ -36,9 +38,17 @@ class Loadmodels:
             model_path = models[0]["model_path"]
             dict_path = models[0]["dict_path"]
             src_vocab_path = models[0]["src_vocab_path"]
+            tgt_vocab_path = models[0]["tgt_vocab_path"]
             bpe_codes_path = models[0]["bpe_codes_path"]
             ids = [model["id"] for model in models]
-            return model_path, dict_path, src_vocab_path, bpe_codes_path, ids
+            return (
+                model_path,
+                dict_path,
+                src_vocab_path,
+                tgt_vocab_path,
+                bpe_codes_path,
+                ids,
+            )
 
     def return_loaded_models(self, model_path, dict_path, ids):
         loaded_models = {}

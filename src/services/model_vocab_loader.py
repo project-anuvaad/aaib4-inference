@@ -254,7 +254,7 @@ class Translator:
                     alignment=hypo["alignment"],
                     align_dict=self.align_dict,
                     tgt_dict=self.tgt_dict,
-                    remove_bpe=self.cfg.common_eval.post_process,
+                    remove_bpe="subword_nmt",
                     extra_symbols_to_ignore=get_symbols_to_strip_from_output(
                         self.generator
                     ),

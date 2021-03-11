@@ -53,14 +53,14 @@ class FairseqTranslateService:
                         "Unsupported Model ID - id: {} for given input".format(i["id"])
                     )
 
-                tag_tgt = translation
+                tag_tgt = translation[0]
                 log_info(
-                    "interactive translation-experiment-{} output: {}".format(
+                    "simple translation-experiment-{} output: {}".format(
                         i["id"], translation
                     ),
                     MODULE_CONTEXT,
                 )
-                tgt.append(translation)
+                tgt.append(translation[0])
                 tagged_tgt.append(tag_tgt)
                 tagged_src.append(tag_src)
 
@@ -221,6 +221,8 @@ def encode_itranslate_decode(i, src_lang, tgt_lang):
 
 def encode_translate_decode(i, src_lang, tgt_lang):
     try:
+        i['src'] = [i['src']]
+        print(i['src'])
         log_info("Inside encode_translate_decode function", MODULE_CONTEXT)
         translator = load_models.loaded_models[i["id"]]
         source_bpe = load_models.bpes[i["id"]][0]

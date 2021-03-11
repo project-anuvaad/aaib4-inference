@@ -72,21 +72,21 @@ def preprocess(sents, lang):
 
     if lang == "en":
 
-        # processed_sents = Parallel(n_jobs=-1, backend="multiprocessing")(
-        #     delayed(preprocess_line)(line, None, lang) for line in tqdm(sents, total=num_lines)
-        # )
-        processed_sents = [preprocess_sent(line, None, lang) for line in tqdm(sents)]
+        processed_sents = Parallel(n_jobs=-1, backend="multiprocessing")(
+            delayed(preprocess_sent)(line, None, lang) for line in tqdm(sents)
+        )
+        # processed_sents = [preprocess_sent(line, None, lang) for line in tqdm(sents)]
 
     else:
         normfactory = indic_normalize.IndicNormalizerFactory()
         normalizer = normfactory.get_normalizer(lang)
 
-        # processed_sents = Parallel(n_jobs=-1, backend="multiprocessing")(
-        #     delayed(preprocess_line)(line, normalizer, lang) for line in tqdm(infile, total=num_lines)
-        # )
-        processed_sents = [
-            preprocess_sent(line, normalizer, lang) for line in tqdm(sents)
-        ]
+        processed_sents = Parallel(n_jobs=-1, backend="multiprocessing")(
+            delayed(preprocess_sent)(line, normalizer, lang) for line in tqdm(sents)
+        )
+        # processed_sents = [
+        #     preprocess_sent(line, normalizer, lang) for line in tqdm(sents)
+        # ]
 
     return processed_sents
 

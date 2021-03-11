@@ -1,6 +1,6 @@
 from flask_restful import fields, marshal_with, reqparse, Resource
 from flask import request
-from services import TranslateService,OpenNMTTranslateService
+from services import FairseqTranslateService, FairseqAutoCompleteTranslateService
 from models import CustomResponse, Status
 from utilities import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception
@@ -13,7 +13,7 @@ class NMTTranslateResource(Resource):
         if len(inputs)>0:
             log_info("Making v3/translate-anuvaad API call",MODULE_CONTEXT)
             log_info("inputs---{}".format(inputs),MODULE_CONTEXT)
-            out = OpenNMTTranslateService.translate_func(inputs)
+            out = FairseqTranslateService.simple_translation(inputs)
             log_info("Final output from v3/translate-anuvaad API: {}".format(out.getresjson()),MODULE_CONTEXT)
             return out.getres()
         else:
@@ -28,7 +28,7 @@ class InteractiveMultiTranslateResourceNew(Resource):
             log_info("Making v2/interactive-translation API call",MODULE_CONTEXT)
             log_info("inputs---{}".format(inputs),MODULE_CONTEXT)
             # log_info(entry_exit_log(LOG_TAGS["input"],inputs))
-            out = TranslateService.interactive_translation(inputs)
+            out = FairseqAutoCompleteTranslateService.constrained_translation(inputs)
             log_info("out from v2/interactive-translation done: {}".format(out.getresjson()),MODULE_CONTEXT)
             # log_info(entry_exit_log(LOG_TAGS["output"],out))
             return out.getres()

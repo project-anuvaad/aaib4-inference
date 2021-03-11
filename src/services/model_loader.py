@@ -3,7 +3,7 @@ import json
 import os
 from anuvaad_auditor.loghandler import log_info, log_exception
 from utilities import MODULE_CONTEXT
-from src.services.model_vocab_loader import Translator, load_vocab
+from services.model_vocab_loader import Translator, load_vocab
 
 
 class Loadmodels:
@@ -40,7 +40,7 @@ class Loadmodels:
             src_vocab_path = models[0]["src_vocab_path"]
             tgt_vocab_path = models[0]["tgt_vocab_path"]
             bpe_codes_path = models[0]["bpe_codes_path"]
-            ids = [model["id"] for model in models]
+            ids = [model["model_id"] for model in models]
             return (
                 model_path,
                 dict_path,

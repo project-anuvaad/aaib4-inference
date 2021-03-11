@@ -1,5 +1,5 @@
-INDIC_NLP_LIB_HOME = "tools/fairseq_tools/indic_nlp_library"
-INDIC_NLP_RESOURCES = "tools/fairseq_tools/indic_nlp_resources"
+INDIC_NLP_LIB_HOME = "src/tools/indic_nlp_library"
+INDIC_NLP_RESOURCES = "src/tools/indic_nlp_resources"
 import sys
 
 sys.path.append(r"{}".format(INDIC_NLP_LIB_HOME))

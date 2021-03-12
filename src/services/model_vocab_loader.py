@@ -81,22 +81,30 @@ def make_batches(
 
 
 class Translator:
-    def __init__(self, data_dir, checkpoint_path, constrained_decoding=False):
+    def __init__(
+        self, data_dir, checkpoint_path, batch_size=25, constrained_decoding=False
+    ):
 
         self.constrained_decoding = constrained_decoding
         self.parser = options.get_generation_parser(interactive=True)
+        # buffer_size is currently not used but we just initialize it to batch
+        # size + 1 to avoid any assertion errors.
         if self.constrained_decoding:
             self.parser.set_defaults(
                 path=checkpoint_path,
                 remove_bpe="subword_nmt",
                 num_wokers=-1,
                 constraints="ordered",
+                batch_size=batch_size,
+                buffer_size=batch_size + 1,
             )
         else:
             self.parser.set_defaults(
                 path=checkpoint_path,
                 remove_bpe="subword_nmt",
                 num_wokers=-1,
+                batch_size=batch_size,
+                buffer_size=batch_size + 1,
             )
         args = options.parse_args_and_arch(self.parser, input_args=[data_dir])
         # we are explictly setting src_lang and tgt_lang here

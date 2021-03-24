@@ -16,8 +16,8 @@ group_id = 'aai4b'
 
 kafka_topic = [
   {
-    "consumer":os.environ.get('KAFKA_NMT_TRANSLATION_INPUT_TOPIC', nmt_input_topic_default),
-    "producer":os.environ.get('KAFKA_NMT_TRANSLATION_OUTPUT_TOPIC', nmt_output_topic_default),
+    "consumer":os.environ.get('KAFKA_AAIB_NMT_TRANSLATION_INPUT_TOPIC', nmt_input_topic_default),
+    "producer":os.environ.get('KAFKA_AAIB_NMT_TRANSLATION_OUTPUT_TOPIC', nmt_output_topic_default),
     "description":"kafka topics with WFM"
   }
 ]

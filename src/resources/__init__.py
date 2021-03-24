@@ -1,1 +1,1 @@
-from .translate import InteractiveMultiTranslateResourceNew,NMTTranslateResource
+from .translate import InteractiveMultiTranslateResourceNew,NMTTranslateResource,TranslateResourceV1

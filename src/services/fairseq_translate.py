@@ -147,7 +147,7 @@ class FairseqAutoCompleteTranslateService:
             out = CustomResponse(Status.SUCCESS.value, out["response_body"])
         except ServerModelError as e:
             status = Status.SEVER_MODEL_ERR.value
-            status["why"] = str(e)
+            status["message"] = str(e)
             log_exception(
                 "ServerModelError error in TRANSLATE_UTIL-translate_func: {} and {}".format(
                     e, sys.exc_info()[0]
@@ -158,7 +158,7 @@ class FairseqAutoCompleteTranslateService:
             out = CustomResponse(status, inputs)
         except Exception as e:
             status = Status.SYSTEM_ERR.value
-            status["why"] = str(e)
+            status["message"] = str(e)
             log_exception(
                 "Unexpected error:%s and %s" % (e, sys.exc_info()[0]), MODULE_CONTEXT, e
             )

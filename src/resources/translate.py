@@ -27,15 +27,13 @@ class InteractiveMultiTranslateResourceNew(Resource):
         if len(inputs)>0:
             log_info("Making v0/interactive-translation API call",MODULE_CONTEXT)
             log_info("inputs---{}".format(inputs),MODULE_CONTEXT)
-            # log_info(entry_exit_log(LOG_TAGS["input"],inputs))
             out = FairseqAutoCompleteTranslateService.constrained_translation(inputs)
             log_info("out from v0/interactive-translation done: {}".format(out.getresjson()),MODULE_CONTEXT)
-            # log_info(entry_exit_log(LOG_TAGS["output"],out))
-            return out.getres()
+            return out.jsonify_res()
         else:
             log_info("null inputs in request in v0/interactive-translation API",MODULE_CONTEXT)
             out = CustomResponse(Status.INVALID_API_REQUEST.value,None)
-            return out.getres()        
+            return out.jsonify_res()        
 
 class TranslateResourceV1(Resource):
     def post(self):

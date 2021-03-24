@@ -85,38 +85,22 @@ class FairseqTranslateService:
 
         return out
 
-
 class FairseqAutoCompleteTranslateService:
     @staticmethod
     def constrained_translation(inputs):
-
         inputs = inputs
         out = {}
-        pred_score = list()
-        sentence_id, node_id = list(), list()
-        input_subwords, output_subwords = list(), list()
+        sentence_id = list()
         i_src, tgt = list(), list()
         tagged_tgt, tagged_src = list(), list()
-        s_id, n_id = [0000], [0000]
-        i_s0_src, i_s0_tgt, i_save = list(), list(), list()
-        i_tmx_phrases = list()
 
         try:
             for i in inputs:
-                s0_src, s0_tgt, save = "NA", "NA", False
-                if all(v in i for v in ["s_id", "n_id"]):
-                    s_id = [i["s_id"]]
-                    n_id = [i["n_id"]]
-
+                sentence_id.append(i.get("s_id") or "NA")
                 if any(v not in i for v in ["src", "id"]):
                     log_info("either id or src missing in some input", MODULE_CONTEXT)
                     out = CustomResponse(Status.ID_OR_SRC_MISSING.value, inputs)
                     return out
-
-                if any(v in i for v in ["s0_src", "s0_tgt", "save"]):
-                    s0_src, s0_tgt, save = handle_custome_input(i, s0_src, s0_tgt, save)
-
-                i_s0_src.append(s0_src), i_s0_tgt.append(s0_tgt), i_save.append(save)
 
                 log_info("input sentences:{}".format(i["src"]), MODULE_CONTEXT)
                 i_src.append(i["src"])
@@ -148,26 +132,15 @@ class FairseqAutoCompleteTranslateService:
                     MODULE_CONTEXT,
                 )
                 tgt.append(translation)
-                sentence_id.append(s_id[0]), node_id.append(n_id[0])
-                # input_subwords.append(input_sw), output_subwords.append(output_sw)
                 tagged_tgt.append(tag_tgt), tagged_src.append(tag_src)
-                i_tmx_phrases.append(i.get("tmx_phrases", []))
 
             out["response_body"] = [
                 {
                     "tgt": tgt[i],
-                    # "pred_score": pred_score[i],
                     "s_id": sentence_id[i],
-                    # "input_subwords": input_subwords[i],
-                    # "output_subwords": output_subwords[i],
-                    "n_id": node_id[i],
                     "src": i_src[i],
                     "tagged_tgt": tagged_tgt[i],
                     "tagged_src": tagged_src[i],
-                    "save": i_save[i],
-                    "s0_src": i_s0_src[i],
-                    "s0_tgt": i_s0_tgt[i],
-                    "tmx_phrases": i_tmx_phrases[i],
                 }
                 for i in range(len(tgt))
             ]

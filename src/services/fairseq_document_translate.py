@@ -15,35 +15,23 @@ from services import load_models
 class FairseqDocumentTranslateService:
     @staticmethod
     def batch_translator(input_dict):
-
         model_id = input_dict["id"]
         src_list = input_dict["src_list"]
         num_sentence = len(src_list)
-        input_subwords_list = [None] * num_sentence
-        output_subwords_list = [None] * num_sentence
         tagged_src_list = [None] * num_sentence
         tagged_tgt_list = [None] * num_sentence
         tgt_list = [None] * num_sentence
-        score_list = [None] * num_sentence
         out = {}
-
-        date_original_array = [None] * num_sentence
-        url_original_array = [None] * num_sentence
-        num_array_array = [None] * num_sentence
-        num_map_array = [None] * num_sentence
-        prefix_array = [None] * num_sentence
 
         translator = load_models.loaded_models[model_id]
         source_bpe = load_models.bpes[model_id][0]
         # target_bpe = load_models.bpes[i["id"]][1]
 
         input_sentence_array_prepd = [None] * num_sentence
-        special_case_sentence_indices = []
 
         try:
             for i, sent in enumerate(src_list):
                 input_sentence_array_prepd[i] = sent
-
             log_info("translating using NMT-model:{}".format(model_id), MODULE_CONTEXT)
             
             if model_id == 100:

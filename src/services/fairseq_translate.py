@@ -106,13 +106,16 @@ class FairseqAutoCompleteTranslateService:
                 i_src.append(i["src"])
                 tag_src = i["src"]
 
-                if i["id"] == 103:
+                if i["id"] == 100:
                     "hindi-english"
+                    i["id"] = 103
                     translation = encode_itranslate_decode(i, "hi", "en")
-                elif i["id"] == 104:
+                elif i["id"] == 101:
                     "bengali-english"
+                    i["id"] = 104
                     translation = encode_itranslate_decode(i, "bn", "en")
-                elif i["id"] == 105:
+                elif i["id"] == 102:
+                    i["id"] =105
                     "tamil-english"
                     translation = encode_itranslate_decode(i, "ta", "en")
                 else:

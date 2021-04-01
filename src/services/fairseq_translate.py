@@ -156,17 +156,6 @@ class FairseqAutoCompleteTranslateService:
                 for i in range(len(tgt))
             ]
             out = CustomResponse(Status.SUCCESS.value, out["response_body"])
-        except ServerModelError as e:
-            status = Status.SEVER_MODEL_ERR.value
-            status["message"] = str(e)
-            log_exception(
-                "ServerModelError error in TRANSLATE_UTIL-translate_func: {} and {}".format(
-                    e, sys.exc_info()[0]
-                ),
-                MODULE_CONTEXT,
-                e,
-            )
-            out = CustomResponse(status, inputs)
         except Exception as e:
             status = Status.SYSTEM_ERR.value
             status["message"] = str(e)
@@ -222,15 +211,6 @@ def encode_translate_decode(i, src_lang, tgt_lang):
         translation = translator.translate(i_final)
         translation = sentence_processor.postprocess(translation, tgt_lang)
         return translation
-    except ServerModelError as e:
-        log_exception(
-            "ServerModelError error in encode_translate_decode: {} and {}".format(
-                e, sys.exc_info()[0]
-            ),
-            MODULE_CONTEXT,
-            e,
-        )
-        raise
 
     except Exception as e:
         log_exception(

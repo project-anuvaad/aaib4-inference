@@ -49,6 +49,11 @@ class FairseqDocumentTranslateService:
                 translation_array = encode_translate_decode(
                     input_sentence_array_prepd, "ta", "en", translator, source_bpe
                 )
+            elif model_id == 103:
+                "english-hindi"
+                translation_array = encode_translate_decode(
+                    input_sentence_array_prepd, "en", "hi", translator, source_bpe
+                )    
 
             else:
                 log_info(

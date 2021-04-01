@@ -60,7 +60,7 @@ class Loadmodels:
         params2cons_translator = {}
         for i, _ in enumerate(ids):
             dict_path = dict_paths[i]
-            model_path = dict_paths[i]
+            model_path = model_paths[i]
             param = (model_path, dict_path)
             if params2translator.get(param, None):
                 translator = params2translator[param]

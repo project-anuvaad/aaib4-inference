@@ -33,7 +33,7 @@ class FairseqDocumentTranslateService:
             for i, sent in enumerate(src_list):
                 input_sentence_array_prepd[i] = sent
             log_info("translating using NMT-model:{}".format(model_id), MODULE_CONTEXT)
-            
+
             if model_id == 100:
                 "hindi-english"
                 translation_array = encode_translate_decode(
@@ -53,7 +53,7 @@ class FairseqDocumentTranslateService:
                 "english-hindi"
                 translation_array = encode_translate_decode(
                     input_sentence_array_prepd, "en", "hi", translator, source_bpe
-                )    
+                )
 
             else:
                 log_info(
@@ -64,7 +64,11 @@ class FairseqDocumentTranslateService:
                     "Unsupported Model ID - id: {} for given input".format(model_id)
                 )
 
-            out = {"tgt_list": translation_array,"tagged_src_list": input_sentence_array_prepd,"tagged_tgt_list": translation_array}
+            out = {
+                "tgt_list": translation_array,
+                "tagged_src_list": input_sentence_array_prepd,
+                "tagged_tgt_list": translation_array,
+            }
         except ServerModelError as e:
             log_exception(
                 "ServerModelError error in TRANSLATE_UTIL-translate_func: {} and {}".format(
@@ -93,7 +97,9 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
         log_info("BPE encoded sent: %s" % inputs, MODULE_CONTEXT)
         i_final = sentence_processor.apply_lang_tags(inputs, src_lang, tgt_lang)
         translation = translator.translate(i_final)
+        log_info("Ourput from model:{}".format(translation), MODULE_CONTEXT)
         translation = sentence_processor.postprocess(translation, tgt_lang)
+        log_info("Ourput from model:{}".format(translation), MODULE_CONTEXT)
         return translation
     except ServerModelError as e:
         log_exception(

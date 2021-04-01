@@ -112,7 +112,7 @@ class FairseqAutoCompleteTranslateService:
                     translation = encode_itranslate_decode(i, "hi", "en")
                 elif i["id"] == 101:
                     "bengali-english"
-                    i["id"] = 104
+                    i["id"] = 108
                     translation = encode_itranslate_decode(i, "bn", "en")
                 elif i["id"] == 102:
                     i["id"] =105
@@ -121,7 +121,11 @@ class FairseqAutoCompleteTranslateService:
                 elif i["id"] == 103:
                     i["id"] =107
                     "english-hindi"
-                    translation = encode_itranslate_decode(i, "en", "hi")    
+                    translation = encode_itranslate_decode(i, "en", "hi")   
+                elif i["id"] == 104:
+                    i["id"] =109
+                    "english-tamil"
+                    translation = encode_itranslate_decode(i, "en", "hi")      
                 else:
                     log_info(
                         "Unsupported model id: {} for given input".format(i["id"]),

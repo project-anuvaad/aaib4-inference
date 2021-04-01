@@ -34,26 +34,26 @@
       "bpe_codes_path": "src/nmt_models/vocab/bpe_codes.32k.SRC_TGT"
     },
     {
-      "source_language_code": "hi",
-      "target_language_code": "en",
-      "model_id": 106,
-      "model_name": "Fairseq AAI4B Constrained decoding model",
-      "model_path": "src/nmt_models/experiments_all-v1_WAT_model_checkpoint_best.pt",
-      "dict_path": "src/nmt_models/dictionaries",
-      "src_vocab_path": "src/nmt_models/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/vocab/bpe_codes.32k.SRC_TGT"
+      "source_language_code": "en",
+      "target_language_code": "hi",
+      "model_id": 103,
+      "model_name": "Fairseq AAI4B English-Indic model",
+      "model_path": "src/nmt_models/en-indic-model/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/en-indic-model/dictionaries",
+      "src_vocab_path": "src/nmt_models/en-indic-model/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/en-indic-model/vocab/vocab.TGT",
+      "bpe_codes_path": "src/nmt_models/en-indic-model/vocab/bpe_codes.32k.SRC_TGT"
     },
     {
-      "source_language_code": "bn",
-      "target_language_code": "en",
+      "source_language_code": "en",
+      "target_language_code": "ta",
       "model_id": 104,
-      "model_name": "Fairseq AAI4B Constrained decoding model",
-      "model_path": "src/nmt_models/experiments_all-v1_WAT_model_checkpoint_best.pt",
-      "dict_path": "src/nmt_models/dictionaries",
-      "src_vocab_path": "src/nmt_models/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/vocab/bpe_codes.32k.SRC_TGT"
+      "model_name": "Fairseq AAI4B English-Indic model",
+      "model_path": "src/nmt_models/en-indic-model/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/en-indic-model/dictionaries",
+      "src_vocab_path": "src/nmt_models/en-indic-model/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/en-indic-model/vocab/vocab.TGT",
+      "bpe_codes_path": "src/nmt_models/en-indic-model/vocab/bpe_codes.32k.SRC_TGT"
     },
     {
       "source_language_code": "ta",
@@ -67,20 +67,42 @@
       "bpe_codes_path": "src/nmt_models/vocab/bpe_codes.32k.SRC_TGT"
     },
     {
-      "source_language_code": "en",
-      "target_language_code": "hi",
-      "model_id": 103,
-      "model_name": "Fairseq AAI4B English-Indic model",
-      "model_path": "src/nmt_models/en-indic-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/en-indic-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/en-indic-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/en-indic-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic-model/vocab/bpe_codes.32k.SRC_TGT"
+      "source_language_code": "hi",
+      "target_language_code": "en",
+      "model_id": 106,
+      "model_name": "Fairseq AAI4B Constrained decoding model",
+      "model_path": "src/nmt_models/experiments_all-v1_WAT_model_checkpoint_best.pt",
+      "dict_path": "src/nmt_models/dictionaries",
+      "src_vocab_path": "src/nmt_models/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/vocab/vocab.TGT",
+      "bpe_codes_path": "src/nmt_models/vocab/bpe_codes.32k.SRC_TGT"
     },
     {
       "source_language_code": "en",
       "target_language_code": "hi",
       "model_id": 107,
+      "model_name": "Fairseq AAI4B English-Indic Constrained decoding model",
+      "model_path": "src/nmt_models/en-indic-model/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/en-indic-model/dictionaries",
+      "src_vocab_path": "src/nmt_models/en-indic-model/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/en-indic-model/vocab/vocab.TGT",
+      "bpe_codes_path": "src/nmt_models//en-indic-modelvocab/bpe_codes.32k.SRC_TGT"
+    },
+    {
+      "source_language_code": "bn",
+      "target_language_code": "en",
+      "model_id": 108,
+      "model_name": "Fairseq AAI4B Constrained decoding model",
+      "model_path": "src/nmt_models/experiments_all-v1_WAT_model_checkpoint_best.pt",
+      "dict_path": "src/nmt_models/dictionaries",
+      "src_vocab_path": "src/nmt_models/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/vocab/vocab.TGT",
+      "bpe_codes_path": "src/nmt_models/vocab/bpe_codes.32k.SRC_TGT"
+    },    
+    {
+      "source_language_code": "en",
+      "target_language_code": "ta",
+      "model_id": 109,
       "model_name": "Fairseq AAI4B English-Indic Constrained decoding model",
       "model_path": "src/nmt_models/en-indic-model/checkpoint_best.pt",
       "dict_path": "src/nmt_models/en-indic-model/dictionaries",

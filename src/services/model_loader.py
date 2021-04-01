@@ -61,7 +61,7 @@ class Loadmodels:
         for i, _ in enumerate(ids):
             if ids[i] in range(100, 104):
                 loaded_models[ids[i]] = translator
-            elif ids[i] in range(104, 107):
+            elif ids[i] in range(104, 108):
                 loaded_models[ids[i]] = constrained_translator
             log_info("Model Loaded: {}".format(ids[i]), MODULE_CONTEXT)
         return loaded_models

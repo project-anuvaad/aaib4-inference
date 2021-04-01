@@ -21,9 +21,10 @@ class Loadmodels:
             self.tgt_vocab_paths,
             self.bpe_codes_paths,
             self.ids,
+            self.is_constrained,
         ) = self.get_paths()
         self.loaded_models = self.return_loaded_models(
-            self.model_paths, self.dict_paths, self.ids
+            self.model_paths, self.dict_paths, self.ids, self.is_constrained
         )
         self.bpes = {}
         for _id, src_vocab_path, tgt_vocab_path, bpe_codes_path in zip(
@@ -43,6 +44,7 @@ class Loadmodels:
             tgt_vocab_paths = [model["tgt_vocab_path"] for model in models]
             bpe_codes_paths = [model["bpe_codes_path"] for model in models]
             ids = [model["model_id"] for model in models]
+            is_constrained = [model["is_constrained"] for model in models]
             return (
                 model_paths,
                 dict_paths,
@@ -50,9 +52,10 @@ class Loadmodels:
                 tgt_vocab_paths,
                 bpe_codes_paths,
                 ids,
+                is_constrained,
             )
 
-    def return_loaded_models(self, model_paths, dict_paths, ids):
+    def return_loaded_models(self, model_paths, dict_paths, ids, is_constrained_list):
         loaded_models = {}
         # this has key of (model_path, dict_path) and stores the corresponding translation model
         params2translator = {}
@@ -72,10 +75,10 @@ class Loadmodels:
                 )
                 params2translator[param] = translator
                 params2cons_translator[param] = constrained_translator
-            if ids[i] in range(100, 104):
-                loaded_models[ids[i]] = translator
-            elif ids[i] in range(105, 110):
+            if is_constrained_list[i]:
                 loaded_models[ids[i]] = constrained_translator
+            else:
+                loaded_models[ids[i]] = translator
             log_info("Model Loaded: {}".format(ids[i]), MODULE_CONTEXT)
         return loaded_models
 

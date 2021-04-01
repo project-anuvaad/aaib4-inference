@@ -77,9 +77,11 @@ class Loadmodels:
                 params2cons_translator[param] = constrained_translator
             if is_constrained_list[i]:
                 loaded_models[ids[i]] = constrained_translator
+                log_info("Model Loaded- constrained: {}".format(ids[i]), MODULE_CONTEXT)
             else:
                 loaded_models[ids[i]] = translator
-            log_info("Model Loaded: {}".format(ids[i]), MODULE_CONTEXT)
+                log_info("Model Loaded- base: {}".format(ids[i]), MODULE_CONTEXT)
+            
         return loaded_models
 
     def return_models(self):

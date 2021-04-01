@@ -86,7 +86,7 @@
       "dict_path": "src/nmt_models/en-indic-model/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models//en-indic-modelvocab/bpe_codes.32k.SRC_TGT"
+      "bpe_codes_path": "src/nmt_models/en-indic-model/vocab/bpe_codes.32k.SRC_TGT"
     },
     {
       "source_language_code": "bn",
@@ -98,7 +98,7 @@
       "src_vocab_path": "src/nmt_models/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/vocab/vocab.TGT",
       "bpe_codes_path": "src/nmt_models/vocab/bpe_codes.32k.SRC_TGT"
-    },    
+    },
     {
       "source_language_code": "en",
       "target_language_code": "ta",
@@ -108,7 +108,7 @@
       "dict_path": "src/nmt_models/en-indic-model/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models//en-indic-modelvocab/bpe_codes.32k.SRC_TGT"
+      "bpe_codes_path": "src/nmt_models/en-indic-model/vocab/bpe_codes.32k.SRC_TGT"
     }
   ]
 }

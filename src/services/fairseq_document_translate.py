@@ -54,6 +54,11 @@ class FairseqDocumentTranslateService:
                 translation_array = encode_translate_decode(
                     input_sentence_array_prepd, "en", "hi", translator, source_bpe
                 )
+            elif model_id == 104:
+                "english-hindi"
+                translation_array = encode_translate_decode(
+                    input_sentence_array_prepd, "en", "hi", translator, source_bpe
+                )
 
             else:
                 log_info(
@@ -96,10 +101,11 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
         inputs = apply_bpe(inputs, source_bpe)
         log_info("BPE encoded sent: %s" % inputs, MODULE_CONTEXT)
         i_final = sentence_processor.apply_lang_tags(inputs, src_lang, tgt_lang)
+        log_info("Output from preprocessing step:{}".format(i_final), MODULE_CONTEXT)
         translation = translator.translate(i_final)
         log_info("Ourput from model:{}".format(translation), MODULE_CONTEXT)
         translation = sentence_processor.postprocess(translation, tgt_lang)
-        log_info("Ourput from model:{}".format(translation), MODULE_CONTEXT)
+        log_info("Ourput from postprocess:{}".format(translation), MODULE_CONTEXT)
         return translation
     except ServerModelError as e:
         log_exception(

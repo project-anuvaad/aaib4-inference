@@ -125,7 +125,47 @@ class FairseqAutoCompleteTranslateService:
                 elif i["id"] == 104:
                     i["id"] =109
                     "english-tamil"
-                    translation = encode_itranslate_decode(i, "en", "hi")      
+                    translation = encode_itranslate_decode(i, "en", "ta")
+                elif i["id"] == 110:
+                    i["id"] =111
+                    "english-assameees"
+                    translation = encode_itranslate_decode(i, "en", "as")   
+                elif i["id"] == 112:
+                    i["id"] =113
+                    "english-bengali"
+                    translation = encode_itranslate_decode(i, "en", "bn")  
+                elif i["id"] == 114:
+                    i["id"] =115
+                    "english-gujarati"
+                    translation = encode_itranslate_decode(i, "en", "gu")    
+                elif i["id"] == 116:
+                    i["id"] =117
+                    "english-kannada"
+                    translation = encode_itranslate_decode(i, "en", "kn")
+                elif i["id"] == 116:
+                    i["id"] =117
+                    "english-kannada"
+                    translation = encode_itranslate_decode(i, "en", "kn")   
+                elif i["id"] == 118:
+                    i["id"] =119
+                    "english-malayalam"
+                    translation = encode_itranslate_decode(i, "en", "ml")  
+                elif i["id"] == 120:
+                    i["id"] =121
+                    "english-marathi"
+                    translation = encode_itranslate_decode(i, "en", "mr")  
+                elif i["id"] == 122:
+                    i["id"] =123
+                    "english-oriya"
+                    translation = encode_itranslate_decode(i, "en", "or")  
+                elif i["id"] == 124:
+                    i["id"] =125
+                    "english-punjabi"
+                    translation = encode_itranslate_decode(i, "en", "pa")
+                elif i["id"] == 126:
+                    i["id"] =127
+                    "english-telugu"
+                    translation = encode_itranslate_decode(i, "en", "te")                                    
                 else:
                     log_info(
                         "Unsupported model id: {} for given input".format(i["id"]),

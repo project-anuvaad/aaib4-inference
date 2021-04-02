@@ -55,10 +55,55 @@ class FairseqDocumentTranslateService:
                     input_sentence_array_prepd, "en", "hi", translator, source_bpe
                 )
             elif model_id == 104:
-                "english-hindi"
+                "english-tamil"
                 translation_array = encode_translate_decode(
-                    input_sentence_array_prepd, "en", "hi", translator, source_bpe
+                    input_sentence_array_prepd, "en", "ta", translator, source_bpe
                 )
+            elif model_id == 110:
+                "english-assamees"
+                translation_array = encode_translate_decode(
+                    input_sentence_array_prepd, "en", "as", translator, source_bpe
+                )   
+            elif model_id == 112:
+                "english-bengali"
+                translation_array = encode_translate_decode(
+                    input_sentence_array_prepd, "en", "bn", translator, source_bpe
+                )
+            elif model_id == 114:
+                "english-gujarati"
+                translation_array = encode_translate_decode(
+                    input_sentence_array_prepd, "en", "gu", translator, source_bpe
+                ) 
+            elif model_id == 116:
+                "english-kannada"
+                translation_array = encode_translate_decode(
+                    input_sentence_array_prepd, "en", "kn", translator, source_bpe
+                ) 
+            elif model_id == 118:
+                "english-malayalam"
+                translation_array = encode_translate_decode(
+                    input_sentence_array_prepd, "en", "ml", translator, source_bpe
+                )   
+            elif model_id == 120:
+                "english-marathi"
+                translation_array = encode_translate_decode(
+                    input_sentence_array_prepd, "en", "mr", translator, source_bpe
+                )  
+            elif model_id == 122:
+                "english-oriya"
+                translation_array = encode_translate_decode(
+                    input_sentence_array_prepd, "en", "or", translator, source_bpe
+                )
+            elif model_id == 124:
+                "english-punjabi"
+                translation_array = encode_translate_decode(
+                    input_sentence_array_prepd, "en", "pa", translator, source_bpe
+                ) 
+            elif model_id == 126:
+                "english-telugu"
+                translation_array = encode_translate_decode(
+                    input_sentence_array_prepd, "en", "te", translator, source_bpe
+                )                              
 
             else:
                 log_info(

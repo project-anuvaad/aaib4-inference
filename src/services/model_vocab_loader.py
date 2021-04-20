@@ -113,6 +113,10 @@ class Translator:
         # use any idx files and only store the SRC and TGT dictionaries.
         args.source_lang = "SRC"
         args.target_lang = "TGT"
+
+        # we have custom architechtures in this folder and we will let fairseq
+        # import this
+        args.user_dir = "src/model_configs"
         self.cfg = convert_namespace_to_omegaconf(args)
 
         utils.import_user_module(self.cfg.common)

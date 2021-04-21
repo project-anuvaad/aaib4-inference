@@ -12,6 +12,21 @@ import datetime
 from services import load_models
 
 
+def get_src_and_tgt_langs_dict():
+    model_id2src_tgt = {}
+    with open(config.FETCH_MODEL_CONFG) as f:
+        confs = json.load(f)
+        models = confs["models"]
+        ids = [model["model_id"] for model in models]
+
+    for model in models:
+        model_id = model["model_id"]
+        src_lang = model["source_language_code"]
+        tgt_lang = model["target_language_code"]
+        model_id2src_tgt[model_id] = (src_lang, tgt_lang)
+    return model_id2src_tgt, ids
+
+
 class FairseqDocumentTranslateService:
     @staticmethod
     def batch_translator(input_dict):
@@ -29,82 +44,23 @@ class FairseqDocumentTranslateService:
 
         input_sentence_array_prepd = [None] * num_sentence
 
+        model_id2src_tgt, ids = get_src_and_tgt_langs_dict()
+
         try:
             for i, sent in enumerate(src_list):
                 input_sentence_array_prepd[i] = sent
             log_info("translating using NMT-model:{}".format(model_id), MODULE_CONTEXT)
 
-            if model_id == 100:
-                "hindi-english"
+            if model_id in ids:
+                src_lang, tgt_lang = model_id2src_tgt[model_id]
+                print(f"{src_lang}-{tgt_lang}")
                 translation_array = encode_translate_decode(
-                    input_sentence_array_prepd, "hi", "en", translator, source_bpe
+                    input_sentence_array_prepd,
+                    src_lang,
+                    tgt_lang,
+                    translator,
+                    source_bpe,
                 )
-            elif model_id == 101:
-                "bengali-english"
-                translation_array = encode_translate_decode(
-                    input_sentence_array_prepd, "bn", "en", translator, source_bpe
-                )
-            elif model_id == 102:
-                "tamil-english"
-                translation_array = encode_translate_decode(
-                    input_sentence_array_prepd, "ta", "en", translator, source_bpe
-                )
-            elif model_id == 103:
-                "english-hindi"
-                translation_array = encode_translate_decode(
-                    input_sentence_array_prepd, "en", "hi", translator, source_bpe
-                )
-            elif model_id == 104:
-                "english-tamil"
-                translation_array = encode_translate_decode(
-                    input_sentence_array_prepd, "en", "ta", translator, source_bpe
-                )
-            elif model_id == 110:
-                "english-assamees"
-                translation_array = encode_translate_decode(
-                    input_sentence_array_prepd, "en", "as", translator, source_bpe
-                )   
-            elif model_id == 112:
-                "english-bengali"
-                translation_array = encode_translate_decode(
-                    input_sentence_array_prepd, "en", "bn", translator, source_bpe
-                )
-            elif model_id == 114:
-                "english-gujarati"
-                translation_array = encode_translate_decode(
-                    input_sentence_array_prepd, "en", "gu", translator, source_bpe
-                ) 
-            elif model_id == 116:
-                "english-kannada"
-                translation_array = encode_translate_decode(
-                    input_sentence_array_prepd, "en", "kn", translator, source_bpe
-                ) 
-            elif model_id == 118:
-                "english-malayalam"
-                translation_array = encode_translate_decode(
-                    input_sentence_array_prepd, "en", "ml", translator, source_bpe
-                )   
-            elif model_id == 120:
-                "english-marathi"
-                translation_array = encode_translate_decode(
-                    input_sentence_array_prepd, "en", "mr", translator, source_bpe
-                )  
-            elif model_id == 122:
-                "english-oriya"
-                translation_array = encode_translate_decode(
-                    input_sentence_array_prepd, "en", "or", translator, source_bpe
-                )
-            elif model_id == 124:
-                "english-punjabi"
-                translation_array = encode_translate_decode(
-                    input_sentence_array_prepd, "en", "pa", translator, source_bpe
-                ) 
-            elif model_id == 126:
-                "english-telugu"
-                translation_array = encode_translate_decode(
-                    input_sentence_array_prepd, "en", "te", translator, source_bpe
-                )                              
-
             else:
                 log_info(
                     "Unsupported model id: {} for given input".format(model_id),

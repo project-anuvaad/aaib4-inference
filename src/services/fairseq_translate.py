@@ -12,6 +12,21 @@ import datetime
 from services import load_models
 
 
+def get_src_and_tgt_langs_dict():
+    model_id2src_tgt = {}
+    with open(config.FETCH_MODEL_CONFG) as f:
+        confs = json.load(f)
+        models = confs["models"]
+        ids = [model["model_id"] for model in models]
+
+    for model in models:
+        model_id = model["model_id"]
+        src_lang = model["source_language_code"]
+        tgt_lang = model["target_language_code"]
+        model_id2src_tgt[model_id] = (src_lang, tgt_lang)
+    return model_id2src_tgt, ids
+
+
 class FairseqTranslateService:
     @staticmethod
     def simple_translation(inputs):
@@ -85,6 +100,7 @@ class FairseqTranslateService:
 
         return out
 
+
 class FairseqAutoCompleteTranslateService:
     @staticmethod
     def constrained_translation(inputs):
@@ -93,7 +109,7 @@ class FairseqAutoCompleteTranslateService:
         sentence_id = list()
         i_src, tgt = list(), list()
         tagged_tgt, tagged_src = list(), list()
-
+        model_id2src_tgt, ids = get_src_and_tgt_langs_dict()
         try:
             for i in inputs:
                 sentence_id.append(i.get("s_id") or "NA")
@@ -106,66 +122,12 @@ class FairseqAutoCompleteTranslateService:
                 i_src.append(i["src"])
                 tag_src = i["src"]
 
-                if i["id"] == 100:
-                    "hindi-english"
-                    i["id"] = 106
-                    translation = encode_itranslate_decode(i, "hi", "en")
-                elif i["id"] == 101:
-                    "bengali-english"
-                    i["id"] = 108
-                    translation = encode_itranslate_decode(i, "bn", "en")
-                elif i["id"] == 102:
-                    i["id"] =105
-                    "tamil-english"
-                    translation = encode_itranslate_decode(i, "ta", "en")
-                elif i["id"] == 103:
-                    i["id"] =107
-                    "english-hindi"
-                    translation = encode_itranslate_decode(i, "en", "hi")   
-                elif i["id"] == 104:
-                    i["id"] =109
-                    "english-tamil"
-                    translation = encode_itranslate_decode(i, "en", "ta")
-                elif i["id"] == 110:
-                    i["id"] =111
-                    "english-assameees"
-                    translation = encode_itranslate_decode(i, "en", "as")   
-                elif i["id"] == 112:
-                    i["id"] =113
-                    "english-bengali"
-                    translation = encode_itranslate_decode(i, "en", "bn")  
-                elif i["id"] == 114:
-                    i["id"] =115
-                    "english-gujarati"
-                    translation = encode_itranslate_decode(i, "en", "gu")    
-                elif i["id"] == 116:
-                    i["id"] =117
-                    "english-kannada"
-                    translation = encode_itranslate_decode(i, "en", "kn")
-                elif i["id"] == 116:
-                    i["id"] =117
-                    "english-kannada"
-                    translation = encode_itranslate_decode(i, "en", "kn")   
-                elif i["id"] == 118:
-                    i["id"] =119
-                    "english-malayalam"
-                    translation = encode_itranslate_decode(i, "en", "ml")  
-                elif i["id"] == 120:
-                    i["id"] =121
-                    "english-marathi"
-                    translation = encode_itranslate_decode(i, "en", "mr")  
-                elif i["id"] == 122:
-                    i["id"] =123
-                    "english-oriya"
-                    translation = encode_itranslate_decode(i, "en", "or")  
-                elif i["id"] == 124:
-                    i["id"] =125
-                    "english-punjabi"
-                    translation = encode_itranslate_decode(i, "en", "pa")
-                elif i["id"] == 126:
-                    i["id"] =127
-                    "english-telugu"
-                    translation = encode_itranslate_decode(i, "en", "te")                                    
+                model_id = i["id"]
+
+                if model_id in ids:
+                    src_lang, tgt_lang = model_id2src_tgt[model_id]
+                    print(f"{src_lang}-{tgt_lang}")
+                    translation = encode_itranslate_decode(i, src_lang, tgt_lang)
                 else:
                     log_info(
                         "Unsupported model id: {} for given input".format(i["id"]),

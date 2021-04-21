@@ -14,6 +14,10 @@ from services import load_models
 
 def get_src_and_tgt_langs_dict():
     model_id2src_tgt = {}
+    # we have these two dictionaries to keep track of src-tgt lang pair to
+    # corresponding model_id and constrained_model_id respectively
+    src_tgt2model_id = {}
+    src_tgt2constrained_model_id = {}
     with open(config.FETCH_MODEL_CONFG) as f:
         confs = json.load(f)
         models = confs["models"]
@@ -24,81 +28,90 @@ def get_src_and_tgt_langs_dict():
         src_lang = model["source_language_code"]
         tgt_lang = model["target_language_code"]
         model_id2src_tgt[model_id] = (src_lang, tgt_lang)
-    return model_id2src_tgt, ids
+        if model["is_constrained"]:
+            src_tgt2constrained_model_id[(src_lang, tgt_lang)] = model_id
+        else:
+            src_tgt2model_id[(src_lang, tgt_lang)] = model_id
+
+    for src_tgt in src_tgt2model_id.keys():
+        # normal_model_id and constrained_model_id for a particular src and tgt
+        # lang pair cannot be equal.
+        assert src_tgt2model_id[src_tgt] != src_tgt2constrained_model_id[src_tgt]
+    return model_id2src_tgt, ids, src_tgt2constrained_model_id
 
 
-class FairseqTranslateService:
-    @staticmethod
-    def simple_translation(inputs):
-        out = {}
-        i_src, tgt = list(), list()
-        tagged_tgt = list()
-        tagged_src = list()
-        sentence_id = list()
-        tp_tokenizer = None
+# class FairseqTranslateService:
+#     @staticmethod
+#     def simple_translation(inputs):
+#         out = {}
+#         i_src, tgt = list(), list()
+#         tagged_tgt = list()
+#         tagged_src = list()
+#         sentence_id = list()
+#         tp_tokenizer = None
 
-        try:
-            for i in inputs:
-                sentence_id.append(i.get("s_id") or "NA")
-                if any(v not in i for v in ["src", "id"]):
-                    log_info("either id or src missing in some input", MODULE_CONTEXT)
-                    out = CustomResponse(Status.ID_OR_SRC_MISSING.value, inputs)
-                    return out
+#         try:
+#             for i in inputs:
+#                 sentence_id.append(i.get("s_id") or "NA")
+#                 if any(v not in i for v in ["src", "id"]):
+#                     log_info("either id or src missing in some input", MODULE_CONTEXT)
+#                     out = CustomResponse(Status.ID_OR_SRC_MISSING.value, inputs)
+#                     return out
 
-                log_info("input sentence:{}".format(i["src"]), MODULE_CONTEXT)
-                i_src.append(i["src"])
-                tag_src = i["src"]
+#                 log_info("input sentence:{}".format(i["src"]), MODULE_CONTEXT)
+#                 i_src.append(i["src"])
+#                 tag_src = i["src"]
 
-                if i["id"] == 100:
-                    "hindi-english"
-                    translation = encode_translate_decode(i, "hi", "en")
-                elif i["id"] == 101:
-                    "bengali-english"
-                    translation = encode_translate_decode(i, "bn", "en")
-                elif i["id"] == 102:
-                    "tamil-english"
-                    translation = encode_translate_decode(i, "ta", "en")
+#                 if i["id"] == 100:
+#                     "hindi-english"
+#                     translation = encode_translate_decode(i, "hi", "en")
+#                 elif i["id"] == 101:
+#                     "bengali-english"
+#                     translation = encode_translate_decode(i, "bn", "en")
+#                 elif i["id"] == 102:
+#                     "tamil-english"
+#                     translation = encode_translate_decode(i, "ta", "en")
 
-                else:
-                    log_info(
-                        "unsupported model id: {} for given input".format(i["id"]),
-                        MODULE_CONTEXT,
-                    )
-                    raise Exception(
-                        "Unsupported Model ID - id: {} for given input".format(i["id"])
-                    )
+#                 else:
+#                     log_info(
+#                         "unsupported model id: {} for given input".format(i["id"]),
+#                         MODULE_CONTEXT,
+#                     )
+#                     raise Exception(
+#                         "Unsupported Model ID - id: {} for given input".format(i["id"])
+#                     )
 
-                tag_tgt = translation[0]
-                log_info(
-                    "simple translation-experiment-{} output: {}".format(
-                        i["id"], translation
-                    ),
-                    MODULE_CONTEXT,
-                )
-                tgt.append(translation[0])
-                tagged_tgt.append(tag_tgt)
-                tagged_src.append(tag_src)
+#                 tag_tgt = translation[0]
+#                 log_info(
+#                     "simple translation-experiment-{} output: {}".format(
+#                         i["id"], translation
+#                     ),
+#                     MODULE_CONTEXT,
+#                 )
+#                 tgt.append(translation[0])
+#                 tagged_tgt.append(tag_tgt)
+#                 tagged_src.append(tag_src)
 
-            out["response_body"] = [
-                {
-                    "tgt": tgt[i],
-                    "tagged_tgt": tagged_tgt[i],
-                    "tagged_src": tagged_src[i],
-                    "s_id": sentence_id[i],
-                    "src": i_src[i],
-                }
-                for i in range(len(tgt))
-            ]
-            out = CustomResponse(Status.SUCCESS.value, out["response_body"])
-        except Exception as e:
-            status = Status.SYSTEM_ERR.value
-            status["why"] = str(e)
-            log_exception(
-                "Unexpected error:%s and %s" % (e, sys.exc_info()[0]), MODULE_CONTEXT, e
-            )
-            out = CustomResponse(status, inputs)
+#             out["response_body"] = [
+#                 {
+#                     "tgt": tgt[i],
+#                     "tagged_tgt": tagged_tgt[i],
+#                     "tagged_src": tagged_src[i],
+#                     "s_id": sentence_id[i],
+#                     "src": i_src[i],
+#                 }
+#                 for i in range(len(tgt))
+#             ]
+#             out = CustomResponse(Status.SUCCESS.value, out["response_body"])
+#         except Exception as e:
+#             status = Status.SYSTEM_ERR.value
+#             status["why"] = str(e)
+#             log_exception(
+#                 "Unexpected error:%s and %s" % (e, sys.exc_info()[0]), MODULE_CONTEXT, e
+#             )
+#             out = CustomResponse(status, inputs)
 
-        return out
+#         return out
 
 
 class FairseqAutoCompleteTranslateService:
@@ -109,7 +122,11 @@ class FairseqAutoCompleteTranslateService:
         sentence_id = list()
         i_src, tgt = list(), list()
         tagged_tgt, tagged_src = list(), list()
-        model_id2src_tgt, ids = get_src_and_tgt_langs_dict()
+        (
+            model_id2src_tgt,
+            ids,
+            src_tgt2constrained_model_id,
+        ) = get_src_and_tgt_langs_dict()
         try:
             for i in inputs:
                 sentence_id.append(i.get("s_id") or "NA")
@@ -126,7 +143,11 @@ class FairseqAutoCompleteTranslateService:
 
                 if model_id in ids:
                     src_lang, tgt_lang = model_id2src_tgt[model_id]
+                    constrained_model_id = src_tgt2constrained_model_id[
+                        (src_lang, tgt_lang)
+                    ]
                     print(f"{src_lang}-{tgt_lang}")
+                    i["id"] = constrained_model_id
                     translation = encode_itranslate_decode(i, src_lang, tgt_lang)
                 else:
                     log_info(

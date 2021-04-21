@@ -40,78 +40,78 @@ def get_src_and_tgt_langs_dict():
     return model_id2src_tgt, ids, src_tgt2constrained_model_id
 
 
-# class FairseqTranslateService:
-#     @staticmethod
-#     def simple_translation(inputs):
-#         out = {}
-#         i_src, tgt = list(), list()
-#         tagged_tgt = list()
-#         tagged_src = list()
-#         sentence_id = list()
-#         tp_tokenizer = None
+class FairseqTranslateService:
+    @staticmethod
+    def simple_translation(inputs):
+        out = {}
+        i_src, tgt = list(), list()
+        tagged_tgt = list()
+        tagged_src = list()
+        sentence_id = list()
+        tp_tokenizer = None
 
-#         try:
-#             for i in inputs:
-#                 sentence_id.append(i.get("s_id") or "NA")
-#                 if any(v not in i for v in ["src", "id"]):
-#                     log_info("either id or src missing in some input", MODULE_CONTEXT)
-#                     out = CustomResponse(Status.ID_OR_SRC_MISSING.value, inputs)
-#                     return out
+        try:
+            for i in inputs:
+                sentence_id.append(i.get("s_id") or "NA")
+                if any(v not in i for v in ["src", "id"]):
+                    log_info("either id or src missing in some input", MODULE_CONTEXT)
+                    out = CustomResponse(Status.ID_OR_SRC_MISSING.value, inputs)
+                    return out
 
-#                 log_info("input sentence:{}".format(i["src"]), MODULE_CONTEXT)
-#                 i_src.append(i["src"])
-#                 tag_src = i["src"]
+                log_info("input sentence:{}".format(i["src"]), MODULE_CONTEXT)
+                i_src.append(i["src"])
+                tag_src = i["src"]
 
-#                 if i["id"] == 100:
-#                     "hindi-english"
-#                     translation = encode_translate_decode(i, "hi", "en")
-#                 elif i["id"] == 101:
-#                     "bengali-english"
-#                     translation = encode_translate_decode(i, "bn", "en")
-#                 elif i["id"] == 102:
-#                     "tamil-english"
-#                     translation = encode_translate_decode(i, "ta", "en")
+                if i["id"] == 100:
+                    "hindi-english"
+                    translation = encode_translate_decode(i, "hi", "en")
+                elif i["id"] == 101:
+                    "bengali-english"
+                    translation = encode_translate_decode(i, "bn", "en")
+                elif i["id"] == 102:
+                    "tamil-english"
+                    translation = encode_translate_decode(i, "ta", "en")
 
-#                 else:
-#                     log_info(
-#                         "unsupported model id: {} for given input".format(i["id"]),
-#                         MODULE_CONTEXT,
-#                     )
-#                     raise Exception(
-#                         "Unsupported Model ID - id: {} for given input".format(i["id"])
-#                     )
+                else:
+                    log_info(
+                        "unsupported model id: {} for given input".format(i["id"]),
+                        MODULE_CONTEXT,
+                    )
+                    raise Exception(
+                        "Unsupported Model ID - id: {} for given input".format(i["id"])
+                    )
 
-#                 tag_tgt = translation[0]
-#                 log_info(
-#                     "simple translation-experiment-{} output: {}".format(
-#                         i["id"], translation
-#                     ),
-#                     MODULE_CONTEXT,
-#                 )
-#                 tgt.append(translation[0])
-#                 tagged_tgt.append(tag_tgt)
-#                 tagged_src.append(tag_src)
+                tag_tgt = translation[0]
+                log_info(
+                    "simple translation-experiment-{} output: {}".format(
+                        i["id"], translation
+                    ),
+                    MODULE_CONTEXT,
+                )
+                tgt.append(translation[0])
+                tagged_tgt.append(tag_tgt)
+                tagged_src.append(tag_src)
 
-#             out["response_body"] = [
-#                 {
-#                     "tgt": tgt[i],
-#                     "tagged_tgt": tagged_tgt[i],
-#                     "tagged_src": tagged_src[i],
-#                     "s_id": sentence_id[i],
-#                     "src": i_src[i],
-#                 }
-#                 for i in range(len(tgt))
-#             ]
-#             out = CustomResponse(Status.SUCCESS.value, out["response_body"])
-#         except Exception as e:
-#             status = Status.SYSTEM_ERR.value
-#             status["why"] = str(e)
-#             log_exception(
-#                 "Unexpected error:%s and %s" % (e, sys.exc_info()[0]), MODULE_CONTEXT, e
-#             )
-#             out = CustomResponse(status, inputs)
+            out["response_body"] = [
+                {
+                    "tgt": tgt[i],
+                    "tagged_tgt": tagged_tgt[i],
+                    "tagged_src": tagged_src[i],
+                    "s_id": sentence_id[i],
+                    "src": i_src[i],
+                }
+                for i in range(len(tgt))
+            ]
+            out = CustomResponse(Status.SUCCESS.value, out["response_body"])
+        except Exception as e:
+            status = Status.SYSTEM_ERR.value
+            status["why"] = str(e)
+            log_exception(
+                "Unexpected error:%s and %s" % (e, sys.exc_info()[0]), MODULE_CONTEXT, e
+            )
+            out = CustomResponse(status, inputs)
 
-#         return out
+        return out
 
 
 class FairseqAutoCompleteTranslateService:

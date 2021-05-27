@@ -12,7 +12,9 @@ bootstrap_server = os.environ.get(KAFKA_BOOTSTRAP_SERVER_HOST, default_value)
 ## "description":"Kafka topics and variables"
 nmt_input_topic_default = "aai4b-nmt-input-default"
 nmt_output_topic_default = 'aai4b-nmt-output-default'
-group_id = 'aai4b'
+group_id_default = "aai4b-nmt-consumer-group"
+
+group_id = os.environ.get('KAFKA_AAI4B_NMT_CONSUMER_GROUP', group_id_default)
 
 kafka_topic = [
   {

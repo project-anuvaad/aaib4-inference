@@ -1,5 +1,6 @@
 src/nmt_models
 src/tools
+fairseq/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

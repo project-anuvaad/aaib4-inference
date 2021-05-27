@@ -113,6 +113,8 @@ class Translator:
         # use any idx files and only store the SRC and TGT dictionaries.
         args.source_lang = "SRC"
         args.target_lang = "TGT"
+        
+        args.skip_invalid_size_inputs_valid_test = True
 
         # we have custom architechtures in this folder and we will let fairseq
         # import this

@@ -75,15 +75,6 @@ class FairseqDocumentTranslateService:
                 "tagged_src_list": input_sentence_array_prepd,
                 "tagged_tgt_list": translation_array,
             }
-        except ServerModelError as e:
-            log_exception(
-                "ServerModelError error in TRANSLATE_UTIL-translate_func: {} and {}".format(
-                    e, sys.exc_info()[0]
-                ),
-                MODULE_CONTEXT,
-                e,
-            )
-            raise e
         except Exception as e:
             log_exception(
                 "Exception caught in NMTTranslateService:batch_translator:%s and %s"
@@ -108,15 +99,6 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
         translation = sentence_processor.postprocess(translation, tgt_lang)
         log_info("Ourput from postprocess:{}".format(translation), MODULE_CONTEXT)
         return translation
-    except ServerModelError as e:
-        log_exception(
-            "ServerModelError error in encode_translate_decode: {} and {}".format(
-                e, sys.exc_info()[0]
-            ),
-            MODULE_CONTEXT,
-            e,
-        )
-        raise
 
     except Exception as e:
         log_exception(

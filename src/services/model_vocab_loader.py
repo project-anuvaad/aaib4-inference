@@ -113,6 +113,8 @@ class Translator:
         # use any idx files and only store the SRC and TGT dictionaries.
         args.source_lang = "SRC"
         args.target_lang = "TGT"
+        
+        args.skip_invalid_size_inputs_valid_test = True
 
         # we have custom architechtures in this folder and we will let fairseq
         # import this
@@ -231,18 +233,20 @@ class Translator:
             src_tokens = batch.src_tokens
             src_lengths = batch.src_lengths
             constraints = batch.constraints
-            if self.use_cuda:
+            if self.use_cuda:    
                 src_tokens = src_tokens.cuda()
                 src_lengths = src_lengths.cuda()
                 if constraints is not None:
                     constraints = constraints.cuda()
+                        
 
             sample = {
                 "net_input": {
                     "src_tokens": src_tokens,
                     "src_lengths": src_lengths,
                 },
-            }
+            }               
+                
             translations = self.task.inference_step(
                 self.generator, self.models, sample, constraints=constraints
             )

@@ -11,7 +11,7 @@ COPY / /app
 WORKDIR /app
 RUN pip3 install --upgrade pip
 RUN pip3 install -r src/requirements.txt
-RUN git clone https://github.com/pytorch/fairseq
+RUN git clone https://github.com/pytorch/fairseq.git
 WORKDIR fairseq
 RUN pip3 install ./
 WORKDIR /app/src/tools

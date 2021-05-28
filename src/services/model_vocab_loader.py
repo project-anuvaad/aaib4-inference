@@ -234,10 +234,25 @@ class Translator:
             src_lengths = batch.src_lengths
             constraints = batch.constraints
             if self.use_cuda:
-                src_tokens = src_tokens.cuda()
-                src_lengths = src_lengths.cuda()
+                try:
+                    src_tokens = src_tokens.cuda()
+                    src_lengths = src_lengths.cuda()
+                except Exception as e:
+                    print("***************Exception caught in model_vocab_loader without contraint decoding*******************")
+                    print(e) 
+                    pass   
+                    
+                # src_tokens = src_tokens.cuda()
+                # src_lengths = src_lengths.cuda()
                 if constraints is not None:
-                    constraints = constraints.cuda()
+                    # constraints = constraints.cuda()
+                    try:
+                        constraints = constraints.cuda()
+                    except as Exception as e:
+                        print("***************Exception caught in model_vocab_loader with contraint decoding*******************")  
+                        print(e)
+                        pass 
+                        
 
             sample = {
                 "net_input": {

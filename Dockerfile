@@ -22,4 +22,6 @@ WORKDIR /app
 #ENTRYPOINT [“CUDA_LAUNCH_BLOCKING=1”]
 #CMD ["python3", "/app/src/app.py"]
 #CMD ["CUDA_LAUNCH_BLOCKING=1","python3", "/app/src/app.py"]
+COPY start.sh /usr/bin/start.sh
+RUN chmod +x /usr/bin/start.sh
 CMD ["/usr/bin/start.sh"]

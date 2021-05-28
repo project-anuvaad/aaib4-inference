@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.2-base
+FROM nvidia/cuda:11.0-base
 CMD nvidia-smi
 RUN apt-get update
 RUN apt-get -y install python3

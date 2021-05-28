@@ -1,4 +1,6 @@
-FROM python:3.7.9
+FROM nvidia/cuda:10.2-base
+CMD nvidia-smi
+RUN apt-get update
 COPY / /app
 WORKDIR /app
 RUN pip install --upgrade pip

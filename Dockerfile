@@ -19,4 +19,4 @@ WORKDIR /app/src/tools
 RUN git clone https://github.com/anoopkunchukuttan/indic_nlp_library.git 
 RUN git clone https://github.com/anoopkunchukuttan/indic_nlp_resources.git 
 WORKDIR /app
-CMD ["python3", "/app/src/app.py"]
+CMD ["CUDA_LAUNCH_BLOCKING=1 python3", "/app/src/app.py"]

@@ -237,21 +237,15 @@ class Translator:
                 try:
                     src_tokens = src_tokens.cuda()
                     src_lengths = src_lengths.cuda()
-                except Exception as e:
-                    print("***************Exception caught in model_vocab_loader without contraint decoding*******************")
+                except RuntimeError as e:
+                    print("***************Exception caught in model_vocab_loader-src_tokens.cuda-*******************")
                     print(e) 
-                    return   
+                    return inputs  
                     
                 # src_tokens = src_tokens.cuda()
                 # src_lengths = src_lengths.cuda()
                 if constraints is not None:
-                    # constraints = constraints.cuda()
-                    try:
-                        constraints = constraints.cuda()
-                    except Exception as e:
-                        print("***************Exception caught in model_vocab_loader with contraint decoding*******************")  
-                        print(e)
-                        return 
+                    constraints = constraints.cuda()
                         
 
             sample = {
@@ -260,9 +254,19 @@ class Translator:
                     "src_lengths": src_lengths,
                 },
             }
-            translations = self.task.inference_step(
+            try:
+                translations = self.task.inference_step(
                 self.generator, self.models, sample, constraints=constraints
             )
+            except RuntimeError as e:
+                print("***************Catching runtime error while translation*******************")
+                print(e) 
+                return inputs
+                    
+                
+            # translations = self.task.inference_step(
+            #     self.generator, self.models, sample, constraints=constraints
+            # )
 
             list_constraints = [[] for _ in range(bsz)]
             if constrained_decoding:

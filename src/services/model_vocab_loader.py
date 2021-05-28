@@ -233,17 +233,9 @@ class Translator:
             src_tokens = batch.src_tokens
             src_lengths = batch.src_lengths
             constraints = batch.constraints
-            if self.use_cuda:
-                try:
-                    src_tokens = src_tokens.cuda()
-                    src_lengths = src_lengths.cuda()
-                except RuntimeError as e:
-                    print("***************Exception caught in model_vocab_loader-src_tokens.cuda-*******************")
-                    print(e) 
-                    return inputs  
-                    
-                # src_tokens = src_tokens.cuda()
-                # src_lengths = src_lengths.cuda()
+            if self.use_cuda:    
+                src_tokens = src_tokens.cuda()
+                src_lengths = src_lengths.cuda()
                 if constraints is not None:
                     constraints = constraints.cuda()
                         
@@ -253,20 +245,11 @@ class Translator:
                     "src_tokens": src_tokens,
                     "src_lengths": src_lengths,
                 },
-            }
-            try:
-                translations = self.task.inference_step(
+            }               
+                
+            translations = self.task.inference_step(
                 self.generator, self.models, sample, constraints=constraints
             )
-            except RuntimeError as e:
-                print("***************Catching runtime error while translation*******************")
-                print(e) 
-                return inputs
-                    
-                
-            # translations = self.task.inference_step(
-            #     self.generator, self.models, sample, constraints=constraints
-            # )
 
             list_constraints = [[] for _ in range(bsz)]
             if constrained_decoding:

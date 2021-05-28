@@ -248,7 +248,7 @@ class Translator:
                     # constraints = constraints.cuda()
                     try:
                         constraints = constraints.cuda()
-                    except as Exception as e:
+                    except Exception as e:
                         print("***************Exception caught in model_vocab_loader with contraint decoding*******************")  
                         print(e)
                         pass 

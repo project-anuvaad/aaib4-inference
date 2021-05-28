@@ -240,7 +240,7 @@ class Translator:
                 except Exception as e:
                     print("***************Exception caught in model_vocab_loader without contraint decoding*******************")
                     print(e) 
-                    pass   
+                    return   
                     
                 # src_tokens = src_tokens.cuda()
                 # src_lengths = src_lengths.cuda()
@@ -251,7 +251,7 @@ class Translator:
                     except Exception as e:
                         print("***************Exception caught in model_vocab_loader with contraint decoding*******************")  
                         print(e)
-                        pass 
+                        return 
                         
 
             sample = {

@@ -106,6 +106,7 @@ class Translator:
                 batch_size=batch_size,
                 buffer_size=batch_size + 1,
             )
+            self.use_cuda = torch.cuda.is_available() and not self.cfg.common.cpu
         args = options.parse_args_and_arch(self.parser, input_args=[data_dir])
         # we are explictly setting src_lang and tgt_lang here
         # generally the data_dir we pass contains {split}-{src_lang}-{tgt_lang}.*.idx files from
@@ -142,7 +143,7 @@ class Translator:
         #     np.random.seed(self.cfg.common.seed)
         #     utils.set_torch_seed(self.cfg.common.seed)
 
-        self.use_cuda = torch.cuda.is_available() and not self.cfg.common.cpu
+        # self.use_cuda = torch.cuda.is_available() and not self.cfg.common.cpu
 
         # Setup task, e.g., translation
         self.task = tasks.setup_task(self.cfg.task)

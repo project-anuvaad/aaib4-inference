@@ -144,6 +144,8 @@ class Translator:
 
         if not self.constrained_decoding:
             self.use_cuda = torch.cuda.is_available() and not self.cfg.common.cpu
+        else:
+            self.use_cuda = False    
             
         # self.use_cuda = torch.cuda.is_available() and not self.cfg.common.cpu
 

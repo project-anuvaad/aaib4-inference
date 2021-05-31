@@ -142,12 +142,12 @@ class Translator:
         #     np.random.seed(self.cfg.common.seed)
         #     utils.set_torch_seed(self.cfg.common.seed)
 
-        if not self.constrained_decoding:
-            self.use_cuda = torch.cuda.is_available() and not self.cfg.common.cpu
-        else:
-            self.use_cuda = False    
+        # if not self.constrained_decoding:
+        #     self.use_cuda = torch.cuda.is_available() and not self.cfg.common.cpu
+        # else:
+        #     self.use_cuda = False    
             
-        # self.use_cuda = torch.cuda.is_available() and not self.cfg.common.cpu
+        self.use_cuda = torch.cuda.is_available() and not self.cfg.common.cpu
 
         # Setup task, e.g., translation
         self.task = tasks.setup_task(self.cfg.task)

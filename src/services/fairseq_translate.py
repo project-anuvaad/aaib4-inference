@@ -148,6 +148,7 @@ class FairseqAutoCompleteTranslateService:
                     ]
                     print(f"{src_lang}-{tgt_lang}")
                     i["id"] = constrained_model_id
+                    log_info("Calling itranslate function", MODULE_CONTEXT)
                     translation = encode_itranslate_decode(i, src_lang, tgt_lang)
                 else:
                     log_info(
@@ -198,13 +199,16 @@ def encode_itranslate_decode(i, src_lang, tgt_lang):
         translator = load_models.loaded_models[i["id"]]
         source_bpe = load_models.bpes[i["id"]][0]
         target_bpe = load_models.bpes[i["id"]][1]
+        log_info("Calling sentence processor IT funtion", MODULE_CONTEXT)
         i["src"] = sentence_processor.preprocess(i["src"], src_lang)
         i["src"] = apply_bpe(i["src"], source_bpe)
         # apply bpe to constraints with target bpe
         prefix = apply_bpe(i["target_prefix"], target_bpe)
         # log_info("BPE encoded sent: %s" % i["src"], MODULE_CONTEXT)
         i_final = sentence_processor.apply_lang_tags(i["src"], src_lang, tgt_lang)
+        log_info("Calling translate IT funtion", MODULE_CONTEXT)
         translation = translator.translate(i_final, constraints=prefix)
+        log_info("Calling sentence postprocess IT funtion", MODULE_CONTEXT)
         translation = sentence_processor.postprocess(translation, tgt_lang)
         return translation
 

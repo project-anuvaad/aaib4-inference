@@ -114,7 +114,7 @@ class Translator:
         args.source_lang = "SRC"
         args.target_lang = "TGT"
         
-        args.skip_invalid_size_inputs_valid_test = True
+        args.skip_invalid_size_inputs_valid_test = False
 
         # we have custom architechtures in this folder and we will let fairseq
         # import this

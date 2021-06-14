@@ -8,8 +8,22 @@ This service currently suports 11 indic languages:
 | Bengali (bn) | Kannada (kn)| Oriya (or) | Telugu (te)|
 | Gujarati (gu) | Malayalam (ml) | Punjabi (pa) |
 
-# Setup
-WIP
+## Prerequisites
+- python 3.6 +
+- ubuntu 16.04 +
+
+Install various python libraries as mentioned in requirements.txt file
+
+```bash
+pip install -r src/requirements.txt
+```
+
+## APIs and Documentation
+Run app.py to start the service with all the packages installed
+
+```bash
+python src/app.py
+```
 # Training Repository
 https://github.com/AI4Bharat/indicTrans
 # License

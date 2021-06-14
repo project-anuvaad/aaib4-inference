@@ -29,7 +29,7 @@ class Loadmodels:
         )
         self.bpes = {}
         for _id, src_vocab_path, tgt_vocab_path, src_bpe_codes_path, tgt_bpe_codes_path in zip(
-            self.ids, self.src_vocab_paths, self.tgt_vocab_paths, self.bpe_codes_paths
+            self.ids, self.src_vocab_paths, self.tgt_vocab_paths, self.src_bpe_codes_path,self.tgt_bpe_codes_path
         ):
             source_bpe = load_vocab(src_vocab_path, src_bpe_codes_path)
             target_bpe = load_vocab(tgt_vocab_path, tgt_bpe_codes_path)

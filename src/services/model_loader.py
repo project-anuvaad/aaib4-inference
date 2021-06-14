@@ -19,7 +19,8 @@ class Loadmodels:
             self.dict_paths,
             self.src_vocab_paths,
             self.tgt_vocab_paths,
-            self.bpe_codes_paths,
+            self.src_bpe_codes_path,
+            self.tgt_bpe_codes_path,
             self.ids,
             self.is_constrained,
         ) = self.get_paths()
@@ -27,11 +28,11 @@ class Loadmodels:
             self.model_paths, self.dict_paths, self.ids, self.is_constrained
         )
         self.bpes = {}
-        for _id, src_vocab_path, tgt_vocab_path, bpe_codes_path in zip(
+        for _id, src_vocab_path, tgt_vocab_path, src_bpe_codes_path, tgt_bpe_codes_path in zip(
             self.ids, self.src_vocab_paths, self.tgt_vocab_paths, self.bpe_codes_paths
         ):
-            source_bpe = load_vocab(src_vocab_path, bpe_codes_path)
-            target_bpe = load_vocab(tgt_vocab_path, bpe_codes_path)
+            source_bpe = load_vocab(src_vocab_path, src_bpe_codes_path)
+            target_bpe = load_vocab(tgt_vocab_path, tgt_bpe_codes_path)
             self.bpes[_id] = [source_bpe, target_bpe]
 
     def get_paths(self):
@@ -42,7 +43,8 @@ class Loadmodels:
             dict_paths = [model["dict_path"] for model in models]
             src_vocab_paths = [model["src_vocab_path"] for model in models]
             tgt_vocab_paths = [model["tgt_vocab_path"] for model in models]
-            bpe_codes_paths = [model["bpe_codes_path"] for model in models]
+            src_bpe_codes_path = [model["src_bpe_codes_path"] for model in models]
+            tgt_bpe_codes_path = [model["tgt_bpe_codes_path"] for model in models]
             ids = [model["model_id"] for model in models]
             is_constrained = [model["is_constrained"] for model in models]
             return (
@@ -50,7 +52,8 @@ class Loadmodels:
                 dict_paths,
                 src_vocab_paths,
                 tgt_vocab_paths,
-                bpe_codes_paths,
+                src_bpe_codes_path,
+                tgt_bpe_codes_path,
                 ids,
                 is_constrained,
             )

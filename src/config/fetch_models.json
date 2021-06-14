@@ -10,7 +10,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "bn",
@@ -22,7 +24,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "ta",
@@ -34,7 +38,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "en",
@@ -46,7 +52,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -58,7 +65,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "ta",
@@ -70,7 +78,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "hi",
@@ -82,7 +92,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "en",
@@ -94,7 +106,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "bn",
@@ -106,7 +119,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "en",
@@ -118,7 +133,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -130,7 +146,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -142,7 +159,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -154,7 +172,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -166,7 +185,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -178,7 +198,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -190,7 +211,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -202,7 +224,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -214,7 +237,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -226,7 +250,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -238,7 +263,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -250,7 +276,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -262,7 +289,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -274,7 +302,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -286,7 +315,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -298,7 +328,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -310,7 +341,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -322,7 +354,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "en",
@@ -334,7 +367,8 @@
       "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
       "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
     },
     {
       "source_language_code": "as",
@@ -346,7 +380,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "as",
@@ -358,7 +394,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "gu",
@@ -370,7 +408,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "gu",
@@ -382,7 +422,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "kn",
@@ -394,7 +436,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "kn",
@@ -406,7 +450,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "ml",
@@ -418,7 +464,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "ml",
@@ -430,7 +478,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "mr",
@@ -442,7 +492,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "mr",
@@ -454,7 +506,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "or",
@@ -466,7 +520,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "or",
@@ -478,7 +534,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "pa",
@@ -490,7 +548,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "pa",
@@ -502,7 +562,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "te",
@@ -514,7 +576,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     },
     {
       "source_language_code": "te",
@@ -526,7 +590,9 @@
       "dict_path": "src/nmt_models/indic-en-model/dictionaries",
       "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+
     }
   ]
 }

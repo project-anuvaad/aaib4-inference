@@ -6,12 +6,12 @@
       "model_id": 100,
       "is_constrained": false,
       "model_name": "Fairseq AAI4B Model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -20,12 +20,12 @@
       "model_id": 101,
       "is_constrained": false,
       "model_name": "Fairseq AAI4B Model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -34,12 +34,12 @@
       "model_id": 102,
       "is_constrained": false,
       "model_name": "Fairseq AAI4B Model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -74,12 +74,12 @@
       "model_id": 105,
       "is_constrained": true,
       "model_name": "Fairseq AAI4B Constrained decoding model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -88,12 +88,12 @@
       "model_id": 106,
       "is_constrained": true,
       "model_name": "Fairseq AAI4B Constrained decoding model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -115,12 +115,12 @@
       "model_id": 108,
       "is_constrained": true,
       "model_name": "Fairseq AAI4B Constrained decoding model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -376,12 +376,12 @@
       "model_id": 128,
       "is_constrained": false,
       "model_name": "Fairseq AAI4B Model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -390,12 +390,12 @@
       "model_id": 129,
       "is_constrained": true,
       "model_name": "Fairseq AAI4B Constrained decoding model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -404,12 +404,12 @@
       "model_id": 130,
       "is_constrained": false,
       "model_name": "Fairseq AAI4B Model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -418,12 +418,12 @@
       "model_id": 131,
       "is_constrained": true,
       "model_name": "Fairseq AAI4B Constrained decoding model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -432,12 +432,12 @@
       "model_id": 132,
       "is_constrained": false,
       "model_name": "Fairseq AAI4B Model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -446,12 +446,12 @@
       "model_id": 133,
       "is_constrained": true,
       "model_name": "Fairseq AAI4B Constrained decoding model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -460,12 +460,12 @@
       "model_id": 134,
       "is_constrained": false,
       "model_name": "Fairseq AAI4B Model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -474,12 +474,12 @@
       "model_id": 135,
       "is_constrained": true,
       "model_name": "Fairseq AAI4B Constrained decoding model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -488,12 +488,12 @@
       "model_id": 136,
       "is_constrained": false,
       "model_name": "Fairseq AAI4B Model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -502,12 +502,12 @@
       "model_id": 137,
       "is_constrained": true,
       "model_name": "Fairseq AAI4B Constrained decoding model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -516,12 +516,12 @@
       "model_id": 138,
       "is_constrained": false,
       "model_name": "Fairseq AAI4B Model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -530,12 +530,12 @@
       "model_id": 139,
       "is_constrained": true,
       "model_name": "Fairseq AAI4B Constrained decoding model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -544,12 +544,12 @@
       "model_id": 140,
       "is_constrained": false,
       "model_name": "Fairseq AAI4B Model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -558,12 +558,12 @@
       "model_id": 141,
       "is_constrained": true,
       "model_name": "Fairseq AAI4B Constrained decoding model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -572,12 +572,12 @@
       "model_id": 142,
       "is_constrained": false,
       "model_name": "Fairseq AAI4B Model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     },
     {
@@ -586,12 +586,12 @@
       "model_id": 143,
       "is_constrained": true,
       "model_name": "Fairseq AAI4B Constrained decoding model",
-      "model_path": "src/nmt_models/indic-en-model/checkpoint_best.pt",
-      "dict_path": "src/nmt_models/indic-en-model/dictionaries",
-      "src_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/indic-en-model/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT",
-      "tgt_bpe_codes_path": "src/nmt_models/indic-en-model/vocab/bpe_codes.32k.SRC_TGT"
+      "model_path": "src/nmt_models/indic-en_sv_v0.2/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/indic-en_sv_v0.2/dictionaries",
+      "src_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/indic-en_sv_v0.2/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
+      "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
     }
   ]

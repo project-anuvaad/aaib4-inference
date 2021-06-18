@@ -593,6 +593,20 @@
       "src_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.SRC",
       "tgt_bpe_codes_path": "src/nmt_models/indic-en_sv_v0.2/vocab/bpe_codes.32k.TGT"
 
+    },
+    {
+      "source_language_code": "hi",
+      "target_language_code": "mr",
+      "model_id": 143,
+      "is_constrained": false,
+      "model_name": "Fairseq AAI4B m2m model",
+      "model_path": "src/nmt_models/m2m_v0.1/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/m2m_v0.1/dictionaries",
+      "src_vocab_path": "src/nmt_models/m2m_v0.1/vocab/vocab.TGT",
+      "tgt_vocab_path": "src/nmt_models/m2m_v0.1/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/m2m_v0.1/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/m2m_v0.1/vocab/bpe_codes.32k.SRC_TGT"
+
     }
   ]
 }

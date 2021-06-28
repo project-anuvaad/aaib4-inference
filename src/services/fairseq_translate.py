@@ -199,16 +199,12 @@ def encode_itranslate_decode(i, src_lang, tgt_lang):
         translator = load_models.loaded_models[i["id"]]
         source_bpe = load_models.bpes[i["id"]][0]
         target_bpe = load_models.bpes[i["id"]][1]
-        log_info("Calling sentence processor IT funtion", MODULE_CONTEXT)
         i["src"] = sentence_processor.preprocess(i["src"], src_lang)
         i["src"] = apply_bpe(i["src"], source_bpe)
         # apply bpe to constraints with target bpe
         prefix = apply_bpe(i["target_prefix"], target_bpe)
-        # log_info("BPE encoded sent: %s" % i["src"], MODULE_CONTEXT)
         i_final = sentence_processor.apply_lang_tags(i["src"], src_lang, tgt_lang)
-        log_info("Calling translate IT funtion", MODULE_CONTEXT)
         translation = translator.translate(i_final, constraints=prefix)
-        log_info("Calling sentence postprocess IT funtion", MODULE_CONTEXT)
         translation = sentence_processor.postprocess(translation, tgt_lang)
         return translation
 
@@ -227,13 +223,11 @@ def encode_translate_decode(i, src_lang, tgt_lang):
     try:
         i["src"] = [i["src"]]
         print(i["src"])
-        log_info("Inside encode_translate_decode function", MODULE_CONTEXT)
         translator = load_models.loaded_models[i["id"]]
         source_bpe = load_models.bpes[i["id"]][0]
         # target_bpe = load_models.bpes[i["id"]][1]
         i["src"] = sentence_processor.preprocess(i["src"], src_lang)
         i["src"] = apply_bpe(i["src"], source_bpe)
-        log_info("BPE encoded sent: %s" % i["src"], MODULE_CONTEXT)
         i_final = sentence_processor.apply_lang_tags(i["src"], src_lang, tgt_lang)
         translation = translator.translate(i_final)
         translation = sentence_processor.postprocess(translation, tgt_lang)

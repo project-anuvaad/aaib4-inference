@@ -50,7 +50,8 @@ class FairseqDocumentTranslateService:
             for i, sent in enumerate(src_list):
                 num_words = len(sent.split())
                 if num_words > config.trunc_limit:
-                    sent = sent[:config.trunc_limit]
+                    updated_sent = sent.split()[:config.trunc_limit]
+                    sent = str(" ".join(updated_sent)) 
                     log_info("Sentence truncated as it exceeds maximum length limit",MODULE_CONTEXT)
                     
                 input_sentence_array_prepd[i] = sent
@@ -96,13 +97,9 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
     try:
         inputs = sentence_processor.preprocess(inputs, src_lang)
         inputs = apply_bpe(inputs, source_bpe)
-        log_info("BPE encoded sent: %s" % inputs, MODULE_CONTEXT)
         i_final = sentence_processor.apply_lang_tags(inputs, src_lang, tgt_lang)
-        log_info("Output from preprocessing step:{}".format(i_final), MODULE_CONTEXT)
         translation = translator.translate(i_final)
-        log_info("Ourput from model:{}".format(translation), MODULE_CONTEXT)
         translation = sentence_processor.postprocess(translation, tgt_lang)
-        log_info("Ourput from postprocess:{}".format(translation), MODULE_CONTEXT)
         return translation
 
     except Exception as e:

@@ -48,11 +48,11 @@ class FairseqDocumentTranslateService:
 
         try:
             for i, sent in enumerate(src_list):
-                num_words = len(sent.split())
-                if num_words > config.trunc_limit:
-                    updated_sent = sent.split()[:config.trunc_limit]
-                    sent = str(" ".join(updated_sent)) 
-                    log_info("Sentence truncated as it exceeds maximum length limit",MODULE_CONTEXT)
+                # num_words = len(sent.split())
+                # if num_words > config.trunc_limit:
+                    # updated_sent = sent.split()[:config.trunc_limit]
+                    # sent = str(" ".join(updated_sent)) 
+                    # log_info("Sentence truncated as it exceeds maximum length limit",MODULE_CONTEXT)
                     
                 input_sentence_array_prepd[i] = sent
             log_info("translating using NMT-model:{}".format(model_id), MODULE_CONTEXT)
@@ -98,6 +98,7 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
         inputs = sentence_processor.preprocess(inputs, src_lang)
         inputs = apply_bpe(inputs, source_bpe)
         i_final = sentence_processor.apply_lang_tags(inputs, src_lang, tgt_lang)
+        i_final = truncate_long_sentences(i_final)
         translation = translator.translate(i_final)
         translation = sentence_processor.postprocess(translation, tgt_lang)
         return translation
@@ -115,3 +116,14 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
 
 def apply_bpe(sents, bpe):
     return [bpe.process_line(sent) for sent in sents]
+
+def truncate_long_sentences(sents):
+    new_sents = []
+    for sent in sents:
+        num_words = len(sent.split())
+        if num_words > config.trunc_limit:
+            log_info("Sentence truncated as it exceeds maximum length limit of- {} tokens".format(config.trunc_limit),MODULE_CONTEXT)
+            updated_sent = sent.split()[:config.trunc_limit]
+            sent = str(" ".join(updated_sent)) 
+        new_sents.append(sent)
+    return new_sents

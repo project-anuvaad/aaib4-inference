@@ -602,7 +602,7 @@
       "model_name": "Fairseq AAI4B m2m model",
       "model_path": "src/nmt_models/m2m_v0.1/checkpoint_best.pt",
       "dict_path": "src/nmt_models/m2m_v0.1/dictionaries",
-      "src_vocab_path": "src/nmt_models/m2m_v0.1/vocab/vocab.TGT",
+      "src_vocab_path": "src/nmt_models/m2m_v0.1/vocab/vocab.SRC",
       "tgt_vocab_path": "src/nmt_models/m2m_v0.1/vocab/vocab.TGT",
       "src_bpe_codes_path": "src/nmt_models/m2m_v0.1/vocab/bpe_codes.32k.SRC_TGT",
       "tgt_bpe_codes_path": "src/nmt_models/m2m_v0.1/vocab/bpe_codes.32k.SRC_TGT"

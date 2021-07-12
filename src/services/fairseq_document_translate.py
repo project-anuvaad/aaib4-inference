@@ -91,6 +91,60 @@ class FairseqDocumentTranslateService:
             raise e
 
         return out
+    
+    def indic_to_indic_translator(input_dict):
+        model_id = 144
+        src_list = input_dict["src_list"]
+        num_sentence = len(src_list)
+        out = {}
+
+        translator = load_models.loaded_models[model_id]
+        source_bpe = load_models.bpes[model_id][0]
+        # target_bpe = load_models.bpes[i["id"]][1]
+
+        input_sentence_array_prepd = [None] * num_sentence
+
+        _, ids = get_src_and_tgt_langs_dict()
+
+        try:
+            for i, sent in enumerate(src_list):   
+                input_sentence_array_prepd[i] = sent
+            log_info("translating using indic to indic NMT-model:{}".format(model_id), MODULE_CONTEXT)
+
+            if model_id in ids:
+                src_lang, tgt_lang = input_dict['src_lang'],input_dict['tgt_lang']
+                print(f"{src_lang}-{tgt_lang}")
+                translation_array = encode_translate_decode(
+                    input_sentence_array_prepd,
+                    src_lang,
+                    tgt_lang,
+                    translator,
+                    source_bpe,
+                )
+            else:
+                log_info(
+                    "Unsupported model id: {} for given input".format(model_id),
+                    MODULE_CONTEXT,
+                )
+                raise Exception(
+                    "Unsupported Model ID - id: {} for given input".format(model_id)
+                )
+
+            out = {
+                "tgt_list": translation_array,
+                "tagged_src_list": input_sentence_array_prepd,
+                "tagged_tgt_list": translation_array,
+            }
+        except Exception as e:
+            log_exception(
+                "Exception caught in NMTTranslateService:batch_translator:%s and %s"
+                % (e, sys.exc_info()[0]),
+                MODULE_CONTEXT,
+                e,
+            )
+            raise e
+
+        return out
 
 
 def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):

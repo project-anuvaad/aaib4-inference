@@ -68,3 +68,38 @@ class TranslateResourceV1(Resource):
             status['message'] = "Missing mandatory data ('src_list','model_id')"
             out = CustomResponse(status,inputs)
             return out.jsonify_res()           
+        
+class TranslateResourcem2m(Resource):
+    def post(self):
+        translation_batch = {}
+        src_list, response_body = list(), list()
+        inputs = request.get_json(force=True)
+        if len(inputs)>0 and all(v in inputs for v in ['src_list','source_language_code','target_language_code','model_id']):
+            try:  
+                log_info("Making m2m API call",MODULE_CONTEXT)
+                log_info("inputs---{}".format(inputs),MODULE_CONTEXT)
+                input_src_list = inputs.get('src_list')
+                src_list = [i.get('src') for i in input_src_list]
+                translation_batch = {'src_lang':inputs.get('source_language_code'),
+                                     'tgt_lang':inputs.get('target_language_code'),'src_list': src_list}
+                output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
+                output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i],
+                                                    'tagged_tgt':output_batch['tagged_tgt_list'][i],'tagged_src':output_batch['tagged_src_list'][i]}
+                                                    for i in range(len(input_src_list))]
+                for j,k in enumerate(input_src_list):
+                    k.update(output_batch_dict_list[j])
+                    response_body.append(k)
+                out = CustomResponse(Status.SUCCESS.value,response_body) 
+                log_info("Final output from m2m API: {}".format(out.getresjson()),MODULE_CONTEXT)        
+            except Exception as e:
+                status = Status.SYSTEM_ERR.value
+                status['message'] = str(e)
+                log_exception("Exception caught in  m2m API child block: {}".format(e),MODULE_CONTEXT,e) 
+                out = CustomResponse(status, inputs)
+            return out.jsonify_res()    
+        else:
+            log_info("API input missing mandatory data ('src_list','model_id')",MODULE_CONTEXT)
+            status = Status.INVALID_API_REQUEST.value
+            status['message'] = "Missing mandatory data ('src_list','model_id')"
+            out = CustomResponse(status,inputs)
+            return out.jsonify_res()                   

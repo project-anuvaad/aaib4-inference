@@ -112,7 +112,8 @@ class FairseqDocumentTranslateService:
             log_info("translating using indic to indic NMT-model:{}".format(model_id), MODULE_CONTEXT)
 
             if model_id in ids:
-                src_lang, tgt_lang = input_dict['src_lang'],input_dict['tgt_lang']
+                src_lang, tgt_lang = (input_dict['src_lang'],input_dict['tgt_lang'])
+                log_info("src_lang-{0},tgt_lang-{1}".format(src_lang,tgt_lang),MODULE_CONTEXT)
                 print(f"{src_lang}-{tgt_lang}")
                 translation_array = encode_translate_decode(
                     input_sentence_array_prepd,

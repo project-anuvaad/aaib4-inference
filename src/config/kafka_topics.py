@@ -3,7 +3,7 @@ import os
 ## Environment variables
 IS_RUN_KAFKA = 'IS_RUN_KAFKA'
 IS_RUN_KAFKA_DEFAULT_VALUE = False
-bootstrap_server_boolean = os.environ.get(IS_RUN_KAFKA, IS_RUN_KAFKA_DEFAULT_VALUE)
+bootstrap_server_boolean = os.environ.get(IS_RUN_KAFKA_DEFAULT_VALUE, IS_RUN_KAFKA_DEFAULT_VALUE)
 
 KAFKA_BOOTSTRAP_SERVER_HOST = 'KAFKA_BOOTSTRAP_SERVER_HOST'
 default_value = 'localhost:9092'

@@ -33,19 +33,21 @@ class NMTTranslateResource(Resource):
                     output.append(k)
                 final_output = {'config': config, 'output':output}     
                 out = CustomResponse(Status.SUCCESS.value,final_output) 
-                log_info("Final output from ULCA API: {}".format(out.get_res_json()),MODULE_CONTEXT)       
+                log_info("Final output from ULCA API: {}".format(out.get_res_json()),MODULE_CONTEXT)  
+                return out.jsonify_data()     
             except Exception as e:
                 status = Status.SYSTEM_ERR.value
                 status['message'] = str(e)
                 log_exception("Exception caught in  ULCA API child block: {}".format(e),MODULE_CONTEXT,e) 
                 out = CustomResponse(status, inputs)
-            return out.jsonify_data()    
+                return out.get_res_json_data(), 500
+                
         else:
             log_info("ULCA API input missing mandatory data ('input','config,'modelId')",MODULE_CONTEXT)
             status = Status.INVALID_API_REQUEST.value
             status['message'] = "Missing mandatory data ('input','config','modelId)"
             out = CustomResponse(status,inputs)
-            return out.jsonify_data()             
+            return out.get_res_json_data(), 400            
         
 class InteractiveMultiTranslateResourceNew(Resource):  
     def post(self):

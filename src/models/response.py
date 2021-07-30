@@ -21,6 +21,9 @@ class CustomResponse :
     def get_res_json(self):
         return self.response
     
+    def get_res_json_data(self):
+        return self.data_out
+    
     @staticmethod
     def jsonify(request):
         return jsonify(request)

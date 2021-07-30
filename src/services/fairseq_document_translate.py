@@ -48,11 +48,6 @@ class FairseqDocumentTranslateService:
 
         try:
             for i, sent in enumerate(src_list):
-                # num_words = len(sent.split())
-                # if num_words > config.trunc_limit:
-                    # updated_sent = sent.split()[:config.trunc_limit]
-                    # sent = str(" ".join(updated_sent)) 
-                    # log_info("Sentence truncated as it exceeds maximum length limit",MODULE_CONTEXT)
                     
                 input_sentence_array_prepd[i] = sent
             log_info("translating using NMT-model:{}".format(model_id), MODULE_CONTEXT)

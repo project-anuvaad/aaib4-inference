@@ -107,7 +107,7 @@ class TranslateResourcem2m(Resource):
         if len(inputs)>0 and all(v in inputs for v in ['src_list','source_language_code','target_language_code']):
             try:  
                 log_info("Making translate v1.1 API call",MODULE_CONTEXT)
-                log_info("inputs---{}".format(inputs),MODULE_CONTEXT)
+                log_info("API input---{}".format(inputs),MODULE_CONTEXT)
                 input_src_list = inputs.get('src_list')
                 src_list = [i.get('src') for i in input_src_list]
                 m_id = get_model_id(inputs.get('source_language_code'),inputs.get('target_language_code'))
@@ -125,15 +125,15 @@ class TranslateResourcem2m(Resource):
             except Exception as e:
                 status = Status.SYSTEM_ERR.value
                 status['message'] = str(e)
-                log_exception("Exception caught in  m2m API resource child block: {}".format(e),MODULE_CONTEXT,e) 
+                log_exception("Exception caught in v1.1 translate API resource child block: {}".format(e),MODULE_CONTEXT,e) 
                 out = CustomResponse(status, inputs)
                 return out.get_res_json(), 500   
         else:
-            log_info("API input missing mandatory data ('src_list','source_language_code','target_language_code')",MODULE_CONTEXT)
             status = Status.INVALID_API_REQUEST.value
             status['message'] = "Missing mandatory data ('src_list','source_language_code','target_language_code')"
+            log_exception("v1.1 translate API input missing mandatory data ('src_list','source_language_code','target_language_code')",MODULE_CONTEXT,status['message'])
             out = CustomResponse(status,inputs)
-            return out.get_res_json(), 400                   
+            return out.get_res_json(), 401                   
         
 def get_model_id(source_language_code,target_language_code):
     

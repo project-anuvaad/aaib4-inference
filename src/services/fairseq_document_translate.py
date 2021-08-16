@@ -95,7 +95,6 @@ class FairseqDocumentTranslateService:
 
         translator = load_models.loaded_models[model_id]
         source_bpe = load_models.bpes[model_id][0]
-        # target_bpe = load_models.bpes[i["id"]][1]
 
         input_sentence_array_prepd = [None] * num_sentence
 
@@ -104,12 +103,11 @@ class FairseqDocumentTranslateService:
         try:
             for i, sent in enumerate(src_list):   
                 input_sentence_array_prepd[i] = sent
-            log_info("translating using indic to indic NMT-model:{}".format(model_id), MODULE_CONTEXT)
+            log_info("translating using any to any NMT-model:{}".format(model_id), MODULE_CONTEXT)
 
             if model_id in ids:
                 src_lang, tgt_lang = (input_dict['src_lang'],input_dict['tgt_lang'])
                 log_info("src_lang-{0},tgt_lang-{1}".format(src_lang,tgt_lang),MODULE_CONTEXT)
-                print(f"{src_lang}-{tgt_lang}")
                 translation_array = encode_translate_decode(
                     input_sentence_array_prepd,
                     src_lang,

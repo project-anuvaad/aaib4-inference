@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  version: 1.0.0
+  version: 1.1.0
   title: IndicTrans NMT Translation system- API Contract
   description: A NMT based translation system in Indic languages
   contact:
@@ -15,7 +15,7 @@ produces:
 basePath: /aai4b-nmt-inference
 
 paths: 
-  /v1/translate:
+  /v1.1/translate:
     post:
       summary: REST API to perform translation at sentence level.
       description: This api takes a batch of sentences as input to translate. Along with this a unique sentence identifier (s_id) is required. Model id (model_id) is the optional parameter in request body. Api outputs translations of each sentence in standard format along with each s_id and src. Supporting 70 plus input sentences per request.

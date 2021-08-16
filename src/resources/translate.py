@@ -106,7 +106,7 @@ class TranslateResourcem2m(Resource):
         src_list, response_body = list(), list()
         inputs = request.get_json(force=True)
         if len(inputs)>0 and all(v in inputs for v in ['src_list','source_language_code','target_language_code']):
-            if inputs.get('source_language_code') and inputs.get('target_language_code') not in config.supported_languages:
+            if (inputs.get('source_language_code') and inputs.get('target_language_code')) not in config.supported_languages:
                 status = Status.UNSUPPORTED_LANGUAGE.value
                 log_exception("v1.1 translate API | Unsupported input language code",MODULE_CONTEXT,status['message'])
                 out = CustomResponse(status,inputs)

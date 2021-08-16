@@ -67,8 +67,10 @@ definitions:
               description: unique identifier for each sentence(src)
       source_language_code:
         type: string
+        enum: ['en','hi','ta','te','kn','pa','mr','as','or','ml','gu','bn']
       target_language_code:
         type: string
+        enum: ['en','hi','ta','te','kn','pa','mr','as','or','ml','gu','bn']
       model_id:
         type: integer  
         description: Optional, model indentifier in case of multiple models for given source and target language pair.
@@ -90,12 +92,6 @@ definitions:
             tgt: 
               type: string
               description: Output translation of above src sentence
-            tagged_src:
-              type: string
-              description: Tagged version of src sentence, meant for keep tagging information of numbers in src.
-            tagged_tgt:
-              type: string
-              description : Tagged version of tgt output, meant for keeping information of numbers in tgt.
 
       status:
         $ref: '#/definitions/success_status'

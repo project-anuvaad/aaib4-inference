@@ -70,7 +70,7 @@ definitions:
         enum: ['en','hi','ta','te','kn','pa','mr','as','or','ml','gu','bn']
       target_language_code:
         type: string
-        enum: ['en','hi','ta','te','kn','pa','mr','as','or','ml','gu','bn']
+        enum: ['hi','en','ta','te','kn','pa','mr','as','or','ml','gu','bn']
       model_id:
         type: integer  
         description: Optional, model indentifier in case of multiple models for given source and target language pair.

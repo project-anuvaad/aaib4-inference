@@ -4,6 +4,7 @@ from services import FairseqAutoCompleteTranslateService, FairseqDocumentTransla
 from models import CustomResponse, Status
 from utilities import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception
+import config
 
         
 class NMTTranslateResource(Resource):
@@ -105,9 +106,15 @@ class TranslateResourcem2m(Resource):
         src_list, response_body = list(), list()
         inputs = request.get_json(force=True)
         if len(inputs)>0 and all(v in inputs for v in ['src_list','source_language_code','target_language_code']):
+            if inputs.get('source_language_code') and inputs.get('target_language_code') not in config.supported_languages:
+                status = Status.UNSUPPORTED_LANGUAGE.value
+                log_exception("v1.1 translate API | Unsupported input language code",MODULE_CONTEXT,status['message'])
+                out = CustomResponse(status,inputs)
+                return out.get_res_json(), 400
+                
             try:  
                 log_info("Making translate v1.1 API call",MODULE_CONTEXT)
-                log_info("API input---{}".format(inputs),MODULE_CONTEXT)
+                log_info("v1.1 translate API | input--- {}".format(inputs),MODULE_CONTEXT)
                 input_src_list = inputs.get('src_list')
                 src_list = [i.get('src') for i in input_src_list]
                 m_id = get_model_id(inputs.get('source_language_code'),inputs.get('target_language_code'))
@@ -120,7 +127,7 @@ class TranslateResourcem2m(Resource):
                     k.update(output_batch_dict_list[j])
                     response_body.append(k)
                 out = CustomResponse(Status.SUCCESS.value,response_body) 
-                log_info("Final output v1.1 API: {}".format(out.get_res_json()),MODULE_CONTEXT)     
+                log_info("Final output v1.1 API | {}".format(out.get_res_json()),MODULE_CONTEXT)     
                 return out.jsonify_res()    
             except Exception as e:
                 status = Status.SYSTEM_ERR.value
@@ -131,7 +138,7 @@ class TranslateResourcem2m(Resource):
         else:
             status = Status.INVALID_API_REQUEST.value
             status['message'] = "Missing mandatory data ('src_list','source_language_code','target_language_code')"
-            log_exception("v1.1 translate API input missing mandatory data ('src_list','source_language_code','target_language_code')",MODULE_CONTEXT,status['message'])
+            log_exception("v1.1 translate API | input missing mandatory data ('src_list','source_language_code','target_language_code')",MODULE_CONTEXT,status['message'])
             out = CustomResponse(status,inputs)
             return out.get_res_json(), 401                   
         

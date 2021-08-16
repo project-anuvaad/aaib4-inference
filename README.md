@@ -1,4 +1,4 @@
-# IndicTrans Inference  (aaib-nmt-inference)
+# IndicTrans Inference  (aai4b-nmt-inference)
 Inference pipeline to deploy IndicTrans nmt models on top of the Flask server.
 This service currently suports 11 indic languages:
 

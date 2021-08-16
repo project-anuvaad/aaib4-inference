@@ -20,3 +20,6 @@ FETCH_MODEL_CONFG = os.path.join(APP_BASE_PATH, "config/fetch_models.json")
 
 ## truncation limit for sentence length
 trunc_limit = 200
+
+## supported languages
+supported_languages = ['en','hi','ta','te','kn','pa','mr','as','or','ml','gu','bn']

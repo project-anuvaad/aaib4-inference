@@ -18,7 +18,7 @@ paths:
   /v1/translate:
     post:
       summary: REST API to perform translation at sentence level.
-      description: This api takes a batch of sentences as input to translate. Along with this a unique sentence identifier (s_id) is required. Model id (model_id) is the optional parameter in request body. Api outputs translations of each sentence in standard format along with each s_id and src. Supporting 70 plus input sentences per request.
+      description: This api takes a batch of sentences as input to translate. Along with this a unique sentence identifier (s_id) is required. Model id (model_id) is the optional parameter in request body. Api outputs translations of each sentence in standard format along with each s_id and src.  Supporting 70 plus input sentences per request on a standard 15GB T4 Gpu system.
       parameters:
          - in: body
            name: translate
@@ -53,7 +53,7 @@ definitions:
         
   nmt_input:
     type: object
-    description: Request object with list of sentences object and source and target language codes (ISO-639-1). Supporting 25 input sentences per request.
+    description: Request object with list of sentences object and source and target language codes (ISO-639-1).
     properties:
       src_list:
         type: array
@@ -67,8 +67,10 @@ definitions:
               description: unique identifier for each sentence(src)
       source_language_code:
         type: string
+        enum: ['en','hi','ta','te','kn','pa','mr','as','or','ml','gu','bn']
       target_language_code:
         type: string
+        enum: ['en','hi','ta','te','kn','pa','mr','as','or','ml','gu','bn']
       model_id:
         type: integer  
         description: Optional, model indentifier in case of multiple models for given source and target language pair.

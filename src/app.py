@@ -6,14 +6,8 @@ from anuvaad_auditor.loghandler import log_info
 import routes
 import config
 from utilities import MODULE_CONTEXT
-import threading
-from kafka_wrapper import KafkaTranslate
 
 server  = Flask(__name__)
-
-def kafka_function():
-    log_info('starting kafka from nmt-server on thread-1',MODULE_CONTEXT)
-    KafkaTranslate.batch_translator([config.kafka_topic[0]['consumer']])     
 
 if config.ENABLE_CORS:
     cors    = CORS(server, resources={r"/api/*": {"origins": "*"}})

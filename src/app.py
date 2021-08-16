@@ -15,10 +15,6 @@ def kafka_function():
     log_info('starting kafka from nmt-server on thread-1',MODULE_CONTEXT)
     KafkaTranslate.batch_translator([config.kafka_topic[0]['consumer']])     
 
-if config.bootstrap_server_boolean:
-    t1 = threading.Thread(target=kafka_function)
-    t1.start()
-
 if config.ENABLE_CORS:
     cors    = CORS(server, resources={r"/api/*": {"origins": "*"}})
 

@@ -88,7 +88,7 @@ class FairseqDocumentTranslateService:
         return out
     
     def indic_to_indic_translator(input_dict):
-        model_id = 144
+        model_id = input_dict["id"]
         src_list = input_dict["src_list"]
         num_sentence = len(src_list)
         out = {}
@@ -127,13 +127,11 @@ class FairseqDocumentTranslateService:
                 )
 
             out = {
-                "tgt_list": translation_array,
-                "tagged_src_list": input_sentence_array_prepd,
-                "tagged_tgt_list": translation_array,
+                "tgt_list": translation_array
             }
         except Exception as e:
             log_exception(
-                "Exception caught in NMTTranslateService:batch_translator:%s and %s"
+                "Exception caught in NMTTranslateService:indic_to_indic_translator:%s and %s"
                 % (e, sys.exc_info()[0]),
                 MODULE_CONTEXT,
                 e,

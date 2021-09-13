@@ -150,7 +150,9 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
         i_final = sentence_processor.apply_lang_tags(inputs, src_lang, tgt_lang)
         i_final = truncate_long_sentences(i_final)
         translation = translator.translate(i_final)
+        log_info("intermediate :{}".format(translation), MODULE_CONTEXT)
         translation = sentence_processor.postprocess(translation, tgt_lang)
+        log_info("intermediate :{}".format(translation), MODULE_CONTEXT)
         return translation
 
     except Exception as e:

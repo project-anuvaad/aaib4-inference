@@ -1,6 +1,6 @@
 FROM nvidia/cuda:11.0-base
 CMD nvidia-smi
-RUN apt-get update --fix-missing
+RUN apt-get update --fix-missing --no-cache
 RUN apt-get -y install python3
 RUN apt-get -y install python3-pip
 RUN apt-get install -y locales locales-all

@@ -141,6 +141,8 @@ class FairseqDocumentTranslateService:
 
 def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
     try:
+        if src_lang == 'en':  
+            inputs = [i.title() if i.isupper() else  i for i in inputs]    
         inputs = sentence_processor.preprocess(inputs, src_lang)
         inputs = apply_bpe(inputs, source_bpe)
         i_final = sentence_processor.apply_lang_tags(inputs, src_lang, tgt_lang)

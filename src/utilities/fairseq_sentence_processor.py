@@ -123,4 +123,5 @@ def postprocess(sents, lang, common_lang="hi"):
             )
             # outfile.write(outstr + "\n")
             postprocessed_sents.append(outstr)
+    postprocessed_sents = [i.replace("<unk>","") for i in postprocessed_sents]         
     return postprocessed_sents

@@ -1,6 +1,6 @@
 FROM nvidia/cuda:11.0-base
 CMD nvidia-smi
-RUN apt-get update
+RUN apt-get update --no-cache
 RUN apt-get -y install python3
 RUN apt-get -y install python3-pip
 RUN apt-get install -y locales locales-all
@@ -11,7 +11,7 @@ COPY / /app
 WORKDIR /app
 RUN pip3 install --upgrade pip
 RUN pip3 install -r src/requirements.txt
-RUN apt-get -y install git --fix-missing
+RUN apt-get -y install git
 RUN git clone https://github.com/pytorch/fairseq.git
 WORKDIR fairseq
 RUN pip3 install ./

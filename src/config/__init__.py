@@ -22,4 +22,4 @@ FETCH_MODEL_CONFG = os.path.join(APP_BASE_PATH, "config/fetch_models.json")
 trunc_limit = 200
 
 ## max number of input sentences per batch (for inference service, specific to GPU type)
-translation_batch_limit = 75
+translation_batch_limit = os.environ.get('TRANSLATION_BATCH_LIMIT', 75)

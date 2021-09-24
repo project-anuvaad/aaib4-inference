@@ -57,6 +57,7 @@ definitions:
     properties:
       src_list:
         type: array
+        description: Max batch size is dependent on the type of GPU used. For 16 GB T4 Gpu system a batch size of ~70 can be used
         items:
           type: object
           properties:
@@ -64,7 +65,7 @@ definitions:
               type: string
             s_id:
               type: string
-              description: unique identifier for each sentence(src)
+              description: unique identifier for each sentence(src), optional
       source_language_code:
         type: string
         enum: ['en','hi','ta','te','kn','pa','mr','as','or','ml','gu','bn']

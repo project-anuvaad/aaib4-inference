@@ -5,6 +5,7 @@ from models import CustomResponse, Status
 from utilities import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception
 import datetime
+from config import translation_batch_limit
 
         
 class NMTTranslateResource(Resource):
@@ -24,6 +25,8 @@ class NMTTranslateResource(Resource):
                 language = config.get('language')
                 model_id = config.get('modelId')
                 src_list = [i.get('source') for i in input_src_list]
+                if len(src_list) > translation_batch_limit:
+                    raise Exception(f"Number of sentences per request exceeded the limit of: {translation_batch_limit} sentences per batch")
                 translation_batch = {'id':model_id,'src_list': src_list}
                 output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
                 output_batch_dict_list = [{'target': output_batch['tgt_list'][i]}
@@ -74,6 +77,8 @@ class TranslateResourceV1(Resource):
                 log_info("inputs---{}".format(inputs),MODULE_CONTEXT)
                 input_src_list = inputs.get('src_list')
                 src_list = [i.get('src') for i in input_src_list]
+                if len(src_list) > translation_batch_limit:
+                    raise Exception(f"Number of sentences per request exceeded the limit of:{translation_batch_limit} sentences per batch")
                 translation_batch = {'id':inputs.get('model_id'),'src_list': src_list}
                 output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
                 output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i],
@@ -108,6 +113,8 @@ class TranslateResourcem2m(Resource):
                 log_info("inputs---{}".format(inputs),MODULE_CONTEXT)
                 input_src_list = inputs.get('src_list')
                 src_list = [i.get('src') for i in input_src_list]
+                if len(src_list) > translation_batch_limit:
+                    raise Exception(f"Number of sentences per request exceeded the limit of:{translation_batch_limit} sentences per batch")
                 translation_batch = {'src_lang':inputs.get('source_language_code'),
                                      'tgt_lang':inputs.get('target_language_code'),'src_list': src_list}
                 output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)

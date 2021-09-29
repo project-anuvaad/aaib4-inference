@@ -20,12 +20,12 @@
       "model_id": 103,
       "is_constrained": false,
       "model_name": "Fairseq AAI4B English-Indic model",
-      "model_path": "src/nmt_models/en-indic_legal_ft/checkpoint_legal_best.pt",
-      "dict_path": "src/nmt_models/en-indic_legal_ft/dictionaries",
-      "src_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.SRC",
-      "tgt_vocab_path": "src/nmt_models/en-indic_legal_ft/vocab/vocab.TGT",
-      "src_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.SRC",
-      "tgt_bpe_codes_path": "src/nmt_models/en-indic_legal_ft/vocab/bpe_codes.32k.TGT"
+      "model_path": "src/nmt_models/en-indic-model/checkpoint_best.pt",
+      "dict_path": "src/nmt_models/en-indic-model/dictionaries",
+      "src_vocab_path": "src/nmt_models/en-indic-model/vocab/vocab.SRC",
+      "tgt_vocab_path": "src/nmt_models/en-indic-model/vocab/vocab.TGT",
+      "src_bpe_codes_path": "src/nmt_models/en-indic-model/vocab/bpe_codes.32k.SRC_TGT",
+      "tgt_bpe_codes_path": "src/nmt_models/en-indic-model/vocab/bpe_codes.32k.SRC_TGT"
     },
     {
       "source_language_code": "hi",

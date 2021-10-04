@@ -1,4 +1,5 @@
 FROM nvidia/cuda:11.0-base
+RUN apt-get install nvidia-driver-460 -y
 CMD nvidia-smi
 RUN apt-get update
 RUN apt-get -y install python3

@@ -6,6 +6,7 @@ from anuvaad_auditor.loghandler import log_info
 import routes
 import config
 from utilities import MODULE_CONTEXT
+import torch
 
 server  = Flask(__name__)
 
@@ -18,4 +19,6 @@ for blueprint in vars(routes).values():
 
 if __name__ == "__main__":
     log_info('starting server at {} at port {}'.format(config.HOST, config.PORT), MODULE_CONTEXT)
+    log_info("*********checking gpu**************",MODULE_CONTEXT)
+    log_info(torch.cuda.is_available(),MODULE_CONTEXT)
     server.run(host=config.HOST, port=config.PORT, debug=config.DEBUG)

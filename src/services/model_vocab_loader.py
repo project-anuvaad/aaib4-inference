@@ -148,6 +148,8 @@ class Translator:
         #     self.use_cuda = False    
             
         self.use_cuda = torch.cuda.is_available() and not self.cfg.common.cpu
+        print("*********checking gpu**************")
+        print(torch.cuda.is_available())
 
         # Setup task, e.g., translation
         self.task = tasks.setup_task(self.cfg.task)

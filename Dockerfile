@@ -1,6 +1,5 @@
 FROM nvidia/cuda:11.1.1-cudnn8-devel-ubuntu20.04 
 RUN apt-get update
-RUN apt-get install nvidia-driver-460 -y
 #FROM nvidia/cuda:11.0-base
 CMD nvidia-smi
 # RUN apt-get update

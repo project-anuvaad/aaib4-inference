@@ -3,7 +3,7 @@ import enum
 
 class Status(enum.Enum):
     
-    SUCCESS = { "ok": "true",  "statusCode": 200 , "why": "Requested operation successful","message":"Request successfully executed!" }
+    SUCCESS = { "ok": "true",  "statusCode": 200 ,"message":"Request successfully executed!" }
     FILE_MISSING = { "ok": "false", "statusCode": 404 , "why": "No file found" }
     TYPE_MISSING = { "ok": "false", "statusCode": 404 , "why": "No type found in the request" }
     ID_MISSING = { "ok": "false", "statusCode": 404 , "why": "No ID found in the request" }
@@ -19,3 +19,5 @@ class Status(enum.Enum):
     INVALID_API_REQUEST = {"ok": "false",  "statusCode": 401 , "why": "invalid api request,either incorrect format or empty request","message": "invalid api request,either incorrect format or empty request"}
     KAFKA_INVALID_REQUEST = {"ok": "false",  "statusCode": 401 , "why": "Mandatory param(id,record id,message) missing from batch translation request","message": "Mandatory param(id,record id,message) missing from batch translation request"}
     INCOMPLETE_API_REQUEST = { "ok": "false",  "statusCode": 401 , "why": "Mandatory input parameters missing" }
+    SAME_LANGUAGE_VALUE = { "ok": "false",  "statusCode": 400 , "message": "src and tgt language code can't be same"}
+    INVALID_CONTENT_TYPE = { "ok": "false",  "statusCode": 406 , "message": "only application/json content type is supported"}

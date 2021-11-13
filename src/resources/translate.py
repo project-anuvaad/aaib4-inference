@@ -104,14 +104,26 @@ class TranslateResourcem2m(Resource):
         '''
         translation_batch = {}
         src_list, response_body = list(), list()
+        content_type = 'application/json'
         inputs = request.get_json(force=True)
+        if request.content_type != content_type:
+            status = Status.INVALID_CONTENT_TYPE.value
+            log_exception("v1.1 translate API | Invalid content type",MODULE_CONTEXT,status['message'])
+            out = CustomResponse(status,inputs)
+            return out.get_res_json(), 406, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}
+            
         if len(inputs)>0 and all(v in inputs for v in ['src_list','source_language_code','target_language_code']):
             if (inputs.get('source_language_code') not in supported_languages) or (inputs.get('target_language_code') not in supported_languages):
                 status = Status.UNSUPPORTED_LANGUAGE.value
                 log_exception("v1.1 translate API | Unsupported input language code",MODULE_CONTEXT,status['message'])
                 out = CustomResponse(status,inputs)
-                return out.get_res_json(), 400
-                
+                return out.get_res_json(), 400, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}
+            elif inputs.get('source_language_code') == inputs.get('target_language_code'):
+                status = Status.SAME_LANGUAGE_VALUE.value
+                log_exception("v1.1 translate API | src and tgt code can't be same",MODULE_CONTEXT,status['message'])
+                out = CustomResponse(status,inputs)
+                return out.get_res_json(), 400, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}
+                   
             try:  
                 log_info("Making translate v1.1 API call",MODULE_CONTEXT)
                 log_info("v1.1 translate API | input--- {}".format(inputs),MODULE_CONTEXT)
@@ -128,19 +140,19 @@ class TranslateResourcem2m(Resource):
                     response_body.append(k)
                 out = CustomResponse(Status.SUCCESS.value,response_body) 
                 log_info("Final output v1.1 API | {}".format(out.get_res_json()),MODULE_CONTEXT)     
-                return out.jsonify_res()    
+                return out.get_res_json(), 200, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}   
             except Exception as e:
                 status = Status.SYSTEM_ERR.value
                 status['message'] = str(e)
                 log_exception("Exception caught in v1.1 translate API resource child block: {}".format(e),MODULE_CONTEXT,e) 
                 out = CustomResponse(status, inputs)
-                return out.get_res_json(), 500   
+                return out.get_res_json(), 500, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}   
         else:
             status = Status.INVALID_API_REQUEST.value
             status['message'] = "Missing mandatory data ('src_list','source_language_code','target_language_code')"
             log_exception("v1.1 translate API | input missing mandatory data ('src_list','source_language_code','target_language_code')",MODULE_CONTEXT,status['message'])
             out = CustomResponse(status,inputs)
-            return out.get_res_json(), 401                   
+            return out.get_res_json(), 401, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}                   
         
 def get_model_id(source_language_code,target_language_code):
     

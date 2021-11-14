@@ -5,6 +5,7 @@ from models import CustomResponse, Status
 from utilities import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception
 from config import supported_languages
+from html import escape
 
         
 class NMTTranslateResource(Resource):
@@ -109,19 +110,19 @@ class TranslateResourcem2m(Resource):
         if request.content_type != content_type:
             status = Status.INVALID_CONTENT_TYPE.value
             log_exception("v1.1 translate API | Invalid content type",MODULE_CONTEXT,status['message'])
-            out = CustomResponse(status,inputs)
+            out = CustomResponse(status,html_encode(inputs))
             return out.get_res_json(), 406, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}
             
         if len(inputs)>0 and all(v in inputs for v in ['src_list','source_language_code','target_language_code']):
             if (inputs.get('source_language_code') not in supported_languages) or (inputs.get('target_language_code') not in supported_languages):
                 status = Status.UNSUPPORTED_LANGUAGE.value
                 log_exception("v1.1 translate API | Unsupported input language code",MODULE_CONTEXT,status['message'])
-                out = CustomResponse(status,inputs)
+                out = CustomResponse(status,html_encode(inputs))
                 return out.get_res_json(), 400, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}
             elif inputs.get('source_language_code') == inputs.get('target_language_code'):
                 status = Status.SAME_LANGUAGE_VALUE.value
                 log_exception("v1.1 translate API | src and tgt code can't be same",MODULE_CONTEXT,status['message'])
-                out = CustomResponse(status,inputs)
+                out = CustomResponse(status,html_encode(inputs))
                 return out.get_res_json(), 400, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}
                    
             try:  
@@ -145,13 +146,13 @@ class TranslateResourcem2m(Resource):
                 status = Status.SYSTEM_ERR.value
                 status['message'] = str(e)
                 log_exception("Exception caught in v1.1 translate API resource child block: {}".format(e),MODULE_CONTEXT,e) 
-                out = CustomResponse(status, inputs)
+                out = CustomResponse(status, html_encode(inputs))
                 return out.get_res_json(), 500, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}   
         else:
             status = Status.INVALID_API_REQUEST.value
             status['message'] = "Missing mandatory data ('src_list','source_language_code','target_language_code')"
             log_exception("v1.1 translate API | input missing mandatory data ('src_list','source_language_code','target_language_code')",MODULE_CONTEXT,status['message'])
-            out = CustomResponse(status,inputs)
+            out = CustomResponse(status,html_encode(inputs))
             return out.get_res_json(), 401, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}                   
         
 def get_model_id(source_language_code,target_language_code):
@@ -163,4 +164,15 @@ def get_model_id(source_language_code,target_language_code):
     else:
         m_id = 144    
         
-    return m_id    
+    return m_id 
+
+def html_encode(request_json_obj):
+    try:
+        request_json_obj["source_language_code"] = escape(request_json_obj["source_language_code"])
+        request_json_obj["target_language_code"] = escape(request_json_obj["target_language_code"])
+        for item in request_json_obj['src_list']:
+            item['src'] = escape(item['src'])
+    except Exception as e:
+        log_exception("Exception caught in v1.1 translate API html encoding: {}".format(e),MODULE_CONTEXT,e)
+
+    return request_json_obj

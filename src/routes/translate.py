@@ -20,5 +20,5 @@ Api(TRANSLATE_BLUEPRINT).add_resource(
 )
 
 Api(TRANSLATE_BLUEPRINT).add_resource(
-    TranslateResourcem2m, config.MODULE_NAME + "/v0/translate-m2m"
+    TranslateResourcem2m, config.MODULE_NAME + "/v1.1/translate"
 )

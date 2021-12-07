@@ -6,6 +6,8 @@ from utilities import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception
 import datetime
 from config import translation_batch_limit
+from config import supported_languages
+from html import escape
 
         
 class NMTTranslateResource(Resource):
@@ -104,37 +106,79 @@ class TranslateResourceV1(Resource):
         
 class TranslateResourcem2m(Resource):
     def post(self):
+        '''
+        End point when only src and tgt language information is available
+        '''
         translation_batch = {}
         src_list, response_body = list(), list()
+        content_type = 'application/json'
         inputs = request.get_json(force=True)
-        if len(inputs)>0 and all(v in inputs for v in ['src_list','source_language_code','target_language_code','model_id']):
+        if request.content_type != content_type:
+            status = Status.INVALID_CONTENT_TYPE.value
+            log_exception("v1.1 translate API | Invalid content type",MODULE_CONTEXT,status['message'])
+            out = CustomResponse(status,html_encode(inputs))
+            return out.get_res_json(), 406, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}
+            
+        if len(inputs)>0 and all(v in inputs for v in ['src_list','source_language_code','target_language_code']):
+            if (inputs.get('source_language_code') not in supported_languages) or (inputs.get('target_language_code') not in supported_languages):
+                status = Status.UNSUPPORTED_LANGUAGE.value
+                log_exception("v1.1 translate API | Unsupported input language code",MODULE_CONTEXT,status['message'])
+                out = CustomResponse(status,html_encode(inputs))
+                return out.get_res_json(), 400, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}
+            elif inputs.get('source_language_code') == inputs.get('target_language_code'):
+                status = Status.SAME_LANGUAGE_VALUE.value
+                log_exception("v1.1 translate API | src and tgt code can't be same",MODULE_CONTEXT,status['message'])
+                out = CustomResponse(status,html_encode(inputs))
+                return out.get_res_json(), 400, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}
+                   
             try:  
-                log_info("Making m2m API call",MODULE_CONTEXT)
-                log_info("inputs---{}".format(inputs),MODULE_CONTEXT)
+                log_info("Making translate v1.1 API call",MODULE_CONTEXT)
+                log_info("v1.1 translate API | input--- {}".format(inputs),MODULE_CONTEXT)
                 input_src_list = inputs.get('src_list')
                 src_list = [i.get('src') for i in input_src_list]
-                if len(src_list) > translation_batch_limit:
-                    raise Exception(f"Number of sentences per request exceeded the limit of:{translation_batch_limit} sentences per batch")
-                translation_batch = {'src_lang':inputs.get('source_language_code'),
+                m_id = get_model_id(inputs.get('source_language_code'),inputs.get('target_language_code'))
+                translation_batch = {'id':m_id,'src_lang':inputs.get('source_language_code'),
                                      'tgt_lang':inputs.get('target_language_code'),'src_list': src_list}
                 output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
-                output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i],
-                                                    'tagged_tgt':output_batch['tagged_tgt_list'][i],'tagged_src':output_batch['tagged_src_list'][i]}
+                output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i]}
                                                     for i in range(len(input_src_list))]
                 for j,k in enumerate(input_src_list):
                     k.update(output_batch_dict_list[j])
                     response_body.append(k)
                 out = CustomResponse(Status.SUCCESS.value,response_body) 
-                log_info("Final output from m2m API: {}".format(out.getresjson()),MODULE_CONTEXT)        
+                log_info("Final output v1.1 API | {}".format(out.get_res_json()),MODULE_CONTEXT)     
+                return out.get_res_json(), 200, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}   
             except Exception as e:
                 status = Status.SYSTEM_ERR.value
                 status['message'] = str(e)
-                log_exception("Exception caught in  m2m API child block: {}".format(e),MODULE_CONTEXT,e) 
-                out = CustomResponse(status, inputs)
-            return out.jsonify_res()    
+                log_exception("Exception caught in v1.1 translate API resource child block: {}".format(e),MODULE_CONTEXT,e) 
+                out = CustomResponse(status, html_encode(inputs))
+                return out.get_res_json(), 500, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}   
         else:
-            log_info("API input missing mandatory data ('src_list','model_id')",MODULE_CONTEXT)
             status = Status.INVALID_API_REQUEST.value
-            status['message'] = "Missing mandatory data ('src_list','model_id')"
-            out = CustomResponse(status,inputs)
-            return out.jsonify_res()                   
+            status['message'] = "Missing mandatory data ('src_list','source_language_code','target_language_code')"
+            log_exception("v1.1 translate API | input missing mandatory data ('src_list','source_language_code','target_language_code')",MODULE_CONTEXT,status['message'])
+            out = CustomResponse(status,html_encode(inputs))
+            return out.get_res_json(), 401, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}                    
+        
+def get_model_id(source_language_code,target_language_code):
+    
+    if source_language_code and source_language_code =='en':
+        m_id = 103
+    elif target_language_code and target_language_code =='en':
+        m_id = 100
+    else:
+        m_id = 144    
+        
+    return m_id 
+
+def html_encode(request_json_obj):
+    try:
+        request_json_obj["source_language_code"] = escape(request_json_obj["source_language_code"])
+        request_json_obj["target_language_code"] = escape(request_json_obj["target_language_code"])
+        for item in request_json_obj['src_list']:
+            item['src'] = escape(item['src'])
+    except Exception as e:
+        log_exception("Exception caught in v1.1 translate API html encoding: {}".format(e),MODULE_CONTEXT,e)
+
+    return request_json_obj

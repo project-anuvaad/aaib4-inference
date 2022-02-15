@@ -27,5 +27,8 @@ for blueprint in vars(routes).values():
         server.register_blueprint(blueprint, url_prefix=config.API_URL_PREFIX)
 
 if __name__ == "__main__":
+    from waitress import serve
+
     log_info('starting server at {} at port {}'.format(config.HOST, config.PORT), MODULE_CONTEXT)
-    server.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)
+    # server.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)
+    serve(server, host=config.HOST, port=config.PORT)

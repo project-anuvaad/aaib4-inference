@@ -8,6 +8,7 @@ import config
 from utilities import MODULE_CONTEXT
 import threading
 from kafka_wrapper import KafkaTranslate
+from werkzeug.serving import run_simple
 
 server  = Flask(__name__)
 
@@ -31,5 +32,6 @@ if __name__ == "__main__":
 
     log_info('starting server at {} at port {}'.format(config.HOST, config.PORT), MODULE_CONTEXT)
     # server.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)
-    server.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=False, processes=50)
+    # server.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=False, processes=50)
     # serve(server, host=config.HOST, port=config.PORT)
+    run_simple(config.HOST,config.PORT,server)

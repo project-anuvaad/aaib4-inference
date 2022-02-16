@@ -31,7 +31,7 @@ if __name__ == "__main__":
     # from waitress import serve
 
     log_info('starting server at {} at port {}'.format(config.HOST, config.PORT), MODULE_CONTEXT)
-    # server.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)
+    server.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)
     # server.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=False, processes=50)
     # serve(server, host=config.HOST, port=config.PORT)
-    run_simple(config.HOST,config.PORT,server,processes=config.concurrent_processes)
+    # run_simple(config.HOST,config.PORT,server,processes=config.concurrent_processes)

@@ -34,4 +34,4 @@ if __name__ == "__main__":
     # server.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)
     # server.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=False, processes=50)
     # serve(server, host=config.HOST, port=config.PORT)
-    run_simple(config.HOST,config.PORT,server,processes=8)
+    run_simple(config.HOST,config.PORT,server,processes=NO_OF_PROCESSES)

@@ -39,6 +39,9 @@ class Loadmodels:
         with open(config.FETCH_MODEL_CONFG) as f:
             confs = json.load(f)
             models = confs["models"]
+
+            models = select_model_to_load(models,config.model_to_load)
+
             model_paths = [model["model_path"] for model in models]
             dict_paths = [model["dict_path"] for model in models]
             src_vocab_paths = [model["src_vocab_path"] for model in models]
@@ -89,3 +92,24 @@ class Loadmodels:
 
     def return_models(self):
         return self.loaded_models
+
+def select_model_to_load(models,filter):
+    filtered_models_array = []
+    
+    if filter == "en-in":
+        for model in models:
+            if (model["source_language_code"] == "en") and (model["target_language_code"] != "en"):
+                filtered_models_array.append(model)
+    elif filter == "in-en":
+        for model in models:
+            if (model["source_language_code"] != "en") and (model["target_language_code"] == "en"):
+                filtered_models_array.append(model)
+    elif filter == "in-in":
+        for model in models:
+            if (model["source_language_code"] != "en") and (model["target_language_code"] != "en"):
+                filtered_models_array.append(model)
+    else:
+        for model in models:
+            filtered_models_array.append(model)
+    
+    return filtered_models_array

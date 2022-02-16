@@ -7,9 +7,9 @@ from resources import NMTTranslateResource,InteractiveMultiTranslateResourceNew,
 TRANSLATE_BLUEPRINT = Blueprint("translate", __name__)
 
 
-Api(TRANSLATE_BLUEPRINT).add_resource(
-    NMTTranslateResource, config.MODULE_NAME + "/v0/translate"
-)
+# Api(TRANSLATE_BLUEPRINT).add_resource(
+#     NMTTranslateResource, config.MODULE_NAME + "/v0/translate"
+# )
 
 Api(TRANSLATE_BLUEPRINT).add_resource(
     InteractiveMultiTranslateResourceNew, config.MODULE_NAME + "/v0/interactive-translation"
@@ -21,4 +21,8 @@ Api(TRANSLATE_BLUEPRINT).add_resource(
 
 Api(TRANSLATE_BLUEPRINT).add_resource(
     TranslateResourcem2m, config.MODULE_NAME + "/v1.1/translate"
+)
+
+Api(TRANSLATE_BLUEPRINT).add_resource(
+    NMTTranslateResource, config.MODULE_NAME + "/v0/" + config.model_to_load + "/translate"
 )

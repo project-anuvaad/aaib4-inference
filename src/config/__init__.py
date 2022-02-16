@@ -28,3 +28,6 @@ translation_batch_limit = os.environ.get('TRANSLATION_BATCH_LIMIT', 75)
 supported_languages = ['en','hi','ta','te','kn','pa','mr','as','or','ml','gu','bn']
 
 concurrent_processes = os.environ.get('NO_OF_PROCESSES', 2)
+
+if isinstance(concurrent_processes, str):
+    concurrent_processes = eval(concurrent_processes)

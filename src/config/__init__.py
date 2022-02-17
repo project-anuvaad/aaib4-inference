@@ -27,5 +27,5 @@ translation_batch_limit = os.environ.get('TRANSLATION_BATCH_LIMIT', 75)
 ## supported languages
 supported_languages = ['en','hi','ta','te','kn','pa','mr','as','or','ml','gu','bn']
 
-## loaded model ('in-en' OR 'en-in' OR 'in-in')
-model_to_load = os.environ.get('MODEL_NAME', '') # loads all three models 
+## loaded model ('indic-en' OR 'en-indic' OR 'indic-indic')
+model_to_load = os.environ.get('MODEL_NAME', 'indic-indic') # loads all three models 

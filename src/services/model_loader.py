@@ -96,20 +96,17 @@ class Loadmodels:
 def select_model_to_load(models,filter):
     filtered_models_array = []
     
-    if filter == "en-in":
+    if filter == "en-indic":
         for model in models:
             if (model["source_language_code"] == "en") and (model["target_language_code"] != "en"):
                 filtered_models_array.append(model)
-    elif filter == "in-en":
+    elif filter == "indic-en":
         for model in models:
             if (model["source_language_code"] != "en") and (model["target_language_code"] == "en"):
                 filtered_models_array.append(model)
-    elif filter == "in-in":
+    else:
         for model in models:
             if (model["source_language_code"] != "en") and (model["target_language_code"] != "en"):
                 filtered_models_array.append(model)
-    else:
-        for model in models:
-            filtered_models_array.append(model)
     
     return filtered_models_array

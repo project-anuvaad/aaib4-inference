@@ -8,6 +8,8 @@ import datetime
 from config import translation_batch_limit
 from config import supported_languages
 from html import escape
+from threading import Thread
+import concurrent.futures
 
         
 class NMTTranslateResource(Resource):
@@ -30,13 +32,18 @@ class NMTTranslateResource(Resource):
                 if len(src_list) > translation_batch_limit:
                     raise Exception(f"Number of sentences per request exceeded the limit of: {translation_batch_limit} sentences per batch")
                 
-                if model_id == 144:                   
-                    translation_batch = {'id':model_id,'src_lang':language['sourceLanguage'],
-                                     'tgt_lang':language['targetLanguage'],'src_list': src_list}
-                    output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
-                else:
-                    translation_batch = {'id':model_id,'src_list': src_list}
-                    output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
+                # if model_id == 144:                   
+                #     translation_batch = {'id':model_id,'src_lang':language['sourceLanguage'],
+                #                      'tgt_lang':language['targetLanguage'],'src_list': src_list}
+                #     output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
+                # else:
+                #     translation_batch = {'id':model_id,'src_list': src_list}
+                #     output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
+                # output_batch = ulca_translate_kernel(model_id,language,src_list)
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    future = executor.submit(ulca_translate_kernel, model_id,language,src_list)
+                    output_batch = future.result()
+                
                 output_batch_dict_list = [{'target': output_batch['tgt_list'][i]}
                                                     for i in range(len(input_src_list))]
                 for j,k in enumerate(input_src_list):
@@ -177,6 +184,16 @@ def get_model_id(source_language_code,target_language_code):
         m_id = 144    
         
     return m_id 
+
+def ulca_translate_kernel(model_id,language,src_list):
+    if model_id == 144:                   
+        translation_batch = {'id':model_id,'src_lang':language['sourceLanguage'],'tgt_lang':language['targetLanguage'],'src_list': src_list}
+        output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
+    else:
+        translation_batch = {'id':model_id,'src_list': src_list}
+        output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
+
+    return output_batch
 
 
 def html_encode(request_json_obj):

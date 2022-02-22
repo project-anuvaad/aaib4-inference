@@ -1,5 +1,5 @@
 from threading import Thread
-from config import nmt_cron_interval_ms
+from config.config import nmt_cron_interval_ms
 from config import translation_batch_limit
 from resource import NMTTranslateResource_async
 from utilities import MODULE_CONTEXT

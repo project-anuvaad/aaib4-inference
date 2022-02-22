@@ -23,7 +23,7 @@ Flask-RESTful==0.3.8
 Flask-WTF==0.14.3
 idna==2.10
 isodate==0.6.0
-itsdangerous==2.1.0
+itsdangerous==2.0.1
 Jinja2==2.11.2
 jmespath==0.10.0
 kafka-python==2.0.2

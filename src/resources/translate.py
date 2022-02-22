@@ -4,10 +4,63 @@ from services import FairseqTranslateService, FairseqAutoCompleteTranslateServic
 from models import CustomResponse, Status
 from utilities import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception
+import datetime
 from config import translation_batch_limit
 from config import supported_languages
 from html import escape
+import uuid
+import redis
 
+from config.config import  redis_server_host, redis_server_port, redis_server_pass, redis_db,record_expiry_in_sec
+
+class  NMTTranslateRedisReadResource(Resource):
+    def get(self,request_id):
+
+        try:
+            key = request_id
+            response = search_redis(key)
+
+            if 'translation_status' not in response.keys():
+                 out = CustomResponse(Status.SUCCESS.value, {"status" : "Translation in progress"})
+
+            else:  
+                del response['translation_status']
+                out = CustomResponse(Status.SUCCESS.value, response)
+                
+            log_info("Final output of Redis Read| {}".format(
+                out.get_res_json()), MODULE_CONTEXT)
+            return out.get_res_json(), 200
+        except Exception as e:
+            status = Status.SYSTEM_ERR.value
+            status['message'] = str(e)
+            log_exception("Exception caught in : {}".format(
+                e), MODULE_CONTEXT, e)
+            out = CustomResponse(status, request_id)
+            return out.get_res_json_data(), 500
+
+
+class NMTTranslateRedisWriteResource(Resource):
+    def post(self):
+        inputs = request.get_json(force=True)
+        if len(inputs) > 0 and all(v in inputs for v in ['input', 'config']) and "modelId" in inputs.get('config'):
+            try:
+                log_info("Making API call for redis write operation",
+                         MODULE_CONTEXT)
+                log_info("inputs---{}".format(inputs), MODULE_CONTEXT)
+                key = str(uuid.uuid4())
+                input["requestId"] = key
+                upsert(key, inputs, True)
+                out = CustomResponse(Status.SUCCESS.value, {"requestId": key})
+                log_info("Final output of Redis Write | {}".format(
+                    out.get_res_json()), MODULE_CONTEXT)
+                return out.get_res_json(), 200
+            except Exception as e:
+                status = Status.SYSTEM_ERR.value
+                status['message'] = str(e)
+                log_exception("Exception caught in : {}".format(
+                    e), MODULE_CONTEXT, e)
+                out = CustomResponse(status, inputs)
+                return out.get_res_json_data(), 500
         
 class NMTTranslateResource(Resource):
     def post(self):
@@ -36,10 +89,6 @@ class NMTTranslateResource(Resource):
                 else:
                     translation_batch = {'id':model_id,'src_list': src_list}
                     output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
-                # with concurrent.futures.ThreadPoolExecutor() as executor:
-                #     future = executor.submit(ulca_translate_kernel, model_id,language,src_list)
-                #     output_batch = future.result()
-                
                 output_batch_dict_list = [{'target': output_batch['tgt_list'][i]}
                                                     for i in range(len(input_src_list))]
                 for j,k in enumerate(input_src_list):
@@ -170,41 +219,6 @@ class TranslateResourcem2m(Resource):
             out = CustomResponse(status,html_encode(inputs))
             return out.get_res_json(), 401, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}                    
         
-
-class NMTTranslateResource_async():
-    def __init__(self):
-        pass
-
-    def async_call(self, inputs):
-        '''
-        Async ULCA call
-        '''
-        model_id, src_lang, tgt_lang, src_list = inputs
-        translation_batch = {}
-        try:  
-            log_info("Making API call for ULCA endpoint",MODULE_CONTEXT)
-            log_info("inputs---{}".format(inputs),MODULE_CONTEXT)
-            if len(src_list) > translation_batch_limit:
-                raise Exception(f"Number of sentences per request exceeded the limit of: {translation_batch_limit} sentences per batch")
-            
-            if model_id == 144:                   
-                translation_batch = {'id':model_id,'src_lang':src_lang,
-                                    'tgt_lang':tgt_lang,'src_list': src_list}
-                output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
-            else:
-                translation_batch = {'id':model_id,'src_list': src_list}
-                output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
-            final_output = {"tgt_list":output_batch['tgt_list']}
-            log_info("Final output from ULCA async API: {}".format(final_output),MODULE_CONTEXT)  
-            return final_output     
-        except Exception as e:
-            status = Status.SYSTEM_ERR.value
-            status['message'] = str(e)
-            log_exception("Exception caught in  ULCA async-call for batch translation child block: {}".format(e),MODULE_CONTEXT,e) 
-            # out = CustomResponse(status, inputs)
-            return {"error": status}
-                
-
 def get_model_id(source_language_code,target_language_code):
     
     if source_language_code and source_language_code =='en':
@@ -215,16 +229,6 @@ def get_model_id(source_language_code,target_language_code):
         m_id = 144    
         
     return m_id 
-
-def ulca_translate_kernel(model_id,language,src_list):
-    if model_id == 144:                   
-        translation_batch = {'id':model_id,'src_lang':language['sourceLanguage'],'tgt_lang':language['targetLanguage'],'src_list': src_list}
-        output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
-    else:
-        translation_batch = {'id':model_id,'src_list': src_list}
-        output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
-
-    return output_batch
 
 
 def html_encode(request_json_obj):
@@ -237,3 +241,44 @@ def html_encode(request_json_obj):
         log_exception("Exception caught in v1.1 translate API html encoding: {}".format(e),MODULE_CONTEXT,e)
 
     return request_json_obj
+# Initialises and fetches redis client
+
+
+def redis_instantiate():
+    global redis_client_datasets
+    redis_client_datasets = redis.Redis(host=redis_server_host, port=redis_server_port, db=redis_db,
+                                        password=redis_server_pass)
+    return redis_client_datasets
+
+
+def get_redis_instance():
+    global redis_client_datasets
+    if not redis_client_datasets:
+        return redis_instantiate()
+    else:
+        return redis_client_datasets
+
+
+def upsert(key, value, expiry):
+    try:
+        client = get_redis_instance()
+        if expiry:
+            client.set(key, json.dumps(value), ex=record_expiry_in_sec)
+        else:
+            client.set(key, json.dumps(value))
+        return True
+    except Exception as e:
+        log_exception(f'Exception in redis upsert: {e}', e)
+        return None
+
+def search_redis(key):
+    try:
+        client = get_redis_instance()
+        result = []
+        val = client.get(key)
+        if val:
+            result.append(json.loads(val))
+        return result
+    except Exception as e:
+        log_exception(f'Exception in redis search: {e}', e)
+        return None

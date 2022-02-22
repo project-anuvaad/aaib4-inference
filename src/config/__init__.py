@@ -24,6 +24,12 @@ trunc_limit = 200
 ## max number of input sentences per batch (for inference service, specific to GPU type)
 translation_batch_limit = os.environ.get('TRANSLATION_BATCH_LIMIT', 75)
 
+## Time delay after which cron job will be executed
+nmt_cron_interval_ms = os.environ.get('NMT_CRON_INTERVAL_MS', 500) 
+
+if isinstance(nmt_cron_interval_ms, str):
+    nmt_cron_interval_ms = eval(nmt_cron_interval_ms)
+
 ## supported languages
 supported_languages = ['en','hi','ta','te','kn','pa','mr','as','or','ml','gu','bn']
 

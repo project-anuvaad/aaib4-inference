@@ -9,6 +9,7 @@ import pandas as pd
 import redis
 from config.config import redis_server_host, redis_server_port, redis_server_pass, redis_db, record_expiry_in_sec
 
+redis_client_datasets = None
 
 class NMTcronjob(Thread):
     def __init__(self, event):
@@ -60,10 +61,10 @@ class NMTcronjob(Thread):
                             for i, tgt_sent in enumerate(output):
                                 sg_out = [{"source": sent_list[i], "target": tgt_sent[i]}]
                                 sg_config = sample_json['config']
-                                final_output = {'config': sg_config, 'output': sg_out}
-                                final_output['translation_status'] = "Done"
+                                final_output = {'config': sg_config, 'output': sg_out, 'translation_status': "Done"}
                                 log_info(
-                                    "Final output from Async call for ULCA batch translation pushed on redis for a request : {}".format(
+                                    "Final output from Async call for ULCA batch translation pushed on redis for a "
+                                    "request : {}".format(
                                         final_output), MODULE_CONTEXT)
                                 upsert(db_key_list[i], final_output, True)
                         elif 'error' in output:
@@ -72,11 +73,12 @@ class NMTcronjob(Thread):
                                 final_output['translation_status'] = 'Done'
                                 upsert(db_key_list[i], final_output, True)
                 run += 1
-                log_info("Async ULCA Batch Translation Cron-job" + " -- Run: " + str(run) + " | Cornjob Completed")
+                log_info("Async NMT Batch Translation Cron-job" + " -- Run: " + str(run) + " | Cornjob Completed",
+                         MODULE_CONTEXT)
             except Exception as e:
                 run += 1
                 log_exception("Async ULCA Batch Translation Cron-job" + " -- Run: " + str(
-                    run) + " | Exception in Cornjob: " + str(e), e, )
+                    run) + " | Exception in Cornjob: " + str(e), e, e)
 
     def check_schema_ULCA(self, json_ob):
         """Check if post request matches the schema for ULCA Translation

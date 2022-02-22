@@ -14,6 +14,8 @@ import redis
 
 from config.config import  redis_server_host, redis_server_port, redis_server_pass, redis_db,record_expiry_in_sec
 
+redis_client_datasets = None
+
 class  NMTTranslateRedisReadResource(Resource):
     def get(self,request_id):
 

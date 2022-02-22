@@ -24,6 +24,10 @@ Api(TRANSLATE_BLUEPRINT).add_resource(
     TranslateResourcem2m, config.MODULE_NAME + "/v1.1/translate"
 )
 
+Api(TRANSLATE_BLUEPRINT).add_resource(
+    NMTTranslateResource, config.MODULE_NAME + "/v0/" + config.model_to_load + "/translate"
+)
+
 
 Api(TRANSLATE_BLUEPRINT).add_resource(
     NMTTranslateRedisReadResource, config.MODULE_NAME + "/v0/" + config.model_to_load + "/search_translation/<request_id>"

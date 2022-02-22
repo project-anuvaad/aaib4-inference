@@ -22,59 +22,66 @@ class NMTcronjob(Thread):
         redis_client = get_redis_instance()
         while not self.stopped.wait(nmt_cron_interval_ms):
             try:
+                log_info("CRON EXECUTING.....", MODULE_CONTEXT)
                 redis_data = []
                 key_list = redis_client.keys()
-                for rd_key in key_list:
-                    value = json.loads(redis_client.get(rd_key))
-                    if 'translation_status' not in value:
-                        redis_data.append((rd_key, value))
-                db_df = self.create_dataframe(redis_data)
-                del redis_data
-                '''
-                #Pushing response for request with wrong schema
-                for entry_indx in db_df[db_df.schema == False].index:
-                    db_key = db_df.last[entry_indx,'db_key']
-                    log_info("ULCA Async API input missing mandatory data ('input','config,'modelId', 'language')",MODULE_CONTEXT)
-                    status = Status.INVALID_API_REQUEST.value
-                    status['message'] = "Missing mandatory data ('input','config','modelId, 'language')"
-                    status['translation_status'] = "Done"
-                    redis_client.upsert(db_key, status)
-                # Deleting wrong schema entries from dataframe
-                db_df.drop(db_df[db_df.schema == False].index, inplace = True)
-                '''
-                # Creating groups based on modelid,src,tgt lauage
-                df_group = db_df.groupby(by=['modelid', 'src_language', 'tgt_language'])
-                for gb_key in df_group.groups.keys():
-                    sub_df = df_group.get_group(gb_key)
-                    sub_modelid = int(gb_key[0])
-                    sub_src = str(gb_key[1])
-                    sub_tgt = str(gb_key[2])
+                if key_list:
+                    for rd_key in key_list:
+                        value = json.loads(redis_client.get(rd_key))
+                        if 'translation_status' not in value:
+                            redis_data.append((rd_key, value))
+                if redis_data:
+                    db_df = self.create_dataframe(redis_data)
+                    del redis_data
+                    '''
+                    #Pushing response for request with wrong schema
+                    for entry_indx in db_df[db_df.schema == False].index:
+                        db_key = db_df.last[entry_indx,'db_key']
+                        log_info("ULCA Async API input missing mandatory data ('input','config,'modelId', 'language')",MODULE_CONTEXT)
+                        status = Status.INVALID_API_REQUEST.value
+                        status['message'] = "Missing mandatory data ('input','config','modelId, 'language')"
+                        status['translation_status'] = "Done"
+                        redis_client.upsert(db_key, status)
+                    # Deleting wrong schema entries from dataframe
+                    db_df.drop(db_df[db_df.schema == False].index, inplace = True)
+                    '''
+                    # Creating groups based on modelid,src,tgt lauage
+                    df_group = db_df.groupby(by=['modelid', 'src_language', 'tgt_language'])
+                    for gb_key in df_group.groups.keys():
+                        sub_df = df_group.get_group(gb_key)
+                        sub_modelid = int(gb_key[0])
+                        sub_src = str(gb_key[1])
+                        sub_tgt = str(gb_key[2])
 
-                    for i in range(0, sub_df.shape[0], translation_batch_limit):
-                        sent_list = sub_df.iloc[i:i + translation_batch_limit].sentence.values.tolist()
-                        db_key_list = sub_df.iloc[i:i + translation_batch_limit].db_key.values.tolist()
-                        nmt_translator = NMTTranslateResource_async()
-                        output = nmt_translator.async_call((sub_modelid, sub_src, sub_tgt, sent_list))
-                        sample_json = sub_df.iloc[0].input
+                        for i in range(0, sub_df.shape[0], translation_batch_limit):
+                            sent_list = sub_df.iloc[i:i + translation_batch_limit].sentence.values.tolist()
+                            db_key_list = sub_df.iloc[i:i + translation_batch_limit].db_key.values.tolist()
+                            nmt_translator = NMTTranslateResource_async()
+                            output = nmt_translator.async_call((sub_modelid, sub_src, sub_tgt, sent_list))
+                            sample_json = sub_df.iloc[0].input
 
-                        if 'tgt_list' in output:
-                            for i, tgt_sent in enumerate(output):
-                                sg_out = [{"source": sent_list[i], "target": tgt_sent[i]}]
-                                sg_config = sample_json['config']
-                                final_output = {'config': sg_config, 'output': sg_out, 'translation_status': "Done"}
-                                log_info(
-                                    "Final output from Async call for ULCA batch translation pushed on redis for a "
-                                    "request : {}".format(
-                                        final_output), MODULE_CONTEXT)
-                                upsert(db_key_list[i], final_output, True)
-                        elif 'error' in output:
-                            for i, _ in enumerate(sent_list):
-                                final_output = output['error']
-                                final_output['translation_status'] = 'Done'
-                                upsert(db_key_list[i], final_output, True)
-                run += 1
-                log_info("Async NMT Batch Translation Cron-job" + " -- Run: " + str(run) + " | Cornjob Completed",
-                         MODULE_CONTEXT)
+                            if 'tgt_list' in output:
+                                for i, tgt_sent in enumerate(output):
+                                    sg_out = [{"source": sent_list[i], "target": tgt_sent[i]}]
+                                    sg_config = sample_json['config']
+                                    final_output = {'config': sg_config, 'output': sg_out, 'translation_status': "Done"}
+                                    log_info(
+                                        "Final output from Async call for ULCA batch translation pushed on redis for a "
+                                        "request : {}".format(
+                                            final_output), MODULE_CONTEXT)
+                                    upsert(db_key_list[i], final_output, True)
+                            elif 'error' in output:
+                                for i, _ in enumerate(sent_list):
+                                    final_output = output['error']
+                                    final_output['translation_status'] = 'Done'
+                                    upsert(db_key_list[i], final_output, True)
+                    run += 1
+                    log_info("Async NMT Batch Translation Cron-job" + " -- Run: " + str(run) + " | Cornjob Completed",
+                             MODULE_CONTEXT)
+                else:
+                    run += 1
+                    log_info("No Requests available in REDIS --- Run: {} | Cornjob Completed".format(run),
+                             MODULE_CONTEXT)
             except Exception as e:
                 run += 1
                 log_exception("Async ULCA Batch Translation Cron-job" + " -- Run: " + str(
@@ -132,7 +139,7 @@ def upsert(key, value, expiry):
             client.set(key, json.dumps(value))
         return True
     except Exception as e:
-        log_exception(f'Exception in redis upsert: {e}', e, e)
+        log_exception(f'Exception in redis upsert: {e}', MODULE_CONTEXT, e)
         return None
 
 
@@ -145,5 +152,5 @@ def search_redis(key):
             result.append(json.loads(val))
         return result
     except Exception as e:
-        log_exception(f'Exception in redis search: {e}', e, e)
+        log_exception(f'Exception in redis search: {e}', MODULE_CONTEXT, e)
         return None

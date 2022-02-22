@@ -17,23 +17,23 @@ from config.config import  redis_server_host, redis_server_port, redis_server_pa
 redis_client_datasets = None
 
 class  NMTTranslateRedisReadResource(Resource):
-    def get(self,request_id):
-
+    def get(self, request_id):
         try:
             key = request_id
             response = search_redis(key)
             if response:
+                log_info("Value obtained for the key : {}".format(key), MODULE_CONTEXT)
                 response = response[0]
                 if 'translation_status' not in response.keys():
-                    out = CustomResponse(Status.SUCCESS.value, {"status" : "Translation in progress"})
-
+                    log_info("Translation is in progress", MODULE_CONTEXT)
+                    out = CustomResponse(Status.SUCCESS.value, {"status": "Translation in progress"})
                 else:
+                    log_info("Translation fetched!", MODULE_CONTEXT)
                     del response['translation_status']
                     out = CustomResponse(Status.SUCCESS.value, response)
-                
-                log_info("Final output of Redis Read| {}".format(
-                    out.get_res_json()), MODULE_CONTEXT)
+                log_info("Final output of Redis Read | {}".format(out.get_res_json()), MODULE_CONTEXT)
             else:
+                log_info("No records found of this key: {}".format(key), MODULE_CONTEXT)
                 out = CustomResponse(Status.INVALID_API_REQUEST.value, {"status": "Translation unavailable"})
             return out.get_res_json(), 400
         except Exception as e:
@@ -50,24 +50,27 @@ class NMTTranslateRedisWriteResource(Resource):
         api_input = request.get_json(force=True)
         if len(api_input) > 0 and all(v in api_input for v in ['input', 'config']) and "modelId" in api_input.get('config'):
             try:
-                log_info("Making API call for redis write operation",
-                         MODULE_CONTEXT)
+                log_info("Making call to redis write operation", MODULE_CONTEXT)
                 log_info("input --- {}".format(api_input), MODULE_CONTEXT)
                 key = str(uuid.uuid4())
                 api_input["requestId"] = key
-                upsert(key, api_input, True)
-                out = CustomResponse(Status.SUCCESS.value, {"requestId": key})
-                log_info("Final output of Redis Write | {}".format(
-                    out.get_res_json()), MODULE_CONTEXT)
-                return out.get_res_json(), 202
+                status = upsert(key, api_input, True)
+                if status:
+                    out = CustomResponse(Status.SUCCESS.value, {"requestId": key})
+                    log_info("Final output of Redis Write | {}".format(out.get_res_json()), MODULE_CONTEXT)
+                    return out.get_res_json(), 202
+                else:
+                    log_info("Write to redis FAILED!", MODULE_CONTEXT)
+                    out = CustomResponse(Status.SYSTEM_ERR.value, {"requestId": key})
+                    return out.get_res_json(), 500
             except Exception as e:
                 status = Status.SYSTEM_ERR.value
                 status['message'] = str(e)
-                log_exception("Exception caught in : {}".format(
-                    e), MODULE_CONTEXT, e)
+                log_exception("Exception caught in : {}".format(e), MODULE_CONTEXT, e)
                 out = CustomResponse(status, api_input)
                 return out.get_res_json_data(), 500
-        
+
+
 class NMTTranslateResource(Resource):
     def post(self):
         '''
@@ -318,7 +321,7 @@ def upsert(key, value, expiry):
             client.set(key, json.dumps(value))
         return True
     except Exception as e:
-        log_exception(f'Exception in redis upsert: {e}', e)
+        log_exception(f'Exception in redis upsert: {e}', MODULE_CONTEXT, e)
         return None
 
 def search_redis(key):
@@ -330,5 +333,5 @@ def search_redis(key):
             result.append(json.loads(val))
         return result
     except Exception as e:
-        log_exception(f'Exception in redis search: {e}', e)
+        log_exception(f'Exception in redis search: {e}', MODULE_CONTEXT, e)
         return None

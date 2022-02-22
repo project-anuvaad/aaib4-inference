@@ -29,7 +29,7 @@ class KafkaTranslate:
                 translation_batch = {}
                 src_list, response_body = list(), list()
 
-                if inputs is not None and all(v in inputs for v in ['message','record_id','id']) and len(inputs) is not 0:
+                if inputs is not None and all(v in inputs for v in ['message', 'record_id', 'id']) and len(inputs) is not 0:
                     try:
                         input_time = datetime.datetime.now()
                         log_info("Input for Record Id:{} at {}".format(inputs.get('record_id'),input_time),MODULE_CONTEXT)

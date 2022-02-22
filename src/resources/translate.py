@@ -225,6 +225,40 @@ class TranslateResourcem2m(Resource):
             out = CustomResponse(status,html_encode(inputs))
             return out.get_res_json(), 401, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}                    
         
+class NMTTranslateResource_async():
+    def __init__(self):
+        pass
+
+    def async_call(self, inputs):
+        '''
+        Async ULCA call
+        '''
+        model_id, src_lang, tgt_lang, src_list = inputs
+        translation_batch = {}
+        try:  
+            log_info("Making API call for ULCA endpoint",MODULE_CONTEXT)
+            log_info("inputs---{}".format(inputs),MODULE_CONTEXT)
+            if len(src_list) > translation_batch_limit:
+                raise Exception(f"Number of sentences per request exceeded the limit of: {translation_batch_limit} sentences per batch")
+            
+            if model_id == 144:                   
+                translation_batch = {'id':model_id,'src_lang':src_lang,
+                                    'tgt_lang':tgt_lang,'src_list': src_list}
+                output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
+            else:
+                translation_batch = {'id':model_id,'src_list': src_list}
+                output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
+            final_output = {"tgt_list":output_batch['tgt_list']}
+            log_info("Final output from ULCA async API: {}".format(final_output),MODULE_CONTEXT)  
+            return final_output     
+        except Exception as e:
+            status = Status.SYSTEM_ERR.value
+            status['message'] = str(e)
+            log_exception("Exception caught in  ULCA async-call for batch translation child block: {}".format(e),MODULE_CONTEXT,e) 
+            # out = CustomResponse(status, inputs)
+            return {"error": status}
+
+
 def get_model_id(source_language_code,target_language_code):
     
     if source_language_code and source_language_code =='en':
@@ -248,6 +282,16 @@ def html_encode(request_json_obj):
 
     return request_json_obj
 # Initialises and fetches redis client
+
+def ulca_translate_kernel(model_id,language,src_list):
+    if model_id == 144:                   
+        translation_batch = {'id':model_id,'src_lang':language['sourceLanguage'],'tgt_lang':language['targetLanguage'],'src_list': src_list}
+        output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
+    else:
+        translation_batch = {'id':model_id,'src_list': src_list}
+        output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
+
+    return output_batch
 
 
 def redis_instantiate():

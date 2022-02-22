@@ -1,10 +1,11 @@
+import json
+
 from flask_restful import fields, marshal_with, reqparse, Resource
 from flask import request
 from services import FairseqTranslateService, FairseqAutoCompleteTranslateService, FairseqDocumentTranslateService
 from models import CustomResponse, Status
 from utilities import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception
-import datetime
 from config import translation_batch_limit
 from config import supported_languages
 from html import escape
@@ -19,17 +20,20 @@ class  NMTTranslateRedisReadResource(Resource):
         try:
             key = request_id
             response = search_redis(key)
+            if response:
+                response = response[0]
+                if 'translation_status' not in response.keys():
+                    out = CustomResponse(Status.SUCCESS.value, {"status" : "Translation in progress"})
 
-            if 'translation_status' not in response.keys():
-                 out = CustomResponse(Status.SUCCESS.value, {"status" : "Translation in progress"})
-
-            else:  
-                del response['translation_status']
-                out = CustomResponse(Status.SUCCESS.value, response)
+                else:
+                    del response['translation_status']
+                    out = CustomResponse(Status.SUCCESS.value, response)
                 
-            log_info("Final output of Redis Read| {}".format(
-                out.get_res_json()), MODULE_CONTEXT)
-            return out.get_res_json(), 200
+                log_info("Final output of Redis Read| {}".format(
+                    out.get_res_json()), MODULE_CONTEXT)
+            else:
+                out = CustomResponse(Status.INVALID_API_REQUEST.value, {"status": "Translation unavailable"})
+            return out.get_res_json(), 400
         except Exception as e:
             status = Status.SYSTEM_ERR.value
             status['message'] = str(e)
@@ -41,25 +45,25 @@ class  NMTTranslateRedisReadResource(Resource):
 
 class NMTTranslateRedisWriteResource(Resource):
     def post(self):
-        inputs = request.get_json(force=True)
-        if len(inputs) > 0 and all(v in inputs for v in ['input', 'config']) and "modelId" in inputs.get('config'):
+        api_input = request.get_json(force=True)
+        if len(api_input) > 0 and all(v in api_input for v in ['input', 'config']) and "modelId" in api_input.get('config'):
             try:
                 log_info("Making API call for redis write operation",
                          MODULE_CONTEXT)
-                log_info("inputs---{}".format(inputs), MODULE_CONTEXT)
+                log_info("input --- {}".format(api_input), MODULE_CONTEXT)
                 key = str(uuid.uuid4())
-                input["requestId"] = key
-                upsert(key, inputs, True)
+                api_input["requestId"] = key
+                upsert(key, api_input, True)
                 out = CustomResponse(Status.SUCCESS.value, {"requestId": key})
                 log_info("Final output of Redis Write | {}".format(
                     out.get_res_json()), MODULE_CONTEXT)
-                return out.get_res_json(), 200
+                return out.get_res_json(), 202
             except Exception as e:
                 status = Status.SYSTEM_ERR.value
                 status['message'] = str(e)
                 log_exception("Exception caught in : {}".format(
                     e), MODULE_CONTEXT, e)
-                out = CustomResponse(status, inputs)
+                out = CustomResponse(status, api_input)
                 return out.get_res_json_data(), 500
         
 class NMTTranslateResource(Resource):

@@ -2,7 +2,8 @@ from flask import Blueprint
 from flask_restful import Api
 import config
 
-from resources import NMTTranslateResource,InteractiveMultiTranslateResourceNew,TranslateResourceV1,TranslateResourcem2m,NMTTranslateRedisWriteResource,NMTTranslateRedisReadResource
+from resources import NMTTranslateResource, InteractiveMultiTranslateResourceNew, TranslateResourceV1,\
+    TranslateResourcem2m, NMTTranslateRedisWriteResource, NMTTranslateRedisReadResource
 
 TRANSLATE_BLUEPRINT = Blueprint("translate", __name__)
 

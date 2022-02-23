@@ -14,33 +14,42 @@ redisclient = RedisRepo()
 
 
 class NMTTranslateRedisReadResource(Resource):
-    def get(self, request_id):
-        try:
-
-            key = request_id
-            response = redisclient.search_redis(key)
-            if response:
-                log_info("Value obtained for the key : {}".format(key), MODULE_CONTEXT)
-                response = response[0]
-                if 'translation_status' not in response.keys():
-                    log_info("Translation is in progress", MODULE_CONTEXT)
-                    out = CustomResponse(Status.SUCCESS.value, {"status": "Translation in progress"})
+    def post(self):
+        api_input = request.get_json(force=True)
+        if len(api_input) > 0 and all(v in api_input for v in ['requestId']):
+            request_id = api_input["requestId"]
+            try:
+                key = request_id
+                response = redisclient.search_redis(key)
+                if response:
+                    log_info("Value obtained for the key : {}".format(key), MODULE_CONTEXT)
+                    response = response[0]
+                    if 'translation_status' not in response.keys():
+                        log_info("Translation is in progress", MODULE_CONTEXT)
+                        out = CustomResponse(Status.SUCCESS.value, {"status": "Translation in progress"})
+                        return out.get_res_json(), 200
+                    else:
+                        log_info("Translation fetched!", MODULE_CONTEXT)
+                        del response['translation_status']
+                        out = CustomResponse(Status.SUCCESS.value, response)
+                        log_info("Final output of Redis Read | {}".format(out.get_res_json()), MODULE_CONTEXT)
+                        return out.get_res_json(), 200
                 else:
-                    log_info("Translation fetched!", MODULE_CONTEXT)
-                    del response['translation_status']
-                    out = CustomResponse(Status.SUCCESS.value, response)
-                log_info("Final output of Redis Read | {}".format(out.get_res_json()), MODULE_CONTEXT)
-            else:
-                log_info("No records found of this key: {}".format(key), MODULE_CONTEXT)
-                out = CustomResponse(Status.INVALID_API_REQUEST.value, {"status": "Translation unavailable"})
-            return out.get_res_json(), 400
-        except Exception as e:
-            status = Status.SYSTEM_ERR.value
-            status['message'] = str(e)
-            log_exception("Exception caught in : {}".format(
-                e), MODULE_CONTEXT, e)
-            out = CustomResponse(status, request_id)
-            return out.get_res_json_data(), 500
+                    log_info("No records found of this key: {}".format(key), MODULE_CONTEXT)
+                    out = CustomResponse(Status.INVALID_API_REQUEST.value, {"status": "Translation unavailable"})
+                    return out.get_res_json(), 400
+            except Exception as e:
+                status = Status.SYSTEM_ERR.value
+                status['message'] = str(e)
+                log_exception("Exception caught in : {}".format(e), MODULE_CONTEXT, e)
+                out = CustomResponse(status, request_id)
+                return out.get_res_json_data(), 500
+        else:
+            log_info("ULCA API input missing mandatory data ('requestId')", MODULE_CONTEXT)
+            status = Status.INVALID_API_REQUEST.value
+            status['message'] = "Missing mandatory data ('requestId')"
+            out = CustomResponse(status, api_input)
+            return out.get_res_json_data(), 400
 
 
 class NMTTranslateRedisWriteResource(Resource):

@@ -68,3 +68,17 @@ class RedisRepo:
         except Exception as e:
             log_exception(f'Exception in redis get all keys: {e}', MODULE_CONTEXT, e)
             return None
+
+    def get_list_of_values(self, keys):
+        try:
+            values = {}
+            client = self.get_redis_instance()
+            db_values = client.mget(keys)
+            if db_values:
+                for val in db_values:
+                    val = json.loads(val)
+                    values[val["requestId"]] = val
+            return values
+        except Exception as e:
+            log_exception(f'Exception in redis get all keys: {e}', MODULE_CONTEXT, e)
+            return None

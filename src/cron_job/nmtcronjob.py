@@ -24,13 +24,11 @@ class NMTcronjob(Thread):
             try:
                 key_list = redisclient.get_all_keys()
                 if key_list:
-                    for rd_key in key_list:
-                        value = redisclient.search_redis(rd_key)
-                        if value:
-                            value = value[0]
-                            if 'translation_status' not in value:
-                                db_key = str(rd_key.decode('utf-8'))
-                                redis_data.append((db_key, value))
+                    values = redisclient.get_list_of_values(key_list)
+                    if values:
+                        for rd_key in values.keys():
+                            if 'translation_status' not in values[rd_key]:
+                                redis_data.append((rd_key, values[rd_key]))
                 if redis_data:
                     log_info(f'Total Size of Redis Fetch: {len(redis_data)}', MODULE_CONTEXT)
                     db_df = self.create_dataframe(redis_data)
@@ -38,7 +36,7 @@ class NMTcronjob(Thread):
                     del redis_data
                     # Creating groups based on modelid,src,tgt lauage
                     df_group = db_df.groupby(by=['modelid', 'src_language', 'tgt_language'])
-                    log_info(f'Total no LANGUAGE PAIRS: {len(df_group.groups.keys())}', MODULE_CONTEXT)
+                    log_info(f'Total no Language Pairs: {len(df_group.groups.keys())}', MODULE_CONTEXT)
                     counter = 0
                     for gb_key in df_group.groups.keys():
                         sub_df = df_group.get_group(gb_key)

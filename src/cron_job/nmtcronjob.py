@@ -57,21 +57,18 @@ class NMTcronjob(Thread):
                             output = nmt_translator.async_call((sub_modelid, sub_src, sub_tgt, sent_list))
                             if output:
                                 sample_json = sub_df.iloc[0].input
+                                key = str(db_key_list[i].decode('utf-8'))
                                 if 'tgt_list' in output:
                                     for i, tgt_sent in enumerate(output['tgt_list']):
                                         sg_out = [{"source": sent_list[i], "target": tgt_sent}]
                                         sg_config = sample_json['config']
                                         final_output = {'config': sg_config, 'output': sg_out,
                                                         'translation_status': "Done"}
-                                        log_info(f'KEY: {str(db_key_list[i])}', MODULE_CONTEXT)
-                                        log_info(f'VALUE: {final_output}', MODULE_CONTEXT)
-                                        redisclient.upsert_redis(str(db_key_list[i]), final_output, True)
+                                        redisclient.upsert_redis(key, final_output, True)
                                 elif 'error' in output:
                                     for i, _ in enumerate(sent_list):
                                         final_output = output['error']
                                         final_output['translation_status'] = 'Done'
-                                        log_info(f'KEY: {str(db_key_list[i])}', MODULE_CONTEXT)
-                                        log_info(f'VALUE: {final_output}', MODULE_CONTEXT)
                                         redisclient.upsert_redis(str(db_key_list[i]), final_output, True)
                                 run += 1
                                 log_info("Async NMT Batch Translation Cron-job" + " -- Run: " + str(

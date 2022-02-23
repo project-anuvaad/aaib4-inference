@@ -3,7 +3,7 @@ import time
 
 import requests
 from flask_restful import fields, marshal_with, reqparse, Resource
-from flask import request
+from flask import request, jsonify
 from services import FairseqTranslateService, FairseqAutoCompleteTranslateService, FairseqDocumentTranslateService
 from models import CustomResponse, Status
 from utilities import MODULE_CONTEXT
@@ -27,22 +27,16 @@ class NMTTranslateRedisReadResource(Resource):
                 key = request_id
                 response = redisclient.search_redis(key)
                 if response:
-                    log_info("Value obtained for the key : {}".format(key), MODULE_CONTEXT)
                     response = response[0]
                     if 'translation_status' not in response.keys():
-                        log_info("Translation is in progress", MODULE_CONTEXT)
-                        out = CustomResponse(Status.SUCCESS.value, {"status": "Translation in progress"})
-                        return out.get_res_json(), 200
+                        response = {"status": "Translation in progress"}
+                        return jsonify(response), 200
                     else:
-                        log_info("Translation fetched!", MODULE_CONTEXT)
                         del response['translation_status']
-                        out = CustomResponse(Status.SUCCESS.value, response)
-                        log_info("Final output of Redis Read | {}".format(out.get_res_json()), MODULE_CONTEXT)
-                        return out.get_res_json(), 200
+                        return jsonify(response), 200
                 else:
-                    log_info("No records found of this key: {}".format(key), MODULE_CONTEXT)
-                    out = CustomResponse(Status.INVALID_API_REQUEST.value, {"status": "Translation unavailable"})
-                    return out.get_res_json(), 400
+                    response = {"status": "Translation unavailable"}
+                    return jsonify(response), 400
             except Exception as e:
                 status = Status.SYSTEM_ERR.value
                 status['message'] = str(e)
@@ -69,12 +63,11 @@ class NMTTranslateRedisWriteResource(Resource):
                 api_input["requestId"] = key
                 status = redisclient.upsert_redis(key, api_input, True)
                 if status:
-                    out = CustomResponse(Status.SUCCESS.value, {"requestId": key})
-                    log_info("Final output of Redis Write | {}".format(out.get_res_json()), MODULE_CONTEXT)
-                    return out.get_res_json(), 202
+                    response = {"requestId": key}
+                    return jsonify(response), 202
                 else:
                     log_info("Write to redis FAILED!", MODULE_CONTEXT)
-                    out = CustomResponse(Status.SYSTEM_ERR.value, {"requestId": key})
+                    out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
                     return out.get_res_json(), 500
             except Exception as e:
                 status = Status.SYSTEM_ERR.value
@@ -281,12 +274,9 @@ class TranslationDummy(Resource):
         api_input = request.get_json(force=True)
         try:
             write_endpoint = f'http://localhost:5001/aai4b-nmt-inference/v0/{config.model_to_load}/translate/async'
-            log_info("Calling translate/sync....", MODULE_CONTEXT)
             response = call_api(write_endpoint, api_input, "userId")
-            log_info("sync response received!", MODULE_CONTEXT)
             if response:
-                log_info(f'WRITE RESPONSE: {response}', MODULE_CONTEXT)
-                request_id = response['data']["requestId"]
+                request_id = response["requestId"]
                 read_endpoint = f'http://localhost:5001/aai4b-nmt-inference/v0/{config.model_to_load}/search-translation'
                 body = {"requestId": request_id}
                 final_response = None
@@ -294,12 +284,10 @@ class TranslationDummy(Resource):
                 while not final_response:
                     response = call_api(read_endpoint, body, "userId")
                     if response:
-                        if "status" not in response["data"].keys():
-                            log_info(f'FINAL READ RESPONSE: {response}', MODULE_CONTEXT)
+                        if "status" not in response.keys():
                             final_response = response
                     count += 1
                     time.sleep(0.5)
-                log_info(f"No of polls at rate of 1req per 500ms done to get translation: {count}", MODULE_CONTEXT)
                 out = CustomResponse(Status.SUCCESS.value, final_response)
                 return out.get_res_json(), 200
             else:

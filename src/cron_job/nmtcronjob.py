@@ -22,11 +22,8 @@ class NMTcronjob(Thread):
             log_info("Cron Executing.....", MODULE_CONTEXT)
             redis_data = []
             try:
-                log_info("Fetching KEYS from REDIS.....", MODULE_CONTEXT)
                 key_list = redisclient.get_all_keys()
-                log_info("KEYS fetched", MODULE_CONTEXT)
                 if key_list:
-                    log_info("Fetching VALUES from REDIS.....", MODULE_CONTEXT)
                     for rd_key in key_list:
                         value = redisclient.search_redis(rd_key)
                         if value:
@@ -34,7 +31,6 @@ class NMTcronjob(Thread):
                             if 'translation_status' not in value:
                                 db_key = str(rd_key.decode('utf-8'))
                                 redis_data.append((db_key, value))
-                    log_info("VALUES fetched", MODULE_CONTEXT)
                 if redis_data:
                     log_info(f'Total Size of Redis Fetch: {len(redis_data)}', MODULE_CONTEXT)
                     db_df = self.create_dataframe(redis_data)

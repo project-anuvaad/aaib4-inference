@@ -20,8 +20,11 @@ class NMTcronjob(Thread):
     # Cron JOB to fetch status of each record and push it to CH and WFM on completion/failure.
     def run(self):
         run = 0
+        log_info("Getting redis instance.....", MODULE_CONTEXT)
         redis_client = get_redis_instance()
-        while not self.stopped.wait(nmt_cron_interval_ms):
+        log_info("Redis instance created.....", MODULE_CONTEXT)
+        # print(nmt_cron_interval_ms)
+        while not self.stopped.wait(0.5):
             try:
                 log_info("CRON EXECUTING.....", MODULE_CONTEXT)
                 redis_data = []
@@ -111,7 +114,8 @@ class NMTcronjob(Thread):
             # chk = self.check_schema_ULCA(value)
             value_language = value.get('config')['language']
             chk = [value, True, value.get('input')[0]['source'], value.get('config')['modelId'],
-                   value_language['sourceLanguage'], value_language['targetLanguage'], key]
+                        value_language['sourceLanguage'], value_language['targetLanguage']]
+            chk.append(key)
             json_df.loc[len(json_df)] = chk
         json_df = json_df.astype({'sentence': str, 'db_key': str, 'src_language': str, 'tgt_language': str},
                                  errors='ignore')

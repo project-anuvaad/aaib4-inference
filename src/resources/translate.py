@@ -288,8 +288,7 @@ class TranslationDummy(Resource):
                             final_response = response
                     count += 1
                     time.sleep(0.5)
-                out = CustomResponse(Status.SUCCESS.value, final_response)
-                return out.get_res_json(), 200
+                return jsonify(final_response), 200
             else:
                 log_exception("Something went wrong", MODULE_CONTEXT, None)
                 out = CustomResponse(Status.SYSTEM_ERR.value, api_input)

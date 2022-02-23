@@ -233,17 +233,8 @@ class NMTTranslateResource_async():
         pass
 
     def async_call(self, inputs):
-        '''
-        Async ULCA call
-        '''
         model_id, src_lang, tgt_lang, src_list = inputs
-        translation_batch = {}
-        try:  
-            log_info("Making API call for ULCA endpoint",MODULE_CONTEXT)
-            log_info("inputs---{}".format(inputs),MODULE_CONTEXT)
-            if len(src_list) > translation_batch_limit:
-                raise Exception(f"Number of sentences per request exceeded the limit of: {translation_batch_limit} sentences per batch")
-            
+        try:
             if model_id == 144:                   
                 translation_batch = {'id':model_id,'src_lang':src_lang,
                                     'tgt_lang':tgt_lang,'src_list': src_list}
@@ -251,14 +242,12 @@ class NMTTranslateResource_async():
             else:
                 translation_batch = {'id':model_id,'src_list': src_list}
                 output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
-            final_output = {"tgt_list":output_batch['tgt_list']}
-            log_info("Final output from ULCA async API: {}".format(final_output),MODULE_CONTEXT)  
-            return final_output     
+            final_output = {"tgt_list": output_batch['tgt_list']}
+            return final_output
         except Exception as e:
             status = Status.SYSTEM_ERR.value
             status['message'] = str(e)
             log_exception("Exception caught in  ULCA async-call for batch translation child block: {}".format(e),MODULE_CONTEXT,e) 
-            # out = CustomResponse(status, inputs)
             return {"error": status}
 
 

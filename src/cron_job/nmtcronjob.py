@@ -20,13 +20,10 @@ class NMTcronjob(Thread):
     # Cron JOB to fetch status of each record and push it to CH and WFM on completion/failure.
     def run(self):
         run = 0
-        log_info("Getting redis instance.....", MODULE_CONTEXT)
         redis_client = get_redis_instance()
-        log_info("Redis instance created.....", MODULE_CONTEXT)
-        # print(nmt_cron_interval_ms)
-        while not self.stopped.wait(0.5):
+        while not self.stopped.wait(nmt_cron_interval_ms):
             try:
-                log_info("CRON EXECUTING.....", MODULE_CONTEXT)
+                log_info("Cron Executing.....", MODULE_CONTEXT)
                 redis_data = []
                 key_list = redis_client.keys()
                 if key_list:
@@ -56,32 +53,37 @@ class NMTcronjob(Thread):
                         sub_modelid = int(gb_key[0])
                         sub_src = str(gb_key[1])
                         sub_tgt = str(gb_key[2])
-
                         for i in range(0, sub_df.shape[0], translation_batch_limit):
                             sent_list = sub_df.iloc[i:i + translation_batch_limit].sentence.values.tolist()
                             db_key_list = sub_df.iloc[i:i + translation_batch_limit].db_key.values.tolist()
                             nmt_translator = NMTTranslateResource_async()
                             output = nmt_translator.async_call((sub_modelid, sub_src, sub_tgt, sent_list))
-                            sample_json = sub_df.iloc[0].input
-
-                            if 'tgt_list' in output:
-                                for i, tgt_sent in enumerate(output['tgt_list']):
-                                    sg_out = [{"source": sent_list[i], "target": tgt_sent}]
-                                    sg_config = sample_json['config']
-                                    final_output = {'config': sg_config, 'output': sg_out, 'translation_status': "Done"}
-                                    log_info(
-                                        "Final output from Async call for ULCA batch translation pushed on redis for a "
-                                        "request : {}".format(
-                                            final_output), MODULE_CONTEXT)
-                                    upsert(str(db_key_list[i]), final_output, True)
-                            elif 'error' in output:
-                                for i, _ in enumerate(sent_list):
-                                    final_output = output['error']
-                                    final_output['translation_status'] = 'Done'
-                                    upsert(str(db_key_list[i]), final_output, True)
-                    run += 1
-                    log_info("Async NMT Batch Translation Cron-job" + " -- Run: " + str(run) + " | Cornjob Completed",
-                             MODULE_CONTEXT)
+                            if output:
+                                sample_json = sub_df.iloc[0].input
+                                if 'tgt_list' in output:
+                                    for i, tgt_sent in enumerate(output['tgt_list']):
+                                        sg_out = [{"source": sent_list[i], "target": tgt_sent}]
+                                        sg_config = sample_json['config']
+                                        final_output = {'config': sg_config, 'output': sg_out, 'translation_status': "Done"}
+                                        log_info(f'KEY: {str(db_key_list[i])}', MODULE_CONTEXT)
+                                        log_info(f'VALUE: {final_output}', MODULE_CONTEXT)
+                                        upsert(str(db_key_list[i]), final_output, True)
+                                elif 'error' in output:
+                                    for i, _ in enumerate(sent_list):
+                                        final_output = output['error']
+                                        final_output['translation_status'] = 'Done'
+                                        log_info(f'KEY: {str(db_key_list[i])}', MODULE_CONTEXT)
+                                        log_info(f'VALUE: {final_output}', MODULE_CONTEXT)
+                                        upsert(str(db_key_list[i]), final_output, True)
+                                run += 1
+                                log_info("Async NMT Batch Translation Cron-job" + " -- Run: " + str(
+                                    run) + " | Cornjob Completed",
+                                         MODULE_CONTEXT)
+                            else:
+                                run += 1
+                                log_info("Async NMT Batch Translation Cron-job | TRANSLATION FAILED" + " -- Run: " + str(
+                                    run) + " | Cornjob Completed",
+                                         MODULE_CONTEXT)
                 else:
                     run += 1
                     log_info("No Requests available in REDIS --- Run: {} | Cornjob Completed".format(run),
@@ -114,8 +116,7 @@ class NMTcronjob(Thread):
             # chk = self.check_schema_ULCA(value)
             value_language = value.get('config')['language']
             chk = [value, True, value.get('input')[0]['source'], value.get('config')['modelId'],
-                        value_language['sourceLanguage'], value_language['targetLanguage']]
-            chk.append(key)
+                   value_language['sourceLanguage'], value_language['targetLanguage'], key]
             json_df.loc[len(json_df)] = chk
         json_df = json_df.astype({'sentence': str, 'db_key': str, 'src_language': str, 'tgt_language': str},
                                  errors='ignore')

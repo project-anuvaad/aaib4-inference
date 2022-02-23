@@ -281,21 +281,25 @@ class TranslationDummy(Resource):
         api_input = request.get_json(force=True)
         try:
             write_endpoint = f'http://localhost:5001/aai4b-nmt-inference/v0/{config.model_to_load}/translate/async'
+            log_info("Calling translate/sync....", MODULE_CONTEXT)
             response = call_api(write_endpoint, api_input, "userId")
+            log_info("sync response received!", MODULE_CONTEXT)
             if response:
                 log_info(f'WRITE RESPONSE: {response}', MODULE_CONTEXT)
                 request_id = response['data']["requestId"]
                 read_endpoint = f'http://localhost:5001/aai4b-nmt-inference/v0/{config.model_to_load}/search-translation'
                 body = {"requestId": request_id}
                 final_response = None
+                count = 0
                 while not final_response:
                     response = call_api(read_endpoint, body, "userId")
                     if response:
-                        log_info(f'READ RESPONSE: {response}', MODULE_CONTEXT)
                         if "status" not in response["data"].keys():
                             log_info(f'FINAL READ RESPONSE: {response}', MODULE_CONTEXT)
                             final_response = response
-                    time.sleep(0.1)
+                    count += 1
+                    time.sleep(0.5)
+                log_info(f"No of polls at rate of 1req per 500ms done to get translation: {count}", MODULE_CONTEXT)
                 out = CustomResponse(Status.SUCCESS.value, final_response)
                 return out.get_res_json(), 200
             else:

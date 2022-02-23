@@ -63,7 +63,7 @@ class NMTcronjob(Thread):
 
                             if 'tgt_list' in output:
                                 for i, tgt_sent in enumerate(output['tgt_list']):
-                                    sg_out = [{"source": sent_list[i], "target": tgt_sent[i]}]
+                                    sg_out = [{"source": sent_list[i], "target": tgt_sent}]
                                     sg_config = sample_json['config']
                                     final_output = {'config': sg_config, 'output': sg_out, 'translation_status': "Done"}
                                     log_info(

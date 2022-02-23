@@ -11,16 +11,16 @@ from config import supported_languages
 from html import escape
 import uuid
 import redis
+from repository import RedisRepo
 
-from config import  redis_server_host, redis_server_port, redis_server_pass, redis_db,record_expiry_in_sec
-
-redis_client_datasets = None
+redisclient = RedisRepo()
 
 class  NMTTranslateRedisReadResource(Resource):
     def get(self, request_id):
         try:
+            
             key = request_id
-            response = search_redis(key)
+            response = redisclient.search_redis(key)
             if response:
                 log_info("Value obtained for the key : {}".format(key), MODULE_CONTEXT)
                 response = response[0]
@@ -54,7 +54,7 @@ class NMTTranslateRedisWriteResource(Resource):
                 log_info("input --- {}".format(api_input), MODULE_CONTEXT)
                 key = str(uuid.uuid4())
                 api_input["requestId"] = key
-                status = upsert(key, api_input, True)
+                status = redisclient.upsert(key, api_input, True)
                 if status:
                     out = CustomResponse(Status.SUCCESS.value, {"requestId": key})
                     log_info("Final output of Redis Write | {}".format(out.get_res_json()), MODULE_CONTEXT)
@@ -285,42 +285,3 @@ def ulca_translate_kernel(model_id,language,src_list):
 
     return output_batch
 
-
-def redis_instantiate():
-    global redis_client_datasets
-    redis_client_datasets = redis.Redis(host=redis_server_host, port=redis_server_port, db=redis_db,
-                                        password=redis_server_pass)
-    return redis_client_datasets
-
-
-def get_redis_instance():
-    global redis_client_datasets
-    if not redis_client_datasets:
-        return redis_instantiate()
-    else:
-        return redis_client_datasets
-
-
-def upsert(key, value, expiry):
-    try:
-        client = get_redis_instance()
-        if expiry:
-            client.set(key, json.dumps(value), ex=record_expiry_in_sec)
-        else:
-            client.set(key, json.dumps(value))
-        return True
-    except Exception as e:
-        log_exception(f'Exception in redis upsert: {e}', MODULE_CONTEXT, e)
-        return None
-
-def search_redis(key):
-    try:
-        client = get_redis_instance()
-        result = []
-        val = client.get(key)
-        if val:
-            result.append(json.loads(val))
-        return result
-    except Exception as e:
-        log_exception(f'Exception in redis search: {e}', MODULE_CONTEXT, e)
-        return None

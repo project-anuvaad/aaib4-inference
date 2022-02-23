@@ -62,7 +62,7 @@ class NMTcronjob(Thread):
                             sample_json = sub_df.iloc[0].input
 
                             if 'tgt_list' in output:
-                                for i, tgt_sent in enumerate(output):
+                                for i, tgt_sent in enumerate(output['tgt_list']):
                                     sg_out = [{"source": sent_list[i], "target": tgt_sent[i]}]
                                     sg_config = sample_json['config']
                                     final_output = {'config': sg_config, 'output': sg_out, 'translation_status': "Done"}
@@ -70,12 +70,12 @@ class NMTcronjob(Thread):
                                         "Final output from Async call for ULCA batch translation pushed on redis for a "
                                         "request : {}".format(
                                             final_output), MODULE_CONTEXT)
-                                    upsert(db_key_list[i], final_output, True)
+                                    upsert(str(db_key_list[i]), final_output, True)
                             elif 'error' in output:
                                 for i, _ in enumerate(sent_list):
                                     final_output = output['error']
                                     final_output['translation_status'] = 'Done'
-                                    upsert(db_key_list[i], final_output, True)
+                                    upsert(str(db_key_list[i]), final_output, True)
                     run += 1
                     log_info("Async NMT Batch Translation Cron-job" + " -- Run: " + str(run) + " | Cornjob Completed",
                              MODULE_CONTEXT)

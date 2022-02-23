@@ -277,15 +277,15 @@ class NMTTranslateResource_async():
 
 
 class TranslationDummy(Resource):
-    def translation(self):
+    def post(self):
         api_input = request.get_json(force=True)
         try:
             write_endpoint = f'http://localhost:5001/aai4b-nmt-inference/v0/{config.model_to_load}/translate/async'
             response = call_api(write_endpoint, api_input, "userId")
             if response:
                 log_info(f'WRITE RESPONSE: {response}', MODULE_CONTEXT)
-                request_id = response["requestId"]
-                read_endpoint = f'http://localhost:5001/aai4b-nmt-inference/v0/{config.model_to_load}/search_translation'
+                request_id = response['data']["requestId"]
+                read_endpoint = f'http://localhost:5001/aai4b-nmt-inference/v0/{config.model_to_load}/search-translation'
                 body = {"requestId": request_id}
                 final_response = None
                 while not final_response:

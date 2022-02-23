@@ -107,7 +107,10 @@ class NMTcronjob(Thread):
         json_df = pd.DataFrame(
             columns=['input', 'schema', 'sentence', 'modelid', 'src_language', 'tgt_language', 'db_key'])
         for key, value in redis_data:
-            chk = self.check_schema_ULCA(value)
+            # chk = self.check_schema_ULCA(value)
+            value_language = value.get('config')['language']
+            chk = [value, True, value.get('input')[0]['source'], value.get('config')['modelId'],
+                        value_language['sourceLanguage'], value_language['targetLanguage']]
             chk.append(key)
             json_df.loc[len(json_df)] = chk
         json_df = json_df.astype({'sentence': str, 'db_key': str, 'src_language': str, 'tgt_language': str},

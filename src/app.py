@@ -4,6 +4,7 @@ from flask_cors import CORS
 from anuvaad_auditor.loghandler import log_info
 import routes
 import config
+import cron_job
 from utilities import MODULE_CONTEXT
 import threading
 from kafka_wrapper import KafkaTranslate

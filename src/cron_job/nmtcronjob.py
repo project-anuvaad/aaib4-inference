@@ -52,7 +52,9 @@ class NMTcronjob(Thread):
                             sent_list = sub_df.iloc[i:i + translation_batch_limit].sentence.values.tolist()
                             db_key_list = sub_df.iloc[i:i + translation_batch_limit].db_key.values.tolist()
                             nmt_translator = NMTTranslateResource_async()
+                            log_info("Translation started.....", MODULE_CONTEXT)
                             output = nmt_translator.async_call((sub_modelid, sub_src, sub_tgt, sent_list))
+                            log_info("Translation COMPLETE!", MODULE_CONTEXT)
                             op_dict = {}
                             if output:
                                 sample_json = sub_df.iloc[0].input
@@ -63,16 +65,14 @@ class NMTcronjob(Thread):
                                         final_output = {'config': sg_config, 'output': sg_out,
                                                         'translation_status': "Done"}
                                         op_dict[db_key_list[i]] = final_output
-                                        #redisclient.upsert_redis(db_key_list[i], final_output, True)
                                 elif 'error' in output:
                                     for i, _ in enumerate(sent_list):
                                         final_output = output['error']
                                         final_output['translation_status'] = 'Done'
                                         op_dict[db_key_list[i]] = final_output
-                                        #redisclient.upsert_redis(db_key_list[i], final_output, True)
-                                log_info("BULK UPSERT REDIS INITIATED....", MODULE_CONTEXT)
+                                log_info("Bulk upsert Redis INITIATED....", MODULE_CONTEXT)
                                 redisclient.bulk_upsert_redis(op_dict)
-                                log_info("BULK UPSERT REDIS COMPLETED....", MODULE_CONTEXT)
+                                log_info("Bulk upsert Redis COMPLETED....", MODULE_CONTEXT)
                                 counter += 1
                     run += 1
                     log_info("Async NMT Batch Translation Cron-job" + " -- Run: " + str(

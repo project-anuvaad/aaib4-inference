@@ -30,7 +30,7 @@ class RedisRepo:
             client = self.get_redis_instance()
             pipe = client.pipeline()
             for i in ip_dict.keys():
-                pipe.set(i, ip_dict[i])
+                pipe.set(i, json.dumps(ip_dict[i]))
             pipe.execute()
             return True
         except Exception as e:

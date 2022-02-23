@@ -4,12 +4,10 @@ from config import translation_batch_limit
 from resources import NMTTranslateResource_async
 from utilities import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception
-import json
 import pandas as pd
-import redis
-from config import redis_server_host, redis_server_port, redis_server_pass, redis_db, record_expiry_in_sec
+from repository import RedisRepo
 
-redis_client_datasets = None
+redisclient = RedisRepo()
 
 
 class NMTcronjob(Thread):
@@ -20,15 +18,14 @@ class NMTcronjob(Thread):
     # Cron JOB to fetch status of each record and push it to CH and WFM on completion/failure.
     def run(self):
         run = 0
-        redis_client = get_redis_instance()
         while not self.stopped.wait(nmt_cron_interval_ms):
             try:
                 log_info("Cron Executing.....", MODULE_CONTEXT)
                 redis_data = []
-                key_list = redis_client.keys()
+                key_list = redisclient.get_all_keys()
                 if key_list:
                     for rd_key in key_list:
-                        value = json.loads(redis_client.get(rd_key))
+                        value = redisclient.search_redis(rd_key)[0]
                         if 'translation_status' not in value:
                             redis_data.append((rd_key, value))
                 if redis_data:
@@ -64,26 +61,28 @@ class NMTcronjob(Thread):
                                     for i, tgt_sent in enumerate(output['tgt_list']):
                                         sg_out = [{"source": sent_list[i], "target": tgt_sent}]
                                         sg_config = sample_json['config']
-                                        final_output = {'config': sg_config, 'output': sg_out, 'translation_status': "Done"}
+                                        final_output = {'config': sg_config, 'output': sg_out,
+                                                        'translation_status': "Done"}
                                         log_info(f'KEY: {str(db_key_list[i])}', MODULE_CONTEXT)
                                         log_info(f'VALUE: {final_output}', MODULE_CONTEXT)
-                                        upsert(str(db_key_list[i]), final_output, True)
+                                        redisclient.upsert_redis(str(db_key_list[i]), final_output, True)
                                 elif 'error' in output:
                                     for i, _ in enumerate(sent_list):
                                         final_output = output['error']
                                         final_output['translation_status'] = 'Done'
                                         log_info(f'KEY: {str(db_key_list[i])}', MODULE_CONTEXT)
                                         log_info(f'VALUE: {final_output}', MODULE_CONTEXT)
-                                        upsert(str(db_key_list[i]), final_output, True)
+                                        redisclient.upsert_redis(str(db_key_list[i]), final_output, True)
                                 run += 1
                                 log_info("Async NMT Batch Translation Cron-job" + " -- Run: " + str(
                                     run) + " | Cornjob Completed",
                                          MODULE_CONTEXT)
                             else:
                                 run += 1
-                                log_info("Async NMT Batch Translation Cron-job | TRANSLATION FAILED" + " -- Run: " + str(
-                                    run) + " | Cornjob Completed",
-                                         MODULE_CONTEXT)
+                                log_info(
+                                    "Async NMT Batch Translation Cron-job | TRANSLATION FAILED" + " -- Run: " + str(
+                                        run) + " | Cornjob Completed",
+                                    MODULE_CONTEXT)
                 else:
                     run += 1
                     log_info("No Requests available in REDIS --- Run: {} | Cornjob Completed".format(run),
@@ -121,44 +120,3 @@ class NMTcronjob(Thread):
         json_df = json_df.astype({'sentence': str, 'db_key': str, 'src_language': str, 'tgt_language': str},
                                  errors='ignore')
         return json_df
-
-
-def redis_instantiate():
-    global redis_client_datasets
-    redis_client_datasets = redis.Redis(host=redis_server_host, port=redis_server_port, db=redis_db,
-                                        password=redis_server_pass)
-    return redis_client_datasets
-
-
-def get_redis_instance():
-    global redis_client_datasets
-    if not redis_client_datasets:
-        return redis_instantiate()
-    else:
-        return redis_client_datasets
-
-
-def upsert(key, value, expiry):
-    try:
-        client = get_redis_instance()
-        if expiry:
-            client.set(key, json.dumps(value), ex=record_expiry_in_sec)
-        else:
-            client.set(key, json.dumps(value))
-        return True
-    except Exception as e:
-        log_exception(f'Exception in redis upsert: {e}', MODULE_CONTEXT, e)
-        return None
-
-
-def search_redis(key):
-    try:
-        client = get_redis_instance()
-        result = []
-        val = client.get(key)
-        if val:
-            result.append(json.loads(val))
-        return result
-    except Exception as e:
-        log_exception(f'Exception in redis search: {e}', MODULE_CONTEXT, e)
-        return None

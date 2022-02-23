@@ -3,9 +3,10 @@ from anuvaad_auditor.loghandler import log_info, log_exception
 from utilities import MODULE_CONTEXT
 import json
 
+from config import redis_server_host, redis_server_port, redis_server_pass, redis_db, record_expiry_in_sec
 
-from config import  redis_server_host, redis_server_port, redis_server_pass, redis_db,record_expiry_in_sec
 redis_client_datasets = None
+
 
 class RedisRepo:
     def __init__(self):
@@ -17,7 +18,6 @@ class RedisRepo:
                                             password=redis_server_pass)
         return redis_client_datasets
 
-
     def get_redis_instance(self):
         global redis_client_datasets
         if not redis_client_datasets:
@@ -25,8 +25,7 @@ class RedisRepo:
         else:
             return redis_client_datasets
 
-
-    def upsert(self, key, value, expiry):
+    def upsert_redis(self, key, value, expiry):
         try:
             client = self.get_redis_instance()
             if expiry:
@@ -48,4 +47,12 @@ class RedisRepo:
             return result
         except Exception as e:
             log_exception(f'Exception in redis search: {e}', MODULE_CONTEXT, e)
+            return None
+
+    def get_all_keys(self):
+        try:
+            client = self.get_redis_instance()
+            return client.keys()
+        except Exception as e:
+            log_exception(f'Exception in redis get all keys: {e}', MODULE_CONTEXT, e)
             return None

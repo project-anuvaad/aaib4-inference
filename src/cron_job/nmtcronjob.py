@@ -11,6 +11,7 @@ from config import redis_server_host, redis_server_port, redis_server_pass, redi
 
 redis_client_datasets = None
 
+
 class NMTcronjob(Thread):
     def __init__(self, event):
         Thread.__init__(self)

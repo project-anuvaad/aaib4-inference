@@ -12,7 +12,7 @@ from html import escape
 import uuid
 import redis
 
-from config.config import  redis_server_host, redis_server_port, redis_server_pass, redis_db,record_expiry_in_sec
+from config import  redis_server_host, redis_server_port, redis_server_pass, redis_db,record_expiry_in_sec
 
 redis_client_datasets = None
 

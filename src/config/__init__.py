@@ -28,4 +28,22 @@ translation_batch_limit = os.environ.get('TRANSLATION_BATCH_LIMIT', 75)
 supported_languages = ['en','hi','ta','te','kn','pa','mr','as','or','ml','gu','bn']
 
 ## loaded model ('indic-en' OR 'en-indic' OR 'indic-indic')
-model_to_load = os.environ.get('MODEL_NAME', '') # loads all three models 
+model_to_load = os.environ.get('MODEL_NAME', 'indic-indic') # loads all three models 
+
+redis_server_host = os.environ.get('REDIS_URL', 'localhost')
+redis_server_pass = os.environ.get('REDIS_PASS', 'mypassword')
+redis_server_port = os.environ.get('REDIS_PORT', 6380)
+if isinstance(redis_server_port, str):
+    redis_server_port = eval(redis_server_port)
+
+redis_db = os.environ.get('TRANSLATION_REDIS_DB', 0)
+if isinstance(redis_db, str):
+    redis_db = eval(redis_db)
+
+record_expiry_in_sec = os.environ.get('TRANSLATION_REDIS_EXPIRY', 86400)
+if isinstance(record_expiry_in_sec, str):
+    record_expiry_in_sec = eval(record_expiry_in_sec)
+
+nmt_cron_interval_ms = os.environ.get('NMT_CRON_INTERVAL_MS', 500)
+if isinstance(nmt_cron_interval_ms, str):
+    nmt_cron_interval_ms = eval(nmt_cron_interval_ms)

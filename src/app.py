@@ -4,7 +4,7 @@ from flask_cors import CORS
 from anuvaad_auditor.loghandler import log_info
 import routes
 import config
-import cron_job
+from cron_job import NMTcronjob
 from utilities import MODULE_CONTEXT
 import threading
 from kafka_wrapper import KafkaTranslate
@@ -29,4 +29,6 @@ for blueprint in vars(routes).values():
 
 if __name__ == "__main__":
     log_info('starting server at {} at port {}'.format(config.HOST, config.PORT), MODULE_CONTEXT)
+    wfm_jm_thread = NMTcronjob(threading.Event())
+    wfm_jm_thread.start()
     nmt_app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)

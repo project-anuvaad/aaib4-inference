@@ -1,13 +1,13 @@
 from threading import Thread
-from config.config import nmt_cron_interval_ms
+from config import nmt_cron_interval_ms
 from config import translation_batch_limit
-from resource import NMTTranslateResource_async
+from resources import NMTTranslateResource_async
 from utilities import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception
 import json
 import pandas as pd
 import redis
-from config.config import redis_server_host, redis_server_port, redis_server_pass, redis_db, record_expiry_in_sec
+from config import redis_server_host, redis_server_port, redis_server_pass, redis_db, record_expiry_in_sec
 
 redis_client_datasets = None
 
@@ -19,8 +19,11 @@ class NMTcronjob(Thread):
     # Cron JOB to fetch status of each record and push it to CH and WFM on completion/failure.
     def run(self):
         run = 0
+        log_info("Getting redis instance.....", MODULE_CONTEXT)
         redis_client = get_redis_instance()
-        while not self.stopped.wait(nmt_cron_interval_ms):
+        log_info("Redis instance created.....", MODULE_CONTEXT)
+        # print(nmt_cron_interval_ms)
+        while not self.stopped.wait(1):
             try:
                 log_info("CRON EXECUTING.....", MODULE_CONTEXT)
                 redis_data = []

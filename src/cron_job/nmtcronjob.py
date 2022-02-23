@@ -34,6 +34,7 @@ class NMTcronjob(Thread):
                 if redis_data:
                     log_info(f'Total Size of Redis Fetch: {len(redis_data)}', MODULE_CONTEXT)
                     db_df = self.create_dataframe(redis_data)
+                    sample_json = redis_data[0][-1]
                     del redis_data
                     # Creating groups based on modelid,src,tgt lauage
                     df_group = db_df.groupby(by=['modelid', 'src_language', 'tgt_language'])
@@ -53,7 +54,7 @@ class NMTcronjob(Thread):
                             log_info("Translation COMPLETE!", MODULE_CONTEXT)
                             op_dict = {}
                             if output:
-                                sample_json = sub_df.iloc[0].input
+                                # sample_json = sub_df.iloc[0].input
                                 if 'tgt_list' in output:
                                     for i, tgt_sent in enumerate(output['tgt_list']):
                                         sg_out = [{"source": sent_list[i], "target": tgt_sent}]
@@ -100,14 +101,22 @@ class NMTcronjob(Thread):
     def create_dataframe(self, redis_data):
         """Create and return dataframe from response of check_schema_ULCA function + redis_db key"""
 
-        json_df = pd.DataFrame(
-            columns=['input', 'schema', 'sentence', 'modelid', 'src_language', 'tgt_language', 'db_key'])
-        for key, value in redis_data:
-            # chk = self.check_schema_ULCA(value)
-            value_language = value.get('config')['language']
-            chk = [value, True, value.get('input')[0]['source'], value.get('config')['modelId'],
-                   value_language['sourceLanguage'], value_language['targetLanguage'], key]
-            json_df.loc[len(json_df)] = chk
-        json_df = json_df.astype({'sentence': str, 'db_key': str, 'src_language': str, 'tgt_language': str},
+        # json_df = pd.DataFrame(
+        #     columns=['input', 'schema', 'sentence', 'modelid', 'src_language', 'tgt_language', 'db_key'])
+        db_key_list , input_dict_list = zip(*redis_data)
+        db_key_list = list(db_key_list)
+        input_dict_list = list(input_dict_list)
+        json_df = pd.json_normalize(input_dict_list, sep = '_')
+        json_df['input'] = json_df['input'].apply(lambda x:x[0]['source'])
+        json_df['db_key'] = db_key_list
+        json_df.columns = ['sentence', 'modelid', 'src_language', 'tgt_language', 'db_key']
+
+        # for key, value in redis_data:
+        #     # chk = self.check_schema_ULCA(value)
+        #     value_language = value.get('config')['language']
+        #     chk = [value, True, value.get('input')[0]['source'], value.get('config')['modelId'],
+        #            value_language['sourceLanguage'], value_language['targetLanguage'], key]
+        #     json_df.loc[len(json_df)] = chk
+        json_df = json_df.astype({'sentence': str, 'src_language': str, 'tgt_language': str, 'db_key': str},
                                  errors='ignore')
         return json_df

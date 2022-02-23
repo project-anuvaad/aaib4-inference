@@ -19,15 +19,18 @@ class NMTcronjob(Thread):
     def run(self):
         run = 0
         while not self.stopped.wait(nmt_cron_interval_ms):
+            log_info("Cron Executing.....", MODULE_CONTEXT)
+            redis_data = []
             try:
-                log_info("Cron Executing.....", MODULE_CONTEXT)
-                redis_data = []
                 key_list = redisclient.get_all_keys()
                 if key_list:
                     for rd_key in key_list:
-                        value = redisclient.search_redis(rd_key)[0]
-                        if 'translation_status' not in value:
-                            redis_data.append((rd_key, value))
+                        value = redisclient.search_redis(rd_key)
+                        if value:
+                            value = value[0]
+                            if 'translation_status' not in value:
+                                db_key = str(rd_key.decode('utf-8'))
+                                redis_data.append((db_key, value))
                 if redis_data:
                     db_df = self.create_dataframe(redis_data)
                     del redis_data
@@ -57,19 +60,18 @@ class NMTcronjob(Thread):
                             output = nmt_translator.async_call((sub_modelid, sub_src, sub_tgt, sent_list))
                             if output:
                                 sample_json = sub_df.iloc[0].input
-                                key = str(db_key_list[i].decode('utf-8'))
                                 if 'tgt_list' in output:
                                     for i, tgt_sent in enumerate(output['tgt_list']):
                                         sg_out = [{"source": sent_list[i], "target": tgt_sent}]
                                         sg_config = sample_json['config']
                                         final_output = {'config': sg_config, 'output': sg_out,
                                                         'translation_status': "Done"}
-                                        redisclient.upsert_redis(key, final_output, True)
+                                        redisclient.upsert_redis(db_key_list[i], final_output, True)
                                 elif 'error' in output:
                                     for i, _ in enumerate(sent_list):
                                         final_output = output['error']
                                         final_output['translation_status'] = 'Done'
-                                        redisclient.upsert_redis(str(db_key_list[i]), final_output, True)
+                                        redisclient.upsert_redis(db_key_list[i], final_output, True)
                                 run += 1
                                 log_info("Async NMT Batch Translation Cron-job" + " -- Run: " + str(
                                     run) + " | Cornjob Completed",

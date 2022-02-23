@@ -25,6 +25,18 @@ class RedisRepo:
         else:
             return redis_client_datasets
 
+    def bulk_upsert_redis(self, ip_dict):
+        try:
+            client = self.get_redis_instance()
+            pipe = client.pipeline()
+            for i in ip_dict.keys():
+                pipe.set(i, ip_dict[i])
+            pipe.execute()
+            return True
+        except Exception as e:
+            log_exception(f'Exception in bulk redis upsert: {e}', MODULE_CONTEXT, e)
+            return None
+
     def upsert_redis(self, key, value, expiry):
         try:
             client = self.get_redis_instance()

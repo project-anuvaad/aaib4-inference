@@ -22,8 +22,11 @@ class NMTcronjob(Thread):
             log_info("Cron Executing.....", MODULE_CONTEXT)
             redis_data = []
             try:
+                log_info("Fetching KEYS from REDIS.....", MODULE_CONTEXT)
                 key_list = redisclient.get_all_keys()
+                log_info("KEYS fetched", MODULE_CONTEXT)
                 if key_list:
+                    log_info("Fetching VALUES from REDIS.....", MODULE_CONTEXT)
                     for rd_key in key_list:
                         value = redisclient.search_redis(rd_key)
                         if value:
@@ -31,23 +34,15 @@ class NMTcronjob(Thread):
                             if 'translation_status' not in value:
                                 db_key = str(rd_key.decode('utf-8'))
                                 redis_data.append((db_key, value))
+                    log_info("VALUES fetched", MODULE_CONTEXT)
                 if redis_data:
+                    log_info(f'Total Size of Redis Fetch: {len(redis_data)}', MODULE_CONTEXT)
                     db_df = self.create_dataframe(redis_data)
                     del redis_data
-                    '''
-                    #Pushing response for request with wrong schema
-                    for entry_indx in db_df[db_df.schema == False].index:
-                        db_key = db_df.last[entry_indx,'db_key']
-                        log_info("ULCA Async API input missing mandatory data ('input','config,'modelId', 'language')",MODULE_CONTEXT)
-                        status = Status.INVALID_API_REQUEST.value
-                        status['message'] = "Missing mandatory data ('input','config','modelId, 'language')"
-                        status['translation_status'] = "Done"
-                        redis_client.upsert(db_key, status)
-                    # Deleting wrong schema entries from dataframe
-                    db_df.drop(db_df[db_df.schema == False].index, inplace = True)
-                    '''
                     # Creating groups based on modelid,src,tgt lauage
                     df_group = db_df.groupby(by=['modelid', 'src_language', 'tgt_language'])
+                    log_info(f'Total no LANGUAGE PAIRS: {len(df_group.groups.keys())}', MODULE_CONTEXT)
+                    counter = 0
                     for gb_key in df_group.groups.keys():
                         sub_df = df_group.get_group(gb_key)
                         sub_modelid = int(gb_key[0])
@@ -58,6 +53,7 @@ class NMTcronjob(Thread):
                             db_key_list = sub_df.iloc[i:i + translation_batch_limit].db_key.values.tolist()
                             nmt_translator = NMTTranslateResource_async()
                             output = nmt_translator.async_call((sub_modelid, sub_src, sub_tgt, sent_list))
+                            op_dict = {}
                             if output:
                                 sample_json = sub_df.iloc[0].input
                                 if 'tgt_list' in output:
@@ -66,22 +62,22 @@ class NMTcronjob(Thread):
                                         sg_config = sample_json['config']
                                         final_output = {'config': sg_config, 'output': sg_out,
                                                         'translation_status': "Done"}
-                                        redisclient.upsert_redis(db_key_list[i], final_output, True)
+                                        op_dict[db_key_list[i]] = final_output
+                                        #redisclient.upsert_redis(db_key_list[i], final_output, True)
                                 elif 'error' in output:
                                     for i, _ in enumerate(sent_list):
                                         final_output = output['error']
                                         final_output['translation_status'] = 'Done'
-                                        redisclient.upsert_redis(db_key_list[i], final_output, True)
-                                run += 1
-                                log_info("Async NMT Batch Translation Cron-job" + " -- Run: " + str(
-                                    run) + " | Cornjob Completed",
-                                         MODULE_CONTEXT)
-                            else:
-                                run += 1
-                                log_info(
-                                    "Async NMT Batch Translation Cron-job | TRANSLATION FAILED" + " -- Run: " + str(
-                                        run) + " | Cornjob Completed",
-                                    MODULE_CONTEXT)
+                                        op_dict[db_key_list[i]] = final_output
+                                        #redisclient.upsert_redis(db_key_list[i], final_output, True)
+                                log_info("BULK UPSERT REDIS INITIATED....", MODULE_CONTEXT)
+                                redisclient.bulk_upsert_redis(op_dict)
+                                log_info("BULK UPSERT REDIS COMPLETED....", MODULE_CONTEXT)
+                                counter += 1
+                    run += 1
+                    log_info("Async NMT Batch Translation Cron-job" + " -- Run: " + str(
+                                    run) + " | Cornjob Completed", MODULE_CONTEXT)
+                    log_info(f'Total no of BATCHES: {counter}', MODULE_CONTEXT)
                 else:
                     run += 1
                     log_info("No Requests available in REDIS --- Run: {} | Cornjob Completed".format(run),

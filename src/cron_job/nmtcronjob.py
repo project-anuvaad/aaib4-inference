@@ -23,7 +23,7 @@ class NMTcronjob(Thread):
         redis_client = get_redis_instance()
         log_info("Redis instance created.....", MODULE_CONTEXT)
         # print(nmt_cron_interval_ms)
-        while not self.stopped.wait(1):
+        while not self.stopped.wait(0.5):
             try:
                 log_info("CRON EXECUTING.....", MODULE_CONTEXT)
                 redis_data = []

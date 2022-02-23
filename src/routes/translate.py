@@ -3,7 +3,7 @@ from flask_restful import Api
 import config
 
 from resources import NMTTranslateResource, InteractiveMultiTranslateResourceNew, TranslateResourceV1,\
-    TranslateResourcem2m, NMTTranslateRedisWriteResource, NMTTranslateRedisReadResource
+    TranslateResourcem2m, NMTTranslateRedisWriteResource, NMTTranslateRedisReadResource, TranslationDummy
 
 TRANSLATE_BLUEPRINT = Blueprint("translate", __name__)
 
@@ -36,4 +36,8 @@ Api(TRANSLATE_BLUEPRINT).add_resource(
 
 Api(TRANSLATE_BLUEPRINT).add_resource(
     NMTTranslateRedisWriteResource, config.MODULE_NAME + "/v0/" + config.model_to_load + "/translate/async"
+)
+
+Api(TRANSLATE_BLUEPRINT).add_resource(
+    TranslationDummy, config.MODULE_NAME + "/v0/" + config.model_to_load + "/translation/dummy"
 )

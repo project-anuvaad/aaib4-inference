@@ -1,13 +1,18 @@
+import json
+import time
+
+import requests
 from flask_restful import fields, marshal_with, reqparse, Resource
 from flask import request
 from services import FairseqTranslateService, FairseqAutoCompleteTranslateService, FairseqDocumentTranslateService
 from models import CustomResponse, Status
 from utilities import MODULE_CONTEXT
-from anuvaad_auditor.loghandler import log_info, log_exception
+from anuvaad_auditor.loghandler import log_info, log_exception, log_error
 from config import translation_batch_limit
 from config import supported_languages
 from html import escape
 import uuid
+import config
 from repository import RedisRepo
 
 redisclient = RedisRepo()
@@ -271,6 +276,38 @@ class NMTTranslateResource_async():
             return {"error": status}
 
 
+class TranslationDummy(Resource):
+    def translation(self):
+        api_input = request.get_json(force=True)
+        try:
+            write_endpoint = f'http://localhost:5001/aai4b-nmt-inference/v0/{config.model_to_load}/translate/async'
+            response = call_api(write_endpoint, api_input, "userId")
+            if response:
+                log_info(f'WRITE RESPONSE: {response}', MODULE_CONTEXT)
+                request_id = response["requestId"]
+                read_endpoint = f'http://localhost:5001/aai4b-nmt-inference/v0/{config.model_to_load}/search_translation'
+                body = {"requestId": request_id}
+                final_response = None
+                while not final_response:
+                    response = call_api(read_endpoint, body, "userId")
+                    if response:
+                        log_info(f'READ RESPONSE: {response}', MODULE_CONTEXT)
+                        if "status" not in response["data"].keys():
+                            log_info(f'FINAL READ RESPONSE: {response}', MODULE_CONTEXT)
+                            final_response = response
+                    time.sleep(0.1)
+                out = CustomResponse(Status.SUCCESS.value, final_response)
+                return out.get_res_json(), 200
+            else:
+                log_exception("Something went wrong", MODULE_CONTEXT, None)
+                out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
+                return out.get_res_json_data(), 500
+        except Exception as e:
+            log_exception("Something went wrong", MODULE_CONTEXT, e)
+            out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
+            return out.get_res_json_data(), 500
+
+
 def get_model_id(source_language_code, target_language_code):
     if source_language_code and source_language_code == 'en':
         m_id = 103
@@ -306,3 +343,27 @@ def ulca_translate_kernel(model_id, language, src_list):
         output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
 
     return output_batch
+
+
+def call_api(uri, api_input, user_id):
+    try:
+        log_info("URI: " + uri, None)
+        api_headers = {'userid': user_id, 'x-user-id': user_id,
+                       'Content-Type': 'application/json'}
+        response = requests.post(
+            url=uri, json=api_input, headers=api_headers)
+        if response is not None:
+            if response.text is not None:
+                log_info(response.text, None)
+                data = json.loads(response.text)
+                return data
+            else:
+                log_error("API response was None !", api_input, None)
+                return None
+        else:
+            log_error("API call failed!", api_input, None)
+            return None
+    except Exception as e:
+        log_exception(
+            "Exception while making the api call: " + str(e), api_input, e)
+        return None

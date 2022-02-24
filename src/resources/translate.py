@@ -29,14 +29,12 @@ class NMTTranslateRedisReadResource(Resource):
                 if response:
                     response = response[0]
                     if 'translation_status' not in response.keys():
-                        response = {"status": "Translation in progress"}
-                        return jsonify(response), 200
+                        return {"status": "Translation in progress"}, 200
                     else:
                         del response['translation_status']
-                        return jsonify(response), 200
+                        return response, 200
                 else:
-                    response = {"status": "Translation unavailable"}
-                    return jsonify(response), 400
+                    return {"status": "Translation unavailable"}, 400
             except Exception as e:
                 status = Status.SYSTEM_ERR.value
                 status['message'] = str(e)
@@ -63,8 +61,7 @@ class NMTTranslateRedisWriteResource(Resource):
                 api_input["requestId"] = key
                 status = redisclient.upsert_redis(key, api_input, True)
                 if status:
-                    response = {"requestId": key}
-                    return jsonify(response), 202
+                    return {"requestId": key}, 202
                 else:
                     log_info("Write to redis FAILED!", MODULE_CONTEXT)
                     out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
@@ -276,19 +273,24 @@ class TranslationDummy(Resource):
             write_endpoint = f'http://localhost:5001/aai4b-nmt-inference/v0/{config.model_to_load}/translate/async'
             response = call_api(write_endpoint, api_input, "userId")
             if response:
-                request_id = response["requestId"]
-                read_endpoint = f'http://localhost:5001/aai4b-nmt-inference/v0/{config.model_to_load}/search-translation'
-                body = {"requestId": request_id}
-                final_response = None
-                count = 0
-                while not final_response:
-                    response = call_api(read_endpoint, body, "userId")
-                    if response:
-                        if "status" not in response.keys():
-                            final_response = response
-                    count += 1
-                    time.sleep(0.5)
-                return jsonify(final_response), 200
+                if 'requestId' in response.keys():
+                    request_id = response["requestId"]
+                    read_endpoint = f'http://localhost:5001/aai4b-nmt-inference/v0/{config.model_to_load}/search-translation'
+                    body = {"requestId": request_id}
+                    final_response = None
+                    count = 0
+                    while not final_response:
+                        response = call_api(read_endpoint, body, "userId")
+                        if response:
+                            if "status" not in response.keys():
+                                final_response = response
+                        count += 1
+                        time.sleep(0.5)
+                    return jsonify(final_response), 200
+                else:
+                    log_exception("Something went wrong", MODULE_CONTEXT, None)
+                    out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
+                    return out.get_res_json_data(), 500
             else:
                 log_exception("Something went wrong", MODULE_CONTEXT, None)
                 out = CustomResponse(Status.SYSTEM_ERR.value, api_input)

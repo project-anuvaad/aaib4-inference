@@ -10,6 +10,7 @@ from utilities import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception, log_error
 from config import translation_batch_limit
 from config import supported_languages
+from config import nmt_cron_interval_ms
 from html import escape
 import uuid
 import config
@@ -55,8 +56,6 @@ class NMTTranslateRedisWriteResource(Resource):
         if len(api_input) > 0 and all(v in api_input for v in ['input', 'config']) and "modelId" in api_input.get(
                 'config'):
             try:
-                log_info("Making call to redis write operation", MODULE_CONTEXT)
-                log_info("input --- {}".format(api_input), MODULE_CONTEXT)
                 key = str(uuid.uuid4())
                 api_input["requestId"] = key
                 status = redisclient.upsert_redis(key, api_input, True)
@@ -278,14 +277,12 @@ class TranslationDummy(Resource):
                     read_endpoint = f'http://localhost:5001/aai4b-nmt-inference/v0/{config.model_to_load}/search-translation'
                     body = {"requestId": request_id}
                     final_response = None
-                    count = 0
                     while not final_response:
                         response = call_api(read_endpoint, body, "userId")
                         if response:
                             if "status" not in response.keys():
                                 final_response = response
-                        count += 1
-                        time.sleep(0.5)
+                        time.sleep(nmt_cron_interval_ms)
                     return final_response, 200
                 else:
                     log_exception("Something went wrong", MODULE_CONTEXT, None)
@@ -340,14 +337,12 @@ def ulca_translate_kernel(model_id, language, src_list):
 
 def call_api(uri, api_input, user_id):
     try:
-        log_info("URI: " + uri, None)
         api_headers = {'userid': user_id, 'x-user-id': user_id,
                        'Content-Type': 'application/json'}
         response = requests.post(
             url=uri, json=api_input, headers=api_headers)
         if response is not None:
             if response.text is not None:
-                log_info(response.text, None)
                 data = json.loads(response.text)
                 return data
             else:

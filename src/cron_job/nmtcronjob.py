@@ -19,7 +19,7 @@ class NMTcronjob(Thread):
     def run(self):
         run = 0
         while not self.stopped.wait(nmt_cron_interval_ms):
-            log_info("Cron Executing.....", MODULE_CONTEXT)
+            log_info("CRON Cron Executing.....", MODULE_CONTEXT)
             redis_data = []
             try:
                 key_list = redisclient.get_all_keys()
@@ -30,13 +30,13 @@ class NMTcronjob(Thread):
                             if 'translation_status' not in values[rd_key]:
                                 redis_data.append((rd_key, values[rd_key]))
                 if redis_data:
-                    log_info(f'Total Size of Redis Fetch: {len(redis_data)}', MODULE_CONTEXT)
+                    log_info(f'CRON Total Size of Redis Fetch: {len(redis_data)}', MODULE_CONTEXT)
                     db_df = self.create_dataframe(redis_data)
                     sample_json = redis_data[0][-1]
                     del redis_data
                     # Creating groups based on modelid,src,tgt lauage
                     df_group = db_df.groupby(by=['modelid', 'src_language', 'tgt_language'])
-                    log_info(f'Total no Language Pairs: {len(df_group.groups.keys())}', MODULE_CONTEXT)
+                    log_info(f'CRON Total no Language Pairs: {len(df_group.groups.keys())}', MODULE_CONTEXT)
                     counter = 0
                     for gb_key in df_group.groups.keys():
                         sub_df = df_group.get_group(gb_key)
@@ -47,9 +47,9 @@ class NMTcronjob(Thread):
                             sent_list = sub_df.iloc[i:i + translation_batch_limit].sentence.values.tolist()
                             db_key_list = sub_df.iloc[i:i + translation_batch_limit].db_key.values.tolist()
                             nmt_translator = NMTTranslateResource_async()
-                            log_info("Translation started.....", MODULE_CONTEXT)
+                            log_info("CRON Translation started.....", MODULE_CONTEXT)
                             output = nmt_translator.async_call((sub_modelid, sub_src, sub_tgt, sent_list))
-                            log_info("Translation COMPLETE!", MODULE_CONTEXT)
+                            log_info("CRON Translation COMPLETE!", MODULE_CONTEXT)
                             op_dict = {}
                             if output:
                                 # sample_json = sub_df.iloc[0].input
@@ -65,18 +65,15 @@ class NMTcronjob(Thread):
                                         final_output = output['error']
                                         final_output['translation_status'] = 'Done'
                                         op_dict[db_key_list[i]] = final_output
-                                log_info("Bulk upsert Redis INITIATED....", MODULE_CONTEXT)
+                                log_info("CRON Bulk upsert Redis INITIATED....", MODULE_CONTEXT)
                                 redisclient.bulk_upsert_redis(op_dict)
-                                log_info("Bulk upsert Redis COMPLETED....", MODULE_CONTEXT)
+                                log_info("CRON Bulk upsert Redis COMPLETED....", MODULE_CONTEXT)
                                 counter += 1
                     run += 1
-                    log_info("Async NMT Batch Translation Cron-job" + " -- Run: " + str(
-                                    run) + " | Cornjob Completed", MODULE_CONTEXT)
-                    log_info(f'Total no of BATCHES: {counter}', MODULE_CONTEXT)
+                    log_info(f'CRON Total no of BATCHES: {counter} -- Run: {run}', MODULE_CONTEXT)
                 else:
                     run += 1
-                    log_info("No Requests available in REDIS --- Run: {} | Cornjob Completed".format(run),
-                             MODULE_CONTEXT)
+                    log_info("CRON No Requests available in REDIS --- Run: {}".format(run), MODULE_CONTEXT)
             except Exception as e:
                 run += 1
                 log_exception("Async ULCA Batch Translation Cron-job" + " -- Run: " + str(

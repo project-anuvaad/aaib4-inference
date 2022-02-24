@@ -30,10 +30,17 @@ class NMTTranslateRedisReadResource(Resource):
                 if response:
                     response = response[0]
                     if 'translation_status' not in response.keys():
-                        return {"status": "Translation in progress"}, 200
+                        #statuscode for inprogress
+                        return {"status": "Translation in progress"}, 102
                     else:
-                        del response['translation_status']
-                        return response, 200
+                        if response['translation_status'] == "Done":
+                            del response['translation_status']
+                            return response, 200
+                        else:
+                            statusCode = response["statusCode"]
+                            del response['translation_status']
+                            return response, statusCode
+
                 else:
                     return {"status": "Translation unavailable"}, 400
             except Exception as e:

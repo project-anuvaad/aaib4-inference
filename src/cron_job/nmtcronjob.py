@@ -63,7 +63,7 @@ class NMTcronjob(Thread):
                                 elif 'error' in output:
                                     for i, _ in enumerate(sent_list):
                                         final_output = output['error']
-                                        final_output['translation_status'] = 'Done'
+                                        final_output['translation_status'] = 'Failure'
                                         op_dict[db_key_list[i]] = final_output
                                 redisclient.bulk_upsert_redis(op_dict)
                                 counter += 1

@@ -104,11 +104,15 @@ class NMTcronjob(Thread):
         db_key_list , input_dict_list = zip(*redis_data)
         db_key_list = list(db_key_list)
         input_dict_list = list(input_dict_list)
+        log_info(f"Sample bd-key -{db_key_list[0]} and \n sample input-{input_dict_list[0]}", MODULE_CONTEXT)
         json_df = pd.json_normalize(input_dict_list, sep = '_')
         json_df['input'] = json_df['input'].apply(lambda x:x[0]['source'])
         json_df['db_key'] = db_key_list
-        json_df.columns = ['sentence', 'modelid', 'src_language', 'tgt_language', 'db_key']
-
+        json_df.rename(columns = {'input':'sentence',
+                            'config_modelId':'modelid',
+                            'config_language_sourceLanguage':'src_language',
+                            'config_language_targetLanguage':'tgt_language',
+                           }, inplace = True)
         # for key, value in redis_data:
         #     # chk = self.check_schema_ULCA(value)
         #     value_language = value.get('config')['language']

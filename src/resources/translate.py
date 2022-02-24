@@ -32,7 +32,7 @@ class NMTTranslateRedisReadResource(Resource):
                         return {"status": "Translation in progress"}, 200
                     else:
                         del response['translation_status']
-                        return response, 200
+                        return jsonify(response), 200
                 else:
                     return {"status": "Translation unavailable"}, 400
             except Exception as e:

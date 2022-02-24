@@ -31,7 +31,7 @@ class NMTTranslateRedisReadResource(Resource):
                     response = response[0]
                     if 'translation_status' not in response.keys():
                         #statuscode for inprogress
-                        return {"status": "Translation in progress"}, 102
+                        return {"status": "Translation in progress"}, 202
                     else:
                         if response['translation_status'] == "Done":
                             del response['translation_status']
@@ -348,9 +348,6 @@ def call_api(uri, api_input, user_id):
                        'Content-Type': 'application/json'}
         response = requests.post(url=uri, json=api_input, headers=api_headers)
         if response is not None:
-            log_info(response, MODULE_CONTEXT)
-            log_info(response.text, MODULE_CONTEXT)
-            log_info(response.status_code, MODULE_CONTEXT)
             if response.text is not None:
                 data = json.loads(response.text)
                 return data

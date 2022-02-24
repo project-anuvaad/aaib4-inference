@@ -346,9 +346,11 @@ def call_api(uri, api_input, user_id):
     try:
         api_headers = {'userid': user_id, 'x-user-id': user_id,
                        'Content-Type': 'application/json'}
-        response = requests.post(
-            url=uri, json=api_input, headers=api_headers)
+        response = requests.post(url=uri, json=api_input, headers=api_headers)
         if response is not None:
+            log_info(response, MODULE_CONTEXT)
+            log_info(response.text, MODULE_CONTEXT)
+            log_info(response.status_code, MODULE_CONTEXT)
             if response.text is not None:
                 data = json.loads(response.text)
                 return data

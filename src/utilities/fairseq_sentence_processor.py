@@ -90,11 +90,47 @@ def preprocess(sents, lang):
 
     return processed_sents
 
+def preprocess_multilingual(sents, lang_list):
+    """
+    Normalize, tokenize and script convert(for Indic)
+    return number of sentences input file
+
+    """
+
+    if lang_list[0] == "en":
+
+        # processed_sents = Parallel(n_jobs=-1, backend="multiprocessing")(
+        #     delayed(preprocess_sent)(line, None, lang) for line in tqdm(sents)
+        # )
+        processed_sents = [preprocess_sent(line, None, "en") for line in tqdm(sents)]
+
+    else:
+        normfactory = indic_normalize.IndicNormalizerFactory()
+        # normalizer = normfactory.get_normalizer(lang)
+
+        # processed_sents = [
+        #     preprocess_sent(line, normalizer, lang) for line in tqdm(sents)
+        # ]
+        processed_sents = []
+        for index,line in enumerate(sents):
+            normalizer = normfactory.get_normalizer(lang_list[index])
+            processed_sent = preprocess_sent(line, normalizer, lang_list[index])
+            processed_sents.append(preprocess_sent)
+
+    return processed_sents
+
 
 def apply_lang_tags(sents, src_lang, tgt_lang):
     tagged_sents = []
     for sent in sents:
         tagged_sent = add_token(sent.strip(), [("src", src_lang), ("tgt", tgt_lang)])
+        tagged_sents.append(tagged_sent)
+    return tagged_sents
+
+def apply_lang_tags_multilingual(sents, src_lang_list, tgt_lang_list):
+    tagged_sents = []
+    for index,sent in enumerate(sents):
+        tagged_sent = add_token(sent.strip(), [("src", src_lang_list[index]), ("tgt", tgt_lang_list[index])])
         tagged_sents.append(tagged_sent)
     return tagged_sents
 
@@ -120,6 +156,33 @@ def postprocess(sents, lang, common_lang="hi"):
         for sent in sents:
             outstr = indic_detokenize.trivial_detokenize(
                 xliterator.transliterate(sent, common_lang, lang), lang
+            )
+            # outfile.write(outstr + "\n")
+            postprocessed_sents.append(outstr)
+    postprocessed_sents = [i.replace("<unk>","") for i in postprocessed_sents]        
+    return postprocessed_sents
+
+def postprocess_multilingual(sents, lang_list, common_lang="hi"):
+    """
+    parse fairseq interactive output, convert script back to native Indic script (in case of Indic languages) and detokenize.
+
+    infname: fairseq log file
+    outfname: output file of translation (sentences not translated contain the dummy string 'DUMMY_OUTPUT'
+    input_size: expected number of output sentences
+    lang: language
+    """
+    postprocessed_sents = []
+
+    if lang_list[0] == "en":
+        en_detok = MosesDetokenizer(lang="en")
+        for sent in sents:
+            # outfile.write(en_detok.detokenize(sent.split(" ")) + "\n")
+            postprocessed_sents.append(en_detok.detokenize(sent.split(" ")))
+    else:
+        xliterator = unicode_transliterate.UnicodeIndicTransliterator()
+        for index,sent in enumerate(sents):
+            outstr = indic_detokenize.trivial_detokenize(
+                xliterator.transliterate(sent, common_lang, lang_list[index]), lang_list[index]
             )
             # outfile.write(outstr + "\n")
             postprocessed_sents.append(outstr)

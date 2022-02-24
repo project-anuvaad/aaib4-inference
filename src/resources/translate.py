@@ -271,6 +271,24 @@ class NMTTranslateResource_async():
                           MODULE_CONTEXT, e)
             return {"error": status}
 
+class NMTTranslateResource_async_multilingual():
+    def __init__(self):
+        pass
+
+    def async_call(self, inputs):
+        model_id_list, src_lang_list, tgt_lang_list, src_list = inputs
+        try:
+            translation_batch = {'model_id_list': model_id_list, 'src_lang_list': src_lang_list,'tgt_lang_list': tgt_lang_list, 'src_list': src_list}
+            output_batch = FairseqDocumentTranslateService.batch_translator_multilingual(translation_batch)
+            final_output = {"tgt_list": output_batch['tgt_list']}
+            return final_output
+        except Exception as e:
+            status = Status.SYSTEM_ERR.value
+            status['message'] = str(e)
+            log_exception("Exception caught in  ULCA async-call for batch translation multilingual child block: {}".format(e),
+                          MODULE_CONTEXT, e)
+            return {"error": status}
+
 
 class TranslationDummy(Resource):
     def post(self):

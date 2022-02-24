@@ -115,7 +115,7 @@ def preprocess_multilingual(sents, lang_list):
         for index,line in enumerate(sents):
             normalizer = normfactory.get_normalizer(lang_list[index])
             processed_sent = preprocess_sent(line, normalizer, lang_list[index])
-            processed_sents.append(preprocess_sent)
+            processed_sents.append(processed_sent)
 
     return processed_sents
 

@@ -10,7 +10,7 @@ from utilities import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception, log_error
 from config import translation_batch_limit
 from config import supported_languages
-from config import nmt_cron_interval_ms
+from config import poll_api_interval_sec
 from html import escape
 import uuid
 import config
@@ -282,7 +282,7 @@ class TranslationDummy(Resource):
                         if response:
                             if "status" not in response.keys():
                                 final_response = response
-                        time.sleep(nmt_cron_interval_ms)
+                        time.sleep(poll_api_interval_sec)
                     return final_response, 200
                 else:
                     log_exception("Something went wrong", MODULE_CONTEXT, None)

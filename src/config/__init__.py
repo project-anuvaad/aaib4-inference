@@ -44,6 +44,10 @@ record_expiry_in_sec = os.environ.get('TRANSLATION_REDIS_EXPIRY', 86400)
 if isinstance(record_expiry_in_sec, str):
     record_expiry_in_sec = eval(record_expiry_in_sec)
 
-nmt_cron_interval_ms = os.environ.get('NMT_CRON_INTERVAL_MSX', 1)
-if isinstance(nmt_cron_interval_ms, str):
-    nmt_cron_interval_ms = eval(nmt_cron_interval_ms)
+nmt_cron_interval_sec = os.environ.get('NMT_CRON_INTERVAL_SEC', 1)
+if isinstance(nmt_cron_interval_sec, str):
+    nmt_cron_interval_sec = eval(nmt_cron_interval_sec)
+
+poll_api_interval_sec = os.environ.get('POLL_API_INTERVAL_SEC', 0.1)
+if isinstance(poll_api_interval_sec, str):
+    poll_api_interval_sec = eval(poll_api_interval_sec)

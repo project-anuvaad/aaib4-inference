@@ -77,7 +77,8 @@ class RedisRepo:
             if db_values:
                 for val in db_values:
                     val = json.loads(val)
-                    values[val["requestId"]] = val
+                    if 'requestId' in val.keys():
+                        values[val["requestId"]] = val
             return values
         except Exception as e:
             log_exception(f'Exception in redis get all keys: {e}', MODULE_CONTEXT, e)

@@ -32,7 +32,7 @@ class NMTTranslateRedisReadResource(Resource):
                         return {"status": "Translation in progress"}, 200
                     else:
                         del response['translation_status']
-                        return jsonify(response), 200
+                        return response, 200
                 else:
                     return {"status": "Translation unavailable"}, 400
             except Exception as e:
@@ -286,7 +286,7 @@ class TranslationDummy(Resource):
                                 final_response = response
                         count += 1
                         time.sleep(0.5)
-                    return jsonify(final_response), 200
+                    return final_response, 200
                 else:
                     log_exception("Something went wrong", MODULE_CONTEXT, None)
                     out = CustomResponse(Status.SYSTEM_ERR.value, api_input)

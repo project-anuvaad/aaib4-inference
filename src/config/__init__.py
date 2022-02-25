@@ -23,6 +23,8 @@ trunc_limit = 200
 
 ## max number of input sentences per batch (for inference service, specific to GPU type)
 translation_batch_limit = os.environ.get('TRANSLATION_BATCH_LIMIT', 75)
+if isinstance(translation_batch_limit, str):
+    translation_batch_limit = eval(translation_batch_limit)
 
 ## supported languages
 supported_languages = ['en','hi','ta','te','kn','pa','mr','as','or','ml','gu','bn']

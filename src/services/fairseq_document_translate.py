@@ -152,7 +152,7 @@ class FairseqDocumentTranslateService:
         input_sentence_array_prepd = [None] * num_sentence
 
         _, ids = get_src_and_tgt_langs_dict()
-
+        log_info("Translation inputs collected from request", MODULE_CONTEXT)
         try:
             for i, sent in enumerate(src_list):   
                 input_sentence_array_prepd[i] = sent
@@ -216,11 +216,13 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
 def encode_translate_decode_multilingual(inputs, src_lang_list, tgt_lang_list, translator, source_bpe):
     try:
         if src_lang_list[0] == 'en':  
+            log_info("Upper case handled in case of english as src language", MODULE_CONTEXT) 
             inputs = [i.title() if i.isupper() else  i for i in inputs]            
         inputs = sentence_processor.preprocess_multilingual(inputs, src_lang_list)
         inputs = apply_bpe(inputs, source_bpe)
         i_final = sentence_processor.apply_lang_tags_multilingual(inputs, src_lang_list, tgt_lang_list)
         i_final = truncate_long_sentences(i_final)
+        log_info("Running the multilingual batch translation kernel on gpu ...", MODULE_CONTEXT) 
         translation = translator.translate(i_final)
         translation = sentence_processor.postprocess_multilingual(translation, tgt_lang_list)
         return translation
@@ -237,9 +239,11 @@ def encode_translate_decode_multilingual(inputs, src_lang_list, tgt_lang_list, t
 
 
 def apply_bpe(sents, bpe):
+    log_info("BPE of sentences started ...", MODULE_CONTEXT) 
     return [bpe.process_line(sent) for sent in sents]
 
 def truncate_long_sentences(sents):
+    log_info("Truncation function for long of sentences checking...", MODULE_CONTEXT)
     new_sents = []
     for sent in sents:
         num_words = len(sent.split())

@@ -1,6 +1,8 @@
 INDIC_NLP_LIB_HOME = "src/tools/indic_nlp_library"
 INDIC_NLP_RESOURCES = "src/tools/indic_nlp_resources"
 import sys
+from anuvaad_auditor.loghandler import log_info, log_exception
+from utilities import MODULE_CONTEXT
 
 sys.path.append(r"{}".format(INDIC_NLP_LIB_HOME))
 from indicnlp import common
@@ -96,7 +98,7 @@ def preprocess_multilingual(sents, lang_list):
     return number of sentences input file
 
     """
-
+    log_info("Preprocessing of sentences started ...", MODULE_CONTEXT) 
     if lang_list[0] == "en":
 
         # processed_sents = Parallel(n_jobs=-1, backend="multiprocessing")(
@@ -128,6 +130,7 @@ def apply_lang_tags(sents, src_lang, tgt_lang):
     return tagged_sents
 
 def apply_lang_tags_multilingual(sents, src_lang_list, tgt_lang_list):
+    log_info("Applying src and tgt lang tags to sentences started ...", MODULE_CONTEXT) 
     tagged_sents = []
     for index,sent in enumerate(sents):
         tagged_sent = add_token(sent.strip(), [("src", src_lang_list[index]), ("tgt", tgt_lang_list[index])])
@@ -171,6 +174,7 @@ def postprocess_multilingual(sents, lang_list, common_lang="hi"):
     input_size: expected number of output sentences
     lang: language
     """
+    log_info("Postprocessing of sentences started ", MODULE_CONTEXT)
     postprocessed_sents = []
 
     if lang_list[0] == "en":

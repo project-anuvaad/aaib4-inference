@@ -16,9 +16,9 @@ class NMTcronjob(Thread):
         self.stopped = event
 
     # Cron JOB to fetch status of each record and push it to CH and WFM on completion/failure.
-    log_info("CRON Cron Executing.....", MODULE_CONTEXT)
     def run(self):
         run = 0
+        log_info("CRON Cron Executing.....", MODULE_CONTEXT)
         while not self.stopped.wait(nmt_cron_interval_sec):
             redis_data = []
             try:
@@ -147,7 +147,7 @@ class NMTcronjobMultiLingual(Thread):
                         tgt_lang_list = db_df.iloc[i:i + translation_batch_limit].tgt_language.values.tolist()
                         modelid_list = db_df.iloc[i:i + translation_batch_limit].modelid.values.tolist()
                         nmt_multilingual_translator = NMTTranslateResource_async_multilingual()
-                        log_info(f"CRON calling NMTTranslateResource_async_multilingual for Batch-{batch_no} and Batch size-{len(sent_list)}", MODULE_CONTEXT)
+                        log_info(f"CRON calling NMTTranslateResource_async_multilingual for Batch-{batch_no} & Batch size-{len(sent_list)}", MODULE_CONTEXT)
                         output = nmt_multilingual_translator.async_call((modelid_list, src_lang_list, tgt_lang_list, sent_list))
                         log_info(f"CRON translation returned NMTTranslateResource_async_multilingual for Batch-{batch_no}", MODULE_CONTEXT)
                         op_dict = {}
@@ -172,9 +172,6 @@ class NMTcronjobMultiLingual(Thread):
                             log_info(f'CRON Bulk updating Redis complete', MODULE_CONTEXT)
                             counter += 1
                     log_info(f'CRON Total no of BATCHES: {counter}', MODULE_CONTEXT)
-                else:
-                    pass
-                    # log_info("CRON No Requests available in REDIS --- Run: {}".format(run), MODULE_CONTEXT)
             except Exception as e:
                 log_exception("Async ULCA Batch Translation Cron-job | Exception in Cornjob: " + str(e), e, e)
 

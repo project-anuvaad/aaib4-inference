@@ -18,8 +18,8 @@ class NMTcronjob(Thread):
     # Cron JOB to fetch status of each record and push it to CH and WFM on completion/failure.
     def run(self):
         run = 0
+        log_info("CRON Cron Executing.....", MODULE_CONTEXT)
         while not self.stopped.wait(nmt_cron_interval_sec):
-            log_info("CRON Cron Executing.....", MODULE_CONTEXT)
             redis_data = []
             try:
                 key_list = redisclient.get_all_keys()
@@ -164,9 +164,8 @@ class NMTcronjobMultiLingual(Thread):
 
     # Cron JOB to fetch status of each record and push it to CH and WFM on completion/failure.
     def run(self):
-        run = 0
+        log_info("CRON Cron Executing.....", MODULE_CONTEXT)
         while not self.stopped.wait(nmt_cron_interval_sec):
-            log_info("CRON Cron Executing.....", MODULE_CONTEXT)
             redis_data = []
             try:
                 key_list = redisclient.get_all_keys()
@@ -182,16 +181,16 @@ class NMTcronjobMultiLingual(Thread):
                     sample_json = redis_data[0][-1]
                     del redis_data
                     counter = 0
-                    for i in range(0, db_df.shape[0], translation_batch_limit):
+                    for batch_no,i in enumerate(range(0, db_df.shape[0], translation_batch_limit)):
                         sent_list = db_df.iloc[i:i + translation_batch_limit].sentence.values.tolist()
                         db_key_list = db_df.iloc[i:i + translation_batch_limit].db_key.values.tolist()
                         src_lang_list = db_df.iloc[i:i + translation_batch_limit].src_language.values.tolist() 
                         tgt_lang_list = db_df.iloc[i:i + translation_batch_limit].tgt_language.values.tolist()
                         modelid_list = db_df.iloc[i:i + translation_batch_limit].modelid.values.tolist()
                         nmt_multilingual_translator = NMTTranslateResource_async_multilingual()
-                        log_info("CRON Translation started.....", MODULE_CONTEXT)
+                        log_info(f"CRON calling NMTTranslateResource_async_multilingual for Batch-{batch_no} and Batch size-{len(sent_list)}", MODULE_CONTEXT)
                         output = nmt_multilingual_translator.async_call((modelid_list, src_lang_list, tgt_lang_list, sent_list))
-                        log_info("CRON Translation COMPLETE!", MODULE_CONTEXT)
+                        log_info(f"CRON translation returned NMTTranslateResource_async_multilingual for Batch-{batch_no}", MODULE_CONTEXT)
                         op_dict = {}
                         if output:
                             if 'tgt_list' in output:
@@ -209,17 +208,16 @@ class NMTcronjobMultiLingual(Thread):
                                     final_output = output['error']
                                     final_output['translation_status'] = 'Failure'
                                     op_dict[db_key_list[i]] = final_output
+                            log_info(f'CRON Bulk updating Redis started', MODULE_CONTEXT)
                             redisclient.bulk_upsert_redis(op_dict)
+                            log_info(f'CRON Bulk updating Redis complete', MODULE_CONTEXT)
                             counter += 1
-                    run += 1
-                    log_info(f'CRON Total no of BATCHES: {counter} -- Run: {run}', MODULE_CONTEXT)
+                    log_info(f'CRON Total no of BATCHES: {counter}', MODULE_CONTEXT)
                 else:
-                    run += 1
-                    log_info("CRON No Requests available in REDIS --- Run: {}".format(run), MODULE_CONTEXT)
+                    pass
+                    # log_info("CRON No Requests available in REDIS --- Run: {}".format(run), MODULE_CONTEXT)
             except Exception as e:
-                run += 1
-                log_exception("Async ULCA Batch Translation Cron-job" + " -- Run: " + str(
-                    run) + " | Exception in Cornjob: " + str(e), e, e)
+                log_exception("Async ULCA Batch Translation Cron-job | Exception in Cornjob: " + str(e), e, e)
 
 
     def create_dataframe(self, redis_data):
@@ -230,7 +228,7 @@ class NMTcronjobMultiLingual(Thread):
         db_key_list , input_dict_list = zip(*redis_data)
         db_key_list = list(db_key_list)
         input_dict_list = list(input_dict_list)
-        log_info(f"Sample bd-key -{db_key_list[0]} and \n sample input-{input_dict_list[0]}", MODULE_CONTEXT)
+        # log_info(f"Sample bd-key -{db_key_list[0]} and \n sample input-{input_dict_list[0]}", MODULE_CONTEXT)
         json_df = pd.json_normalize(input_dict_list, sep = '_')
         json_df['input'] = json_df['input'].apply(lambda x:x[0]['source'])
         json_df['db_key'] = db_key_list

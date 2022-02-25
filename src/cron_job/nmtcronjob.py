@@ -16,9 +16,9 @@ class NMTcronjob(Thread):
         self.stopped = event
 
     # Cron JOB to fetch status of each record and push it to CH and WFM on completion/failure.
+    log_info("CRON Cron Executing.....", MODULE_CONTEXT)
     def run(self):
         run = 0
-        log_info("CRON Cron Executing.....", MODULE_CONTEXT)
         while not self.stopped.wait(nmt_cron_interval_sec):
             redis_data = []
             try:
@@ -36,7 +36,7 @@ class NMTcronjob(Thread):
                     del redis_data
                     # Creating groups based on modelid,src,tgt lauage
                     df_group = db_df.groupby(by=['modelid', 'src_language', 'tgt_language'])
-                    log_info(f'CRON Total no Language Pairs: {len(df_group.groups.keys())}', MODULE_CONTEXT)
+                    # log_info(f'CRON Total no Language Pairs: {len(df_group.groups.keys())}', MODULE_CONTEXT)
                     counter = 0
                     for gb_key in df_group.groups.keys():
                         sub_df = df_group.get_group(gb_key)
@@ -71,7 +71,7 @@ class NMTcronjob(Thread):
                     log_info(f'CRON Total no of BATCHES: {counter} -- Run: {run}', MODULE_CONTEXT)
                 else:
                     run += 1
-                    log_info("CRON No Requests available in REDIS --- Run: {}".format(run), MODULE_CONTEXT)
+                    # log_info("CRON No Requests available in REDIS --- Run: {}".format(run), MODULE_CONTEXT)
             except Exception as e:
                 run += 1
                 log_exception("Async ULCA Batch Translation Cron-job" + " -- Run: " + str(
@@ -99,7 +99,7 @@ class NMTcronjob(Thread):
         db_key_list , input_dict_list = zip(*redis_data)
         db_key_list = list(db_key_list)
         input_dict_list = list(input_dict_list)
-        log_info(f"Sample bd-key -{db_key_list[0]} and \n sample input-{input_dict_list[0]}", MODULE_CONTEXT)
+        # log_info(f"Sample bd-key -{db_key_list[0]} and \n sample input-{input_dict_list[0]}", MODULE_CONTEXT)
         json_df = pd.json_normalize(input_dict_list, sep = '_')
         json_df['input'] = json_df['input'].apply(lambda x:x[0]['source'])
         json_df['db_key'] = db_key_list

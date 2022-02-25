@@ -30,7 +30,7 @@ for blueprint in vars(routes).values():
 
 if __name__ == "__main__":
     log_info('starting server at {} at port {}'.format(config.HOST, config.PORT), MODULE_CONTEXT)
-    # wfm_jm_thread = NMTcronjob(threading.Event())
-    wfm_jm_thread = NMTcronjobMultiLingual(threading.Event())
+    wfm_jm_thread = NMTcronjob(threading.Event())
+    # wfm_jm_thread = NMTcronjobMultiLingual(threading.Event())
     wfm_jm_thread.start()
     nmt_app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)

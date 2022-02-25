@@ -65,6 +65,7 @@ class NMTTranslateRedisWriteResource(Resource):
             try:
                 key = str(uuid.uuid4())
                 api_input["requestId"] = key
+                api_input["cronId"] = config.get_cron_id()
                 status = redisclient.upsert_redis(key, api_input, True)
                 if status:
                     return {"requestId": key}, 202

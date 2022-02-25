@@ -2,7 +2,7 @@ import redis
 from anuvaad_auditor.loghandler import log_info, log_exception
 from utilities import MODULE_CONTEXT
 import json
-
+import config
 from config import redis_server_host, redis_server_port, redis_server_pass, redis_db, record_expiry_in_sec
 
 redis_client_datasets = None
@@ -75,10 +75,13 @@ class RedisRepo:
             client = self.get_redis_instance()
             db_values = client.mget(keys)
             if db_values:
+                cron_id = config.get_cron_id()
                 for val in db_values:
                     val = json.loads(val)
-                    if 'requestId' in val.keys():
-                        values[val["requestId"]] = val
+                    if 'cronId' in val.keys():
+                        if val["cronId"] == cron_id:
+                            if 'requestId' in val.keys():
+                                values[val["requestId"]] = val
             return values
         except Exception as e:
             log_exception(f'Exception in redis get all keys: {e}', MODULE_CONTEXT, e)

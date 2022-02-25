@@ -1,3 +1,5 @@
+import uuid
+
 from .kafka_topics import kafka_topic, bootstrap_server_boolean, bootstrap_server
 import os
 
@@ -27,10 +29,10 @@ if isinstance(translation_batch_limit, str):
     translation_batch_limit = eval(translation_batch_limit)
 
 ## supported languages
-supported_languages = ['en','hi','ta','te','kn','pa','mr','as','or','ml','gu','bn']
+supported_languages = ['en', 'hi', 'ta', 'te', 'kn', 'pa', 'mr', 'as', 'or', 'ml', 'gu', 'bn']
 
 ## loaded model ('indic-en' OR 'en-indic' OR 'indic-indic')
-model_to_load = os.environ.get('MODEL_NAME', 'indic-indic') # loads all three models 
+model_to_load = os.environ.get('MODEL_NAME', 'indic-indic')  # loads all three models
 
 redis_server_host = os.environ.get('REDIS_URL', 'localhost')
 redis_server_pass = os.environ.get('REDIS_PASS', 'mypassword')
@@ -53,3 +55,12 @@ if isinstance(nmt_cron_interval_sec, str):
 poll_api_interval_sec = os.environ.get('POLL_API_INTERVAL_SEC', 0.1)
 if isinstance(poll_api_interval_sec, str):
     poll_api_interval_sec = eval(poll_api_interval_sec)
+
+cron_id = None
+
+
+def get_cron_id():
+    global cron_id
+    if not cron_id:
+        cron_id = str(uuid.uuid4())
+    return cron_id

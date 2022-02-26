@@ -22,63 +22,69 @@ redisclient = RedisRepo()
 class NMTTranslateRedisReadResource(Resource):
     def post(self):
         api_input = request.get_json(force=True)
-        if len(api_input) > 0 and all(v in api_input for v in ['requestId']):
-            request_id = api_input["requestId"]
-            try:
-                key = request_id
-                response = redisclient.search_redis(key)
-                if response:
-                    response = response[0]
-                    if 'translation_status' not in response.keys():
-                        #statuscode for inprogress
-                        return {"status": "Translation in progress"}, 202
-                    else:
-                        if response['translation_status'] == "Done":
-                            del response['translation_status']
-                            return response, 200
-                        else:
-                            statusCode = response["statusCode"]
-                            del response['translation_status']
-                            return response, statusCode
+        return get_translation(api_input)
 
+
+def get_translation(api_input):
+    if len(api_input) > 0 and all(v in api_input for v in ['requestId']):
+        request_id = api_input["requestId"]
+        try:
+            key = request_id
+            response = redisclient.search_redis(key)
+            if response:
+                response = response[0]
+                if 'translation_status' not in response.keys():
+                    return {"status": "Translation in progress"}, 202
                 else:
-                    return {"status": "Translation unavailable"}, 400
-            except Exception as e:
-                status = Status.SYSTEM_ERR.value
-                status['message'] = str(e)
-                log_exception("Exception caught in : {}".format(e), MODULE_CONTEXT, e)
-                out = CustomResponse(status, request_id)
-                return out.get_res_json_data(), 500
-        else:
-            log_info("ULCA API input missing mandatory data ('requestId')", MODULE_CONTEXT)
-            status = Status.INVALID_API_REQUEST.value
-            status['message'] = "Missing mandatory data ('requestId')"
-            out = CustomResponse(status, api_input)
-            return out.get_res_json_data(), 400
+                    if response['translation_status'] == "Done":
+                        del response['translation_status']
+                        return response, 200
+                    else:
+                        statusCode = response["statusCode"]
+                        del response['translation_status']
+                        return response, statusCode
+            else:
+                return {"status": "Translation unavailable"}, 400
+        except Exception as e:
+            status = Status.SYSTEM_ERR.value
+            status['message'] = str(e)
+            log_exception("Exception caught in : {}".format(e), MODULE_CONTEXT, e)
+            out = CustomResponse(status, request_id)
+            return out.get_res_json_data(), 500
+    else:
+        log_info("ULCA API input missing mandatory data ('requestId')", MODULE_CONTEXT)
+        status = Status.INVALID_API_REQUEST.value
+        status['message'] = "Missing mandatory data ('requestId')"
+        out = CustomResponse(status, api_input)
+        return out.get_res_json_data(), 400
 
 
 class NMTTranslateRedisWriteResource(Resource):
     def post(self):
         api_input = request.get_json(force=True)
-        if len(api_input) > 0 and all(v in api_input for v in ['input', 'config']) and "modelId" in api_input.get(
-                'config'):
-            try:
-                key = str(uuid.uuid4())
-                api_input["requestId"] = key
-                api_input["cronId"] = config.get_cron_id()
-                status = redisclient.upsert_redis(key, api_input, True)
-                if status:
-                    return {"requestId": key}, 202
-                else:
-                    log_info("Write to redis FAILED!", MODULE_CONTEXT)
-                    out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
-                    return out.get_res_json(), 500
-            except Exception as e:
-                status = Status.SYSTEM_ERR.value
-                status['message'] = str(e)
-                log_exception("Exception caught in : {}".format(e), MODULE_CONTEXT, e)
-                out = CustomResponse(status, api_input)
-                return out.get_res_json_data(), 500
+        return write_to_redis(api_input)
+
+
+def write_to_redis(api_input):
+    if len(api_input) > 0 and all(v in api_input for v in ['input', 'config']) and "modelId" in api_input.get(
+            'config'):
+        try:
+            key = str(uuid.uuid4())
+            api_input["requestId"] = key
+            api_input["cronId"] = config.get_cron_id()
+            status = redisclient.upsert_redis(key, api_input, True)
+            if status:
+                return {"requestId": key}, 202
+            else:
+                log_info("Write to redis FAILED!", MODULE_CONTEXT)
+                out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
+                return out.get_res_json(), 500
+        except Exception as e:
+            status = Status.SYSTEM_ERR.value
+            status['message'] = str(e)
+            log_exception("Exception caught in : {}".format(e), MODULE_CONTEXT, e)
+            out = CustomResponse(status, api_input)
+            return out.get_res_json_data(), 500
 
 
 class NMTTranslateResource(Resource):
@@ -272,6 +278,7 @@ class NMTTranslateResource_async():
                           MODULE_CONTEXT, e)
             return {"error": status}
 
+
 class NMTTranslateResource_async_multilingual():
     def __init__(self):
         pass
@@ -279,15 +286,17 @@ class NMTTranslateResource_async_multilingual():
     def async_call(self, inputs):
         model_id_list, src_lang_list, tgt_lang_list, src_list = inputs
         try:
-            translation_batch = {'model_id_list': model_id_list, 'src_lang_list': src_lang_list,'tgt_lang_list': tgt_lang_list, 'src_list': src_list}
+            translation_batch = {'model_id_list': model_id_list, 'src_lang_list': src_lang_list,
+                                 'tgt_lang_list': tgt_lang_list, 'src_list': src_list}
             output_batch = FairseqDocumentTranslateService.batch_translator_multilingual(translation_batch)
             final_output = {"tgt_list": output_batch['tgt_list']}
             return final_output
         except Exception as e:
             status = Status.SYSTEM_ERR.value
             status['message'] = str(e)
-            log_exception("Exception caught in  ULCA async-call for batch translation multilingual child block: {}".format(e),
-                          MODULE_CONTEXT, e)
+            log_exception(
+                "Exception caught in  ULCA async-call for batch translation multilingual child block: {}".format(e),
+                MODULE_CONTEXT, e)
             return {"error": status}
 
 
@@ -295,16 +304,14 @@ class TranslationDummy(Resource):
     def post(self):
         api_input = request.get_json(force=True)
         try:
-            write_endpoint = f'http://localhost:5001/aai4b-nmt-inference/v0/{config.model_to_load}/translate/async'
-            response = call_api(write_endpoint, api_input, "userId")
+            response, code = write_to_redis(api_input)
             if response:
                 if 'requestId' in response.keys():
                     request_id = response["requestId"]
-                    read_endpoint = f'http://localhost:5001/aai4b-nmt-inference/v0/{config.model_to_load}/search-translation'
                     body = {"requestId": request_id}
                     final_response = None
                     while not final_response:
-                        response = call_api(read_endpoint, body, "userId")
+                        response, code = get_translation(body)
                         if response:
                             if "status" not in response.keys():
                                 final_response = response

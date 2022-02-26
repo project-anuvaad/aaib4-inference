@@ -56,6 +56,13 @@ poll_api_interval_sec = os.environ.get('POLL_API_INTERVAL_SEC', 0.1)
 if isinstance(poll_api_interval_sec, str):
     poll_api_interval_sec = eval(poll_api_interval_sec)
 
+multi_lingual_batching_enabled = os.environ.get('MULTI_LINGUAL_BATCHING_ENABLED', True)
+if isinstance(multi_lingual_batching_enabled, str):
+    if multi_lingual_batching_enabled.casefold() == "TRUE".casefold():
+        multi_lingual_batching_enabled = True
+    else:
+        multi_lingual_batching_enabled = False
+
 cron_id = None
 
 

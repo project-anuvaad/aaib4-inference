@@ -2,10 +2,9 @@ from flask import Flask, jsonify, request
 from flask.blueprints import Blueprint
 from flask_cors import CORS
 from anuvaad_auditor.loghandler import log_info
-from cron_job.nmtcronjob import NMTcronjobMultiLingual
 import routes
 import config
-from cron_job import NMTcronjob, NMTcronjobMultiLingual
+from cron_job import NMTcronjob, TranslationScheduler
 from utilities import MODULE_CONTEXT
 import threading
 from kafka_wrapper import KafkaTranslate
@@ -30,7 +29,10 @@ for blueprint in vars(routes).values():
 
 if __name__ == "__main__":
     log_info('starting server at {} at port {}'.format(config.HOST, config.PORT), MODULE_CONTEXT)
-    #wfm_jm_thread = NMTcronjob(threading.Event())
-    wfm_jm_thread = NMTcronjobMultiLingual(threading.Event())
+    translation_scheduler = TranslationScheduler()
+    translation_scheduler.schedule()
+    '''
+    wfm_jm_thread = NMTcronjob(threading.Event())
     wfm_jm_thread.start()
+    '''
     nmt_app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)

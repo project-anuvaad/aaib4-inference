@@ -7,6 +7,7 @@ from anuvaad_auditor.loghandler import log_info, log_exception
 import pandas as pd
 from repository import RedisRepo
 from apscheduler.schedulers.background import BackgroundScheduler
+import time
 
 redisclient = RedisRepo()
 
@@ -25,6 +26,19 @@ class NMTcronjob(Thread):
             else:
                 tranlate_utils.translate_by_lang_level_batching()
 
+class NMTScheduleProcess():
+    def __init__(self):
+        self.run()
+
+    # Cron JOB to fetch status of each record and push it to CH and WFM on completion/failure.
+    def run(self):
+        tranlate_utils = TranslateUtils()
+        while True:
+            if multi_lingual_batching_enabled:
+                tranlate_utils.translate_by_multilingual_batching()
+            else:
+                tranlate_utils.translate_by_lang_level_batching()
+            time.sleep(nmt_cron_interval_sec)
 
 class TranslationScheduler:
     def __init__(self):

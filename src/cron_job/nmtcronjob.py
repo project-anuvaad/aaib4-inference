@@ -1,4 +1,6 @@
 from threading import Thread
+
+from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from config import nmt_cron_interval_sec
 from config import translation_batch_limit, multi_lingual_batching_enabled
 from resources import NMTTranslateResource_async, NMTTranslateResource_async_multilingual
@@ -32,12 +34,16 @@ class TranslationScheduler:
 
     def schedule(self):
         scheduler = BackgroundScheduler()
+        executors = {
+            'default': ThreadPoolExecutor(20),
+            'processpool': ProcessPoolExecutor(5)
+        }
         tranlate_utils = TranslateUtils()
         if multi_lingual_batching_enabled:
-            scheduler.add_job(func=tranlate_utils.translate_by_multilingual_batching, trigger="interval",
+            scheduler.add_job(func=tranlate_utils.translate_by_multilingual_batching, executors=executors, trigger="interval",
                               seconds=nmt_cron_interval_sec)
         else:
-            scheduler.add_job(func=tranlate_utils.translate_by_lang_level_batching, trigger="interval",
+            scheduler.add_job(func=tranlate_utils.translate_by_lang_level_batching, executors=executors, trigger="interval",
                               seconds=nmt_cron_interval_sec)
         scheduler.start()
 

@@ -1,3 +1,5 @@
+from audioop import mul
+from subprocess import call
 from flask import Flask, jsonify, request
 from flask.blueprints import Blueprint
 from flask_cors import CORS
@@ -8,7 +10,7 @@ from cron_job import NMTcronjob, TranslationScheduler, NMTScheduleProcess
 from utilities import MODULE_CONTEXT
 import threading
 from kafka_wrapper import KafkaTranslate
-from torch.multiprocessing import Process, set_start_method
+import multiprocessing
 
 nmt_app = Flask(__name__)
 
@@ -43,11 +45,7 @@ if __name__ == "__main__":
     wfm_jm_thread = NMTcronjob(threading.Event())
     wfm_jm_thread.start()
     '''
-    try:
-         set_start_method('spawn')
-    except RuntimeError:
-        pass
-    p1 = Process(target=call_nmt_translation_service, name='Translation Service')
+    p1 = multiprocessing.Process(target=call_nmt_translation_service, name='Translation Service')
     p1.start()
     nmt_app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)
     p1.join()

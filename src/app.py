@@ -29,10 +29,11 @@ for blueprint in vars(routes).values():
 
 if __name__ == "__main__":
     log_info('starting server at {} at port {}'.format(config.HOST, config.PORT), MODULE_CONTEXT)
-    '''
-    translation_scheduler = TranslationScheduler()
-    translation_scheduler.schedule()
-    '''
-    wfm_jm_thread = NMTcronjob(threading.Event())
-    wfm_jm_thread.start()
+    if config.internal_cron_enabled:
+        '''
+        translation_scheduler = TranslationScheduler()
+        translation_scheduler.schedule()
+        '''
+        wfm_jm_thread = NMTcronjob(threading.Event())
+        wfm_jm_thread.start()
     nmt_app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)

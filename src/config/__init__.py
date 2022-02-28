@@ -63,6 +63,13 @@ if isinstance(multi_lingual_batching_enabled, str):
     else:
         multi_lingual_batching_enabled = False
 
+internal_cron_enabled = os.environ.get('INTERNAL_CRON_ENABLED', True)
+if isinstance(internal_cron_enabled, str):
+    if internal_cron_enabled.casefold() == "TRUE".casefold():
+        internal_cron_enabled = True
+    else:
+        internal_cron_enabled = False
+
 cron_id = None
 
 

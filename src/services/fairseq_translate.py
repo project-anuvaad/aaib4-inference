@@ -9,8 +9,7 @@ import utilities.sentencepiece_util as sp
 import utilities.fairseq_sentence_processor as sentence_processor
 import config
 import datetime
-# from services import load_models
-from .fairseq_document_translate import load_model_fn
+from services import load_models
 
 
 def get_src_and_tgt_langs_dict():
@@ -193,7 +192,6 @@ class FairseqAutoCompleteTranslateService:
 
 
 def encode_itranslate_decode(i, src_lang, tgt_lang):
-    load_models =load_model_fn()
     try:
         i["src"] = [i["src"]]
         i["target_prefix"] = [i["target_prefix"]]
@@ -222,7 +220,6 @@ def encode_itranslate_decode(i, src_lang, tgt_lang):
 
 
 def encode_translate_decode(i, src_lang, tgt_lang):
-    load_models = load_model_fn()
     try:
         i["src"] = [i["src"]]
         print(i["src"])

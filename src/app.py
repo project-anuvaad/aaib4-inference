@@ -4,11 +4,10 @@ from flask_cors import CORS
 from anuvaad_auditor.loghandler import log_info
 import routes
 import config
-from cron_job import NMTcronjob, TranslationScheduler, NMTScheduleProcess
+from cron_job import NMTcronjob, TranslationScheduler
 from utilities import MODULE_CONTEXT
 import threading
 from kafka_wrapper import KafkaTranslate
-from torch.multiprocessing import Process, set_start_method
 
 nmt_app = Flask(__name__)
 
@@ -28,26 +27,12 @@ for blueprint in vars(routes).values():
     if isinstance(blueprint, Blueprint):
         nmt_app.register_blueprint(blueprint, url_prefix=config.API_URL_PREFIX)
 
-def call_nmt_translation_service():
-    log_info(f"Starting the Translation service as a subprocess", MODULE_CONTEXT)
-    NMTScheduleProcess()
-    
 if __name__ == "__main__":
     log_info('starting server at {} at port {}'.format(config.HOST, config.PORT), MODULE_CONTEXT)
-    '''
     translation_scheduler = TranslationScheduler()
     translation_scheduler.schedule()
-    '''
-
     '''
     wfm_jm_thread = NMTcronjob(threading.Event())
     wfm_jm_thread.start()
     '''
-    try:
-         set_start_method('spawn')
-    except RuntimeError:
-        pass
-    p1 = Process(target=call_nmt_translation_service, name='Translation Service')
-    p1.start()
     nmt_app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)
-    p1.join()

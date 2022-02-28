@@ -69,5 +69,6 @@ cron_id = None
 def get_cron_id():
     global cron_id
     if not cron_id:
-        cron_id = str(uuid.uuid4())
+        # cron_id = str(uuid.uuid4())
+        cron_id = 'st'
     return cron_id

@@ -9,8 +9,16 @@ import utilities.sentencepiece_util as sp
 import utilities.fairseq_sentence_processor as sentence_processor
 import config
 import datetime
-from services import load_models
+# from services import load_models
+from services import Loadmodels
 
+load_models = None
+
+def load_model_fn():
+    global load_models
+    if not load_models:
+        load_models = Loadmodels()
+    return load_models
 
 def get_src_and_tgt_langs_dict():
     model_id2src_tgt = {}
@@ -30,6 +38,7 @@ def get_src_and_tgt_langs_dict():
 class FairseqDocumentTranslateService:
     @staticmethod
     def batch_translator(input_dict):
+        load_models = load_model_fn()
         model_id = input_dict["id"]
         src_list = input_dict["src_list"]
         num_sentence = len(src_list)
@@ -88,6 +97,7 @@ class FairseqDocumentTranslateService:
         return out
     
     def indic_to_indic_translator(input_dict):
+        load_models = load_model_fn()
         model_id = input_dict["id"]
         src_list = input_dict["src_list"]
         num_sentence = len(src_list)
@@ -139,6 +149,7 @@ class FairseqDocumentTranslateService:
         return out
 
     def batch_translator_multilingual(input_dict):
+        load_models = load_model_fn()
         model_id = input_dict['model_id_list'][0]
         src_list = input_dict["src_list"]
         src_lang_list = input_dict['src_lang_list']

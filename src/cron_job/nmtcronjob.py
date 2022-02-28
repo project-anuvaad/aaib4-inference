@@ -7,6 +7,7 @@ from resources import NMTTranslateResource_async, NMTTranslateResource_async_mul
 from utilities import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception
 import pandas as pd
+import config
 from repository import RedisRepo
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -54,6 +55,7 @@ class TranslateUtils:
 
     def translate_by_lang_level_batching(self):
         redis_data = []
+        cron_id = config.get_cron_id()
         try:
             key_list = redisclient.get_all_keys()
             if key_list:
@@ -63,7 +65,7 @@ class TranslateUtils:
                         if 'translation_status' not in values[rd_key]:
                             redis_data.append((rd_key, values[rd_key]))
             if redis_data:
-                log_info(f'CRON Total Size of Redis Fetch: {len(redis_data)}', MODULE_CONTEXT)
+                log_info(f'CRON - {cron_id} Total Size of Redis Fetch: {len(redis_data)}', MODULE_CONTEXT)
                 db_df = self.create_dataframe(redis_data)
                 sample_json = redis_data[0][-1]
                 del redis_data
@@ -78,9 +80,9 @@ class TranslateUtils:
                         sent_list = sub_df.iloc[i:i + translation_batch_limit].sentence.values.tolist()
                         db_key_list = sub_df.iloc[i:i + translation_batch_limit].db_key.values.tolist()
                         nmt_translator = NMTTranslateResource_async()
-                        log_info("CRON Translation started.....", MODULE_CONTEXT)
+                        log_info(f"CRON - {cron_id} Translation started.....", MODULE_CONTEXT)
                         output = nmt_translator.async_call((sub_modelid, sub_src, sub_tgt, sent_list))
-                        log_info("CRON Translation COMPLETE!", MODULE_CONTEXT)
+                        log_info(f"CRON - {cron_id} Translation COMPLETE!", MODULE_CONTEXT)
                         op_dict = {}
                         if output:
                             if 'tgt_list' in output:
@@ -97,12 +99,13 @@ class TranslateUtils:
                                     op_dict[db_key_list[i]] = final_output
                             redisclient.bulk_upsert_redis(op_dict)
                             counter += 1
-                log_info(f'CRON Total no of BATCHES: {counter}', MODULE_CONTEXT)
+                log_info(f'CRON - {cron_id} Total no of BATCHES: {counter}', MODULE_CONTEXT)
         except Exception as e:
             log_exception("Async ULCA Batch Translation Cron-job | Exception in Cornjob: " + str(e), MODULE_CONTEXT, e)
 
     def translate_by_multilingual_batching(self):
         redis_data = []
+        cron_id = config.get_cron_id()
         try:
             key_list = redisclient.get_all_keys()
             if key_list:
@@ -125,11 +128,11 @@ class TranslateUtils:
                     modelid_list = db_df.iloc[i:i + translation_batch_limit].modelid.values.tolist()
                     nmt_multilingual_translator = NMTTranslateResource_async_multilingual()
                     log_info(
-                        f"CRON calling NMTTranslateResource_async_multilingual for Batch-{batch_no} & Batch size-{len(sent_list)}",
+                        f"CRON - {cron_id} translating via multilingual batching for Batch - {batch_no} & Batch size - {len(sent_list)}",
                         MODULE_CONTEXT)
                     output = nmt_multilingual_translator.async_call(
                         (modelid_list, src_lang_list, tgt_lang_list, sent_list))
-                    log_info(f"CRON translation returned NMTTranslateResource_async_multilingual for Batch-{batch_no}",
+                    log_info(f"CRON - {cron_id} translation via multilingual batching COMPLETED for Batch - {batch_no}",
                              MODULE_CONTEXT)
                     op_dict = {}
                     if output:
@@ -148,11 +151,9 @@ class TranslateUtils:
                                 final_output = output['error']
                                 final_output['translation_status'] = 'Failure'
                                 op_dict[db_key_list[i]] = final_output
-                        log_info(f'CRON Bulk updating Redis started', MODULE_CONTEXT)
                         redisclient.bulk_upsert_redis(op_dict)
-                        log_info(f'CRON Bulk updating Redis complete', MODULE_CONTEXT)
                         counter += 1
-                log_info(f'CRON Total no of BATCHES: {counter}', MODULE_CONTEXT)
+                log_info(f'CRON - {cron_id} Total no of BATCHES: {counter}', MODULE_CONTEXT)
         except Exception as e:
             log_exception("Async ULCA Batch Translation Cron-job | Exception in Cornjob: " + str(e), MODULE_CONTEXT, e)
 

@@ -16,9 +16,9 @@ if config.ENABLE_CORS:
 for blueprint in vars(routes).values():
     if isinstance(blueprint, Blueprint):
         nmt_proxy_app.register_blueprint(blueprint, url_prefix=config.API_URL_PREFIX)
+
 if __name__ == "__main__":
-    if not config.internal_cron_enabled:
-        log_info('starting cronjob', MODULE_CONTEXT)
-        wfm_jm_thread = NMTcronjob(threading.Event())
-        wfm_jm_thread.start()
+    log_info('starting cronjob', MODULE_CONTEXT)
+    wfm_jm_thread = NMTcronjob(threading.Event())
+    wfm_jm_thread.start()
     nmt_proxy_app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)

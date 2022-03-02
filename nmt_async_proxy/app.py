@@ -6,7 +6,7 @@ from flask import Flask, jsonify, request
 from flask.blueprints import Blueprint
 from flask_cors import CORS
 import routes
-from cron_job import NMTcronjob, TranslationScheduler
+from cron_job import NMTcronjob
 
 nmt_proxy_app = Flask(__name__)
 

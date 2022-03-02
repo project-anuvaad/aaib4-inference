@@ -77,5 +77,5 @@ def get_cron_id():
 
 
 nmt_inference_host = os.environ.get('NMT_INFERENCE_HOST', '127.0.0.1:5001')
-multi_uri = f'http://{nmt_inference_host}/aai4b-nmt-inference/v0/indic-indic/translate/multilingual'
-mono_uri = f'http://{nmt_inference_host}/aai4b-nmt-inference/v0/indic-indic/translate/monolingual'
+multi_uri = f'http://{nmt_inference_host}/v0/{model_to_load}/translate/multilingual'
+mono_uri = f'http://{nmt_inference_host}/v0/{model_to_load}/translate/monolingual'

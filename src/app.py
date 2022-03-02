@@ -34,4 +34,4 @@ if __name__ == "__main__":
         wfm_jm_thread = NMTcronjob(threading.Event())
         wfm_jm_thread.start()
     '''
-    nmt_app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)
+    nmt_app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=False)

@@ -11,12 +11,10 @@ PORT = 5001
 
 ENABLE_CORS = True
 
-MODULE_CONTEXT = {'metadata':{'module':'NMT-INFERENCE-ASYNC-PROXY'}}
-
+MODULE_CONTEXT = {'metadata': {'module': 'NMT-INFERENCE-ASYNC-PROXY'}}
 
 ## Module name
 MODULE_NAME = "/nmt-async-proxy"
-
 
 ## truncation limit for sentence length
 trunc_limit = 200
@@ -74,12 +72,10 @@ cron_id = None
 def get_cron_id():
     global cron_id
     if not cron_id:
-        if internal_cron_enabled:
-            cron_id = str(uuid.uuid4())
-        else:
-            cron_id = 'default_cron_id'
+        cron_id = str(uuid.uuid4())
     return cron_id
 
-multi_uri = 'http://127.0.0.1:5001/aai4b-nmt-inference/v0/indic-indic/translate/multilingual'
 
-mono_uri = 'http://127.0.0.1:5001/aai4b-nmt-inference/v0/indic-indic/translate/monolingual'
+nmt_inference_host = os.environ.get('NMT_INFERENCE_HOST', '127.0.0.1:5001')
+multi_uri = f'http://{nmt_inference_host}/aai4b-nmt-inference/v0/indic-indic/translate/multilingual'
+mono_uri = f'http://{nmt_inference_host}/aai4b-nmt-inference/v0/indic-indic/translate/monolingual'

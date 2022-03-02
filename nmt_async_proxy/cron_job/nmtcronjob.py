@@ -1,15 +1,12 @@
 from threading import Thread
 
-from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from config import nmt_cron_interval_sec
 from config import translation_batch_limit, multi_lingual_batching_enabled
-# from resources import NMTTranslateResource_async, NMTTranslateResource_async_multilingual
 from config import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception, log_error
 import pandas as pd
 import config
 from repository import RedisRepo
-from apscheduler.schedulers.background import BackgroundScheduler
 import requests
 import json
 
@@ -29,26 +26,6 @@ class NMTcronjob(Thread):
                 tranlate_utils.translate_by_multilingual_batching()
             else:
                 tranlate_utils.translate_by_lang_level_batching()
-
-
-class TranslationScheduler:
-    def __init__(self):
-        pass
-
-    def schedule(self):
-        scheduler = BackgroundScheduler()
-        executors = {
-            'default': ThreadPoolExecutor(20),
-            'processpool': ProcessPoolExecutor(5)
-        }
-        tranlate_utils = TranslateUtils()
-        if multi_lingual_batching_enabled:
-            scheduler.add_job(func=tranlate_utils.translate_by_multilingual_batching, executors=executors, trigger="interval",
-                              seconds=nmt_cron_interval_sec)
-        else:
-            scheduler.add_job(func=tranlate_utils.translate_by_lang_level_batching, executors=executors, trigger="interval",
-                              seconds=nmt_cron_interval_sec)
-        scheduler.start()
 
 
 class TranslateUtils:
@@ -81,12 +58,9 @@ class TranslateUtils:
                     for i in range(0, sub_df.shape[0], translation_batch_limit):
                         sent_list = sub_df.iloc[i:i + translation_batch_limit].sentence.values.tolist()
                         db_key_list = sub_df.iloc[i:i + translation_batch_limit].db_key.values.tolist()
-                        # nmt_translator = NMTTranslateResource_async()
                         log_info(f"CRON - {cron_id} Translation started.....", MODULE_CONTEXT)
-                        # output = nmt_translator.async_call((sub_modelid, sub_src, sub_tgt, sent_list))
-                        input_json = {"data" : (sub_modelid, sub_src, sub_tgt, sent_list)}
+                        input_json = {"data": (sub_modelid, sub_src, sub_tgt, sent_list)}
                         output = call_api(config.mono_uri, input_json, 'userid')
-                        # output = json.loads(output_data)
                         log_info(f"CRON - {cron_id} Translation COMPLETE!", MODULE_CONTEXT)
                         op_dict = {}
                         if output:
@@ -131,15 +105,11 @@ class TranslateUtils:
                     src_lang_list = db_df.iloc[i:i + translation_batch_limit].src_language.values.tolist()
                     tgt_lang_list = db_df.iloc[i:i + translation_batch_limit].tgt_language.values.tolist()
                     modelid_list = db_df.iloc[i:i + translation_batch_limit].modelid.values.tolist()
-                    # nmt_multilingual_translator = NMTTranslateResource_async_multilingual()
                     log_info(
                         f"CRON - {cron_id} translating via multilingual batching for Batch - {batch_no} & Batch size - {len(sent_list)}",
                         MODULE_CONTEXT)
-                    # output = nmt_multilingual_translator.async_call(
-                    #     (modelid_list, src_lang_list, tgt_lang_list, sent_list))
-                    input_json = {"data" : (modelid_list, src_lang_list, tgt_lang_list, sent_list)}
+                    input_json = {"data": (modelid_list, src_lang_list, tgt_lang_list, sent_list)}
                     output = call_api(config.multi_uri, input_json, 'userid')
-                    # output = json.loads(output_data)
                     log_info(f"CRON - {cron_id} translation via multilingual batching COMPLETED for Batch - {batch_no}",
                              MODULE_CONTEXT)
                     op_dict = {}
@@ -183,6 +153,7 @@ class TranslateUtils:
                                  errors='ignore')
         return json_df
 
+
 def call_api(uri, api_input, user_id):
     try:
         api_headers = {'userid': user_id, 'x-user-id': user_id,
@@ -190,7 +161,6 @@ def call_api(uri, api_input, user_id):
         response = requests.post(url=uri, json=api_input, headers=api_headers)
         if response is not None:
             if response.text is not None:
-                print(response.text)
                 data = json.loads(response.text)
                 return data
             else:

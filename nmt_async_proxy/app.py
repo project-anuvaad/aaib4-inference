@@ -1,6 +1,5 @@
 import config
 from anuvaad_auditor.loghandler import log_info
-from cron_job import NMTcronjob
 from config import MODULE_CONTEXT
 import threading
 from flask import Flask, jsonify, request

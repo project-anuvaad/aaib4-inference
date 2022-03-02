@@ -1,2 +1,2 @@
 #!/bin/bash
-CUDA_LAUNCH_BLOCKING=1 python3 /app/src/app.py
+python3 /app/nmt_async_proxy/app.py

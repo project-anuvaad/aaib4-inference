@@ -1,16 +1,11 @@
-import json
 import time
 
-import requests
 from flask_restful import fields, marshal_with, reqparse, Resource
 from flask import request, jsonify
 from models import CustomResponse, Status
 from config import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception, log_error
-from config import translation_batch_limit
-from config import supported_languages
 from config import poll_api_interval_sec
-from html import escape
 import uuid
 import config
 from repository import RedisRepo

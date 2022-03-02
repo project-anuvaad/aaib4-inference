@@ -284,7 +284,8 @@ class NMTMonolingualTranslateResource(Resource):
         api_input = request.get_json(force=True)
         input = api_input.get('data')
         nmt_instance = NMTTranslateResource_async()
-        return nmt_instance.async_call(input) 
+        return nmt_instance.async_call(input)
+
 
 class NMTTranslateResource_async_multilingual():
     def __init__(self):
@@ -306,12 +307,13 @@ class NMTTranslateResource_async_multilingual():
                 MODULE_CONTEXT, e)
             return {"error": status}
 
+
 class NMTMultilingualTranslateResource(Resource):
     def post(self):
         api_input = request.get_json(force=True)
         input = api_input.get('data')
         nmt_instance = NMTTranslateResource_async_multilingual()
-        return nmt_instance.async_call(input) 
+        return nmt_instance.async_call(input)
 
 
 class TranslationDummy(Resource):

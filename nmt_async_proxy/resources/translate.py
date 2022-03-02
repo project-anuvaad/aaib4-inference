@@ -99,11 +99,11 @@ class TranslationDummy(Resource):
                         time.sleep(poll_api_interval_sec)
                     return final_response, 200
                 else:
-                    log_exception("Something went wrong", MODULE_CONTEXT, None)
+                    log_exception("No request ID in response", MODULE_CONTEXT, None)
                     out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
                     return out.get_res_json_data(), 500
             else:
-                log_exception("Something went wrong", MODULE_CONTEXT, None)
+                log_exception("No response for search", MODULE_CONTEXT, None)
                 out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
                 return out.get_res_json_data(), 500
         except Exception as e:

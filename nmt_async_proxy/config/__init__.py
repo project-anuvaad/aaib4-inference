@@ -40,7 +40,7 @@ redis_db = os.environ.get('TRANSLATION_REDIS_DB', 0)
 if isinstance(redis_db, str):
     redis_db = eval(redis_db)
 
-record_expiry_in_sec = os.environ.get('TRANSLATION_REDIS_EXPIRY', 86400)
+record_expiry_in_sec = os.environ.get('NMT_PROXY_REDIS_EXPIRY', 300)
 if isinstance(record_expiry_in_sec, str):
     record_expiry_in_sec = eval(record_expiry_in_sec)
 

@@ -11,14 +11,12 @@ PORT = 5001
 
 ENABLE_CORS = True
 
-## application base path
-APP_BASE_PATH = "src/"
+MODULE_CONTEXT = {'metadata':{'module':'NMT-INFERENCE-ASYNC-PROXY'}}
+
 
 ## Module name
-MODULE_NAME = "/aai4b-nmt-inference"
+MODULE_NAME = "/nmt-async-proxy"
 
-## fetch model details
-FETCH_MODEL_CONFG = os.path.join(APP_BASE_PATH, "config/fetch_models.json")
 
 ## truncation limit for sentence length
 trunc_limit = 200
@@ -81,3 +79,7 @@ def get_cron_id():
         else:
             cron_id = 'default_cron_id'
     return cron_id
+
+multi_uri = 'http://127.0.0.1:5001/aai4b-nmt-inference/v0/indic-indic/translate/multilingual'
+
+mono_uri = 'http://127.0.0.1:5001/aai4b-nmt-inference/v0/indic-indic/translate/monolingual'

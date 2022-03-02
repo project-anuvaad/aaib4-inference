@@ -279,6 +279,13 @@ class NMTTranslateResource_async():
             return {"error": status}
 
 
+class NMTMonolingualTranslateResource(Resource):
+    def post(self):
+        api_input = request.get_json(force=True)
+        input = api_input.get('data')
+        nmt_instance = NMTTranslateResource_async()
+        return nmt_instance.async_call(input) 
+
 class NMTTranslateResource_async_multilingual():
     def __init__(self):
         pass
@@ -298,6 +305,13 @@ class NMTTranslateResource_async_multilingual():
                 "Exception caught in  ULCA async-call for batch translation multilingual child block: {}".format(e),
                 MODULE_CONTEXT, e)
             return {"error": status}
+
+class NMTMultilingualTranslateResource(Resource):
+    def post(self):
+        api_input = request.get_json(force=True)
+        input = api_input.get('data')
+        nmt_instance = NMTTranslateResource_async_multilingual()
+        return nmt_instance.async_call(input) 
 
 
 class TranslationDummy(Resource):

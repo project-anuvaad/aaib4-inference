@@ -104,9 +104,12 @@ def select_model_to_load(models,filter):
         for model in models:
             if (model["source_language_code"] != "en") and (model["target_language_code"] == "en"):
                 filtered_models_array.append(model)
-    else:
+    elif filter == "indic-indic":
         for model in models:
             if (model["source_language_code"] != "en") and (model["target_language_code"] != "en"):
                 filtered_models_array.append(model)
-    
+    else:
+        for model in models: 
+            filtered_models_array.append(model)
+
     return filtered_models_array

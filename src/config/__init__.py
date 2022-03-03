@@ -32,7 +32,7 @@ if isinstance(translation_batch_limit, str):
 supported_languages = ['en', 'hi', 'ta', 'te', 'kn', 'pa', 'mr', 'as', 'or', 'ml', 'gu', 'bn']
 
 ## loaded model ('indic-en' OR 'en-indic' OR 'indic-indic')
-model_to_load = os.environ.get('MODEL_NAME', 'indic-indic')  # loads all three models
+model_to_load = os.environ.get('MODEL_NAME', '')  # loads all three models
 
 redis_server_host = os.environ.get('REDIS_URL', 'localhost')
 redis_server_pass = os.environ.get('REDIS_PASS', 'mypassword')

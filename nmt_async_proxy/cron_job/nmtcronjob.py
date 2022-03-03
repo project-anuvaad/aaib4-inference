@@ -21,9 +21,10 @@ class NMTcronjob(Thread):
     # Cron JOB to fetch status of each record and push it to CH and WFM on completion/failure.
     def run(self):
         tranlate_utils = TranslateUtils()
+        batch_no = 0
         while not self.stopped.wait(nmt_cron_interval_sec):
             if multi_lingual_batching_enabled:
-                tranlate_utils.translate_by_multilingual_batching()
+                tranlate_utils.translate_by_multilingual_batching(batch_no)
             else:
                 tranlate_utils.translate_by_lang_level_batching()
 
@@ -82,7 +83,7 @@ class TranslateUtils:
         except Exception as e:
             log_exception("Async ULCA Batch Translation Cron-job | Exception in Cornjob: " + str(e), MODULE_CONTEXT, e)
 
-    def translate_by_multilingual_batching(self):
+    def translate_by_multilingual_batching(self, batch_no):
         redis_data = []
         cron_id = config.get_cron_id()
         try:
@@ -99,7 +100,8 @@ class TranslateUtils:
                 sample_json = redis_data[0][-1]
                 del redis_data
                 counter = 0
-                for batch_no, i in enumerate(range(0, db_df.shape[0], translation_batch_limit)):
+                for i in range(0, db_df.shape[0], translation_batch_limit):
+                    batch_no += 1
                     sent_list = db_df.iloc[i:i + translation_batch_limit].sentence.values.tolist()
                     db_key_list = db_df.iloc[i:i + translation_batch_limit].db_key.values.tolist()
                     src_lang_list = db_df.iloc[i:i + translation_batch_limit].src_language.values.tolist()

@@ -100,39 +100,45 @@ class TranslateUtils:
                 sample_json = redis_data[0][-1]
                 del redis_data
                 counter = 0
-                for i in range(0, db_df.shape[0], translation_batch_limit):
-                    batch_no += 1
-                    sent_list = db_df.iloc[i:i + translation_batch_limit].sentence.values.tolist()
-                    db_key_list = db_df.iloc[i:i + translation_batch_limit].db_key.values.tolist()
-                    src_lang_list = db_df.iloc[i:i + translation_batch_limit].src_language.values.tolist()
-                    tgt_lang_list = db_df.iloc[i:i + translation_batch_limit].tgt_language.values.tolist()
-                    modelid_list = db_df.iloc[i:i + translation_batch_limit].modelid.values.tolist()
-                    log_info(
-                        f"CRON - {cron_id} translating via multilingual batching for Batch - {batch_no} & Batch size - {len(sent_list)}",
-                        MODULE_CONTEXT)
-                    input_json = {"data": (modelid_list, src_lang_list, tgt_lang_list, sent_list)}
-                    output = call_api(config.multi_uri, input_json, 'userid')
-                    log_info(f"CRON - {cron_id} translation via multilingual batching COMPLETED for Batch - {batch_no}",
-                             MODULE_CONTEXT)
-                    op_dict = {}
-                    if output:
-                        if 'tgt_list' in output:
-                            for i, tgt_sent in enumerate(output['tgt_list']):
-                                sg_out = [{"source": sent_list[i], "target": tgt_sent}]
-                                sg_config = sample_json['config']
-                                sg_config['modelId'] = modelid_list[i]
-                                sg_config['language']['sourceLanguage'] = src_lang_list[i]
-                                sg_config['language']['targetLanguage'] = tgt_lang_list[i]
-                                final_output = {'config': sg_config, 'output': sg_out,
-                                                'translation_status': "Done"}
-                                op_dict[db_key_list[i]] = final_output
-                        elif 'error' in output:
-                            for i, _ in enumerate(sent_list):
-                                final_output = output['error']
-                                final_output['translation_status'] = 'Failure'
-                                op_dict[db_key_list[i]] = final_output
-                        redisclient.bulk_upsert_redis(op_dict)
-                        counter += 1
+                db_df['model_to_load'] = ['indic-indic']*len(db_df)
+                db_df.loc[db_df.src_language == 'en', 'model_to_load'] = 'en-indic'
+                db_df.loc[db_df.tgt_language == 'en', 'model_to_load'] = 'indic-en'
+                db_group = db_df.groupby(by=['model_to_load'])
+                for gb_key in db_group.groups.keys():
+                    sub_df = db_group.get_group(gb_key)
+                    for i in range(0, sub_df.shape[0], translation_batch_limit):
+                        batch_no += 1
+                        sent_list = sub_df.iloc[i:i + translation_batch_limit].sentence.values.tolist()
+                        db_key_list = sub_df.iloc[i:i + translation_batch_limit].db_key.values.tolist()
+                        src_lang_list = sub_df.iloc[i:i + translation_batch_limit].src_language.values.tolist()
+                        tgt_lang_list = sub_df.iloc[i:i + translation_batch_limit].tgt_language.values.tolist()
+                        modelid_list = sub_df.iloc[i:i + translation_batch_limit].modelid.values.tolist()
+                        log_info(
+                            f"CRON - {cron_id} translating via multilingual batching for Batch - {batch_no} & Batch size - {len(sent_list)}",
+                            MODULE_CONTEXT)
+                        input_json = {"data": (modelid_list, src_lang_list, tgt_lang_list, sent_list)}
+                        output = call_api(config.multi_uri, input_json, 'userid')
+                        log_info(f"CRON - {cron_id} translation via multilingual batching COMPLETED for Batch - {batch_no}",
+                                 MODULE_CONTEXT)
+                        op_dict = {}
+                        if output:
+                            if 'tgt_list' in output:
+                                for i, tgt_sent in enumerate(output['tgt_list']):
+                                    sg_out = [{"source": sent_list[i], "target": tgt_sent}]
+                                    sg_config = sample_json['config']
+                                    sg_config['modelId'] = modelid_list[i]
+                                    sg_config['language']['sourceLanguage'] = src_lang_list[i]
+                                    sg_config['language']['targetLanguage'] = tgt_lang_list[i]
+                                    final_output = {'config': sg_config, 'output': sg_out,
+                                                    'translation_status': "Done"}
+                                    op_dict[db_key_list[i]] = final_output
+                            elif 'error' in output:
+                                for i, _ in enumerate(sent_list):
+                                    final_output = output['error']
+                                    final_output['translation_status'] = 'Failure'
+                                    op_dict[db_key_list[i]] = final_output
+                            redisclient.bulk_upsert_redis(op_dict)
+                            counter += 1
                 log_info(f'CRON - {cron_id} Total no of BATCHES: {counter}', MODULE_CONTEXT)
         except Exception as e:
             log_exception("Async ULCA Batch Translation Cron-job | Exception in Cornjob: " + str(e), MODULE_CONTEXT, e)

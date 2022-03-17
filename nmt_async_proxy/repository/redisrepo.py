@@ -31,6 +31,7 @@ class RedisRepo:
             pipe = client.pipeline()
             for i in ip_dict.keys():
                 pipe.set(i, json.dumps(ip_dict[i]))
+                pipe.expire(i, record_expiry_in_sec)
             pipe.execute()
             return True
         except Exception as e:

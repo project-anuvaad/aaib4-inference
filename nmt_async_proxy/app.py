@@ -22,3 +22,10 @@ if __name__ == "__main__":
     wfm_jm_thread = NMTcronjob(threading.Event())
     wfm_jm_thread.start()
     nmt_proxy_app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)
+
+
+def create_app_with_gunicorn():
+    log_info('GUNICORN: starting cronjob', MODULE_CONTEXT)
+    wfm_jm_threadx = NMTcronjob(threading.Event())
+    wfm_jm_threadx.start()
+    return nmt_proxy_app

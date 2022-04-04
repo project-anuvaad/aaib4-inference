@@ -57,7 +57,10 @@ def get_translation(api_input):
 class NMTTranslateRedisWriteResource(Resource):
     def post(self):
         api_input = request.get_json(force=True)
-        return write_to_redis(api_input)
+        if config.use_redis_fifo_queue:
+            return write_to_fifo_redis(api_input)
+        else:
+            return write_to_redis(api_input)
 
 
 def write_to_redis(api_input):
@@ -112,10 +115,10 @@ class TranslationDummy(Resource):
     def post(self):
         api_input = request.get_json(force=True)
         try:
-            '''
-            response, code = write_to_redis(api_input)
-            '''
-            response, code = write_to_fifo_redis(api_input)
+            if config.use_redis_fifo_queue:
+                response, code = write_to_fifo_redis(api_input)
+            else:
+                response, code = write_to_redis(api_input)
             if response:
                 if 'requestId' in response.keys():
                     request_id = response["requestId"]

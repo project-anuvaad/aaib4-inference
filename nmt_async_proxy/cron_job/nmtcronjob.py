@@ -28,7 +28,7 @@ class NMTcronjob(Thread):
                 if config.use_redis_fifo_queue:
                     tranlate_utils.translate_by_multilingual_batching_fifo(batch_no)
                 else:
-                    tranlate_utils.translate_by_multilingual_batching_fifo(batch_no)
+                    tranlate_utils.translate_by_multilingual_batching(batch_no)
             else:
                 tranlate_utils.translate_by_lang_level_batching()
 

@@ -40,6 +40,17 @@ redis_db = os.environ.get('TRANSLATION_REDIS_DB', 0)
 if isinstance(redis_db, str):
     redis_db = eval(redis_db)
 
+use_redis_fifo_queue = os.environ.get('USE_REIDS_FIFO_QUEUE', True)
+
+redis_fifo_queue_db = os.environ.get('TRANSLATION_FIFO_QUEUE_REDIS_DB', 1)
+if isinstance(redis_fifo_queue_db, str):
+    redis_fifo_queue_db = eval(redis_fifo_queue_db)
+
+if model_to_load:
+    fifo_db_key_list = [model_to_load]
+else:
+    fifo_db_key_list = ['indic-en', 'en-indic', 'indic-indic']
+
 record_expiry_in_sec = os.environ.get('NMT_PROXY_REDIS_EXPIRY', 300)
 if isinstance(record_expiry_in_sec, str):
     record_expiry_in_sec = eval(record_expiry_in_sec)

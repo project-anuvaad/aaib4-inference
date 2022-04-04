@@ -1,1 +1,1 @@
-from .redisrepo import RedisRepo
+from .redisrepo import RedisRepo, RedisFifoQueue

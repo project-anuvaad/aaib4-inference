@@ -7,6 +7,6 @@ Flask==1.1.2
 anuvaad-auditor==0.1.6
 joblib
 pandas
-redis==3.5.3
+redis==4.2.1
 requests==2.23.0
 gunicorn

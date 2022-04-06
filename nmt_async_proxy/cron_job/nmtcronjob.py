@@ -157,7 +157,7 @@ class TranslateUtils:
                 return
             max_queue_length = fifo_redis_client.get_queue_length(max_queue_key)
             if not max_queue_length:
-                log_info(f'Length of queue with max length is {max_queue_length}', MODULE_CONTEXT)
+                # log_info(f'Length of queue with max length is {max_queue_length}', MODULE_CONTEXT)
                 return None
             values = fifo_redis_client.get_batch(max_queue_key, min(translation_batch_limit, max_queue_length))
             if values:

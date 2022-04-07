@@ -1,1 +1,1 @@
-from .nmtcronjob import NMTcronjob, TranslateUtils
+from .nmtcronjob import NMTcronjob, TranslateUtils, NMTcronjob_subprocess

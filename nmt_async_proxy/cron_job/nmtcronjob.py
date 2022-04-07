@@ -9,6 +9,7 @@ import config
 from repository import RedisRepo, RedisFifoQueue 
 import requests
 import json
+import time
 
 redisclient = RedisRepo()
 fifo_redis_client = RedisFifoQueue(config.redis_fifo_queue_db) 
@@ -31,6 +32,24 @@ class NMTcronjob(Thread):
                     tranlate_utils.translate_by_multilingual_batching(batch_no)
             else:
                 tranlate_utils.translate_by_lang_level_batching()
+
+class NMTcronjob_subprocess:
+    @staticmethod
+    def run():
+        tranlate_utils = TranslateUtils()
+        batch_no = 0
+        cron_start_time = time.time()
+        while True:
+            if multi_lingual_batching_enabled:
+                if config.use_redis_fifo_queue:
+                    tranlate_utils.translate_by_multilingual_batching_fifo(batch_no)
+                else:
+                    tranlate_utils.translate_by_multilingual_batching(batch_no)
+            else:
+                tranlate_utils.translate_by_lang_level_batching()
+            if (time.time() - cron_start_time) < nmt_cron_interval_sec:
+                time.sleep(nmt_cron_interval_sec-(time.time() - cron_start_time))
+            cron_start_time = time.time()
 
 
 class TranslateUtils:

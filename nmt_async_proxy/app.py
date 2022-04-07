@@ -6,7 +6,8 @@ from flask import Flask, jsonify, request
 from flask.blueprints import Blueprint
 from flask_cors import CORS
 import routes
-from cron_job import NMTcronjob
+from cron_job import NMTcronjob, NMTcronjob_subprocess
+import multiprocessing
 
 nmt_proxy_app = Flask(__name__)
 
@@ -19,13 +20,20 @@ for blueprint in vars(routes).values():
 
 if __name__ == "__main__":
     log_info('starting cronjob', MODULE_CONTEXT)
-    wfm_jm_thread = NMTcronjob(threading.Event())
-    wfm_jm_thread.start()
+    if not config.use_redis_fifo_queue:
+        wfm_jm_thread = NMTcronjob(threading.Event())
+        wfm_jm_thread.start()
+    else:
+        wfm_jm_subprocess = multiprocessing.Process(target = NMTcronjob_subprocess.run, name= 'cronjob_subprocess')
+        wfm_jm_subprocess.start()
     nmt_proxy_app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)
-
 
 def create_app_with_gunicorn():
     log_info('GUNICORN: starting cronjob', MODULE_CONTEXT)
-    wfm_jm_threadx = NMTcronjob(threading.Event())
-    wfm_jm_threadx.start()
+    if not config.use_redis_fifo_queue:
+        wfm_jm_thread = NMTcronjob(threading.Event())
+        wfm_jm_thread.start()
+    else:
+        wfm_jm_subprocess = multiprocessing.Process(target = NMTcronjob_subprocess.run, name= 'cronjob_subprocess')
+        wfm_jm_subprocess.start()
     return nmt_proxy_app

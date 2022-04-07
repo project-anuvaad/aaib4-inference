@@ -20,20 +20,21 @@ for blueprint in vars(routes).values():
 
 if __name__ == "__main__":
     log_info('starting cronjob', MODULE_CONTEXT)
-    if not config.use_redis_fifo_queue:
+    if config.use_redis_fifo_queue:
+        wfm_jm_subprocess = multiprocessing.Process(target=NMTcronjob_subprocess.run, name='cronjob_subprocess')
+        wfm_jm_subprocess.start()
+    else:
         wfm_jm_thread = NMTcronjob(threading.Event())
         wfm_jm_thread.start()
-    else:
-        wfm_jm_subprocess = multiprocessing.Process(target = NMTcronjob_subprocess.run, name= 'cronjob_subprocess')
-        wfm_jm_subprocess.start()
     nmt_proxy_app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, threaded=True)
+
 
 def create_app_with_gunicorn():
     log_info('GUNICORN: starting cronjob', MODULE_CONTEXT)
-    if not config.use_redis_fifo_queue:
-        wfm_jm_thread = NMTcronjob(threading.Event())
-        wfm_jm_thread.start()
+    if config.use_redis_fifo_queue:
+        wfm_jm_gu_subprocess = multiprocessing.Process(target=NMTcronjob_subprocess.run, name='cronjob_subprocess')
+        wfm_jm_gu_subprocess.start()
     else:
-        wfm_jm_subprocess = multiprocessing.Process(target = NMTcronjob_subprocess.run, name= 'cronjob_subprocess')
-        wfm_jm_subprocess.start()
+        wfm_jm_gu_thread = NMTcronjob(threading.Event())
+        wfm_jm_gu_thread.start()
     return nmt_proxy_app

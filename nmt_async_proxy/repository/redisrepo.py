@@ -88,6 +88,7 @@ class RedisRepo:
             log_exception(f'Exception in redis get all keys: {e}', MODULE_CONTEXT, e)
             return None
 
+
 class RedisFifoQueue:
     def __init__(self, db_number):
         self.db_number = db_number
@@ -95,7 +96,7 @@ class RedisFifoQueue:
 
     def redis_instantiate(self):
         self.redis_client_connection = redis.Redis(host=redis_server_host, port=redis_server_port, db=self.db_number,
-                                            password=redis_server_pass)
+                                                   password=redis_server_pass)
         return self.redis_client_connection
 
     def get_redis_instance(self):
@@ -116,7 +117,7 @@ class RedisFifoQueue:
     def get_max_queue_length_key(self, key_list):
         try:
             client = self.get_redis_instance()
-            max_queue_name = max(key_list, key = lambda k :client.llen(k))
+            max_queue_name = max(key_list, key=lambda k: client.llen(k))
             return max_queue_name
         except Exception as e:
             log_exception(f'Exception in getting max queue length key: {e}', MODULE_CONTEXT, e)
@@ -135,7 +136,7 @@ class RedisFifoQueue:
         try:
             values = {}
             client = self.get_redis_instance()
-            db_data = client.lpop(name = queue_key, count = batch_size)
+            db_data = client.lpop(name=queue_key, count=batch_size)
             if db_data:
                 for entry in db_data:
                     json_entry = json.loads(entry)

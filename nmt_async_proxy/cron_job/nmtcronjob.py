@@ -6,13 +6,13 @@ from config import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception, log_error
 import pandas as pd
 import config
-from repository import RedisRepo, RedisFifoQueue 
+from repository import RedisRepo, RedisFifoQueue
 import requests
 import json
 import time
 
 redisclient = RedisRepo()
-fifo_redis_client = RedisFifoQueue(config.redis_fifo_queue_db) 
+fifo_redis_client = RedisFifoQueue(config.redis_fifo_queue_db)
 
 
 class NMTcronjob(Thread):
@@ -33,6 +33,7 @@ class NMTcronjob(Thread):
             else:
                 tranlate_utils.translate_by_lang_level_batching()
 
+
 class NMTcronjob_subprocess:
     @staticmethod
     def run():
@@ -48,7 +49,7 @@ class NMTcronjob_subprocess:
             else:
                 tranlate_utils.translate_by_lang_level_batching()
             if (time.time() - cron_start_time) < nmt_cron_interval_sec:
-                time.sleep(nmt_cron_interval_sec-(time.time() - cron_start_time))
+                time.sleep(nmt_cron_interval_sec - (time.time() - cron_start_time))
             cron_start_time = time.time()
 
 
@@ -123,7 +124,7 @@ class TranslateUtils:
                 sample_json = redis_data[0][-1]
                 del redis_data
                 counter = 0
-                db_df['model_to_load'] = ['indic-indic']*len(db_df)
+                db_df['model_to_load'] = ['indic-indic'] * len(db_df)
                 db_df.loc[db_df.src_language == 'en', 'model_to_load'] = 'en-indic'
                 db_df.loc[db_df.tgt_language == 'en', 'model_to_load'] = 'indic-en'
                 db_group = db_df.groupby(by=['model_to_load'])
@@ -141,8 +142,9 @@ class TranslateUtils:
                             MODULE_CONTEXT)
                         input_json = {"data": (modelid_list, src_lang_list, tgt_lang_list, sent_list)}
                         output = call_api(config.multi_uri, input_json, 'userid')
-                        log_info(f"CRON - {cron_id} translation via multilingual batching COMPLETED for Batch - {batch_no}",
-                                 MODULE_CONTEXT)
+                        log_info(
+                            f"CRON - {cron_id} translation via multilingual batching COMPLETED for Batch - {batch_no}",
+                            MODULE_CONTEXT)
                         op_dict = {}
                         if output:
                             if 'tgt_list' in output:
@@ -180,14 +182,14 @@ class TranslateUtils:
                 return None
             values = fifo_redis_client.get_batch(max_queue_key, min(translation_batch_limit, max_queue_length))
             if values:
-                redis_data = [(k,v) for k,v in values.items()]
+                redis_data = [(k, v) for k, v in values.items()]
             if redis_data:
                 log_info(f'CRON Total Size of Redis Fetch: {len(redis_data)}', MODULE_CONTEXT)
                 db_df = self.create_dataframe(redis_data)
                 sample_json = redis_data[0][-1]
                 del redis_data
                 counter = 0
-                db_df['model_to_load'] = ['indic-indic']*len(db_df)
+                db_df['model_to_load'] = ['indic-indic'] * len(db_df)
                 db_df.loc[db_df.src_language == 'en', 'model_to_load'] = 'en-indic'
                 db_df.loc[db_df.tgt_language == 'en', 'model_to_load'] = 'indic-en'
                 db_group = db_df.groupby(by=['model_to_load'])
@@ -205,8 +207,9 @@ class TranslateUtils:
                             MODULE_CONTEXT)
                         input_json = {"data": (modelid_list, src_lang_list, tgt_lang_list, sent_list)}
                         output = call_api(config.multi_uri, input_json, 'userid')
-                        log_info(f"CRON - {cron_id} translation via multilingual batching COMPLETED for Batch - {batch_no}",
-                                 MODULE_CONTEXT)
+                        log_info(
+                            f"CRON - {cron_id} translation via multilingual batching COMPLETED for Batch - {batch_no}",
+                            MODULE_CONTEXT)
                         op_dict = {}
                         if output:
                             if 'tgt_list' in output:

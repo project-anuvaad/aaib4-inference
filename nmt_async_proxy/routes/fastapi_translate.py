@@ -29,7 +29,7 @@ async def redis_write(api_input = Body(...)):
     else:
         return write_to_redis(api_input)
 
-@router.post(config.MODULE_NAME + "/v0" + config.model_to_load + "/translation/dummy")
+@router.post(config.MODULE_NAME + "/v0/" + config.model_to_load + "/translation/dummy")
 async def dummy(api_input = Body(...)):
     try:
         if config.use_redis_fifo_queue:

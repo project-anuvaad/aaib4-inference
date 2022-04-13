@@ -12,3 +12,5 @@ requests==2.23.0
 gunicorn
 Jinja2==3.0.3 
 werkzeug==2.0.2
+fastapi==0.75.1
+uvicorn==0.17.6

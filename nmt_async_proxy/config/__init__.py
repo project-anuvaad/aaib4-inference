@@ -10,7 +10,6 @@ HOST = "0.0.0.0"
 PORT = 5001
 
 ENABLE_CORS = True
-
 MODULE_CONTEXT = {'metadata': {'module': 'NMT-INFERENCE-ASYNC-PROXY'}}
 
 ## Module name
@@ -76,6 +75,13 @@ if isinstance(internal_cron_enabled, str):
         internal_cron_enabled = True
     else:
         internal_cron_enabled = False
+
+use_fast_api_gunicorn = os.environ.get('USE_FASTAPI_GUNICORN', True)
+if isinstance(use_fast_api_gunicorn, str):
+    if use_fast_api_gunicorn.casefold() == "TRUE".casefold():
+        use_fast_api_gunicorn = True
+    else:
+        use_fast_api_gunicorn = False
 
 cron_id = None
 

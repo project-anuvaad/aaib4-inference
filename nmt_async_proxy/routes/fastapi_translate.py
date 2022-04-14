@@ -29,9 +29,16 @@ async def redis_write(api_input = Body(...)):
     else:
         return write_to_redis(api_input)
 
-@router.post(config.MODULE_NAME + "/v0/" + config.model_to_load + "/translation/dummy")
+@router.post(config.MODULE_NAME + "/v0" + config.model_to_load + "/translation/dummy")
 async def dummy(api_input = Body(...)):
+
+    if not isinstance( api_input, dict):
+        log_exception("Non dict input recieved", MODULE_CONTEXT, e)
+        return JSONResponse(status_code=500, content={'no_dict_error' : type(api_input)})
+
+
     try:
+        
         if config.use_redis_fifo_queue:
             response, code = write_to_fifo_redis(api_input)
         else:

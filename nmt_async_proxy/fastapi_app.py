@@ -41,9 +41,14 @@ if __name__ == "__main__":
 
 
 if config.use_fast_api_gunicorn:
+    log_info('starting cronjob', MODULE_CONTEXT)
     if config.use_redis_fifo_queue:
+        log_info('starting cronjob subprocess', MODULE_CONTEXT)
         wfm_jm_gu_subprocess = multiprocessing.Process(target=NMTcronjob_subprocess.run, name='cronjob_subprocess')
         wfm_jm_gu_subprocess.start()
     else:
+        log_info('starting cronjob threaded', MODULE_CONTEXT)
         wfm_jm_gu_thread = NMTcronjob(threading.Event())
         wfm_jm_gu_thread.start()
+else:
+    log_info('FastAPI enviroment variable set to False', MODULE_CONTEXT) 

@@ -35,7 +35,7 @@ async def dummy(api_input = Body(...)):
     log_info("Inside the dummy router", MODULE_CONTEXT) 
 
     if not isinstance( api_input, dict):
-        log_exception("Non dict input recieved", MODULE_CONTEXT, e)
+        log_info("Non dict input recieved", MODULE_CONTEXT)
         try:
             return JSONResponse(status_code=500, content={'no_dict_error' : type(api_input)})
         except Exception as e:
@@ -62,7 +62,7 @@ async def dummy(api_input = Body(...)):
                 # return JSONResponse(status_code=200, content=final_response)
                 try:
                     return JSONResponse(status_code=200, content=final_response)
-                except:
+                except Exception as e:
                    log_exception("Exception in if block of response while returning jsonresponse", MODULE_CONTEXT, e) 
 
             else:
@@ -71,7 +71,7 @@ async def dummy(api_input = Body(...)):
                 # return out.get_res_json_data(), 500
                 try:
                     return JSONResponse(status_code=500, content=out.get_res_json_data())
-                except:
+                except Exception as e:
                    log_exception("Exception in else block of response while returning jsonresponse", MODULE_CONTEXT, e) 
 
         else:
@@ -80,7 +80,7 @@ async def dummy(api_input = Body(...)):
             # return out.get_res_json_data(), 500
             try:
                 return JSONResponse(status_code=500, content=out.get_res_json_data())
-            except Exception as e2:
+            except Exception as e:
                log_exception("exception in except block jsonresponse", MODULE_CONTEXT, e) 
 
     except Exception as e:

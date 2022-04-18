@@ -36,9 +36,8 @@ async def dummy(api_input = Body(...)):
         log_exception("Non dict input recieved", MODULE_CONTEXT, e)
         return JSONResponse(status_code=500, content={'no_dict_error' : type(api_input)})
 
-
     try:
-        
+        log_info("Inside the try block", MODULE_CONTEXT) 
         if config.use_redis_fifo_queue:
             response, code = write_to_fifo_redis(api_input)
         else:
@@ -55,23 +54,36 @@ async def dummy(api_input = Body(...)):
                             final_response = response
                     time.sleep(poll_api_interval_sec)
                 # return final_response, 200
-                return JSONResponse(status_code=200, content=final_response)
+                # return JSONResponse(status_code=200, content=final_response)
+                try:
+                    return JSONResponse(status_code=200, content=final_response)
+                except:
+                   log_exception("Exception in if block of response while returning jsonresponse", MODULE_CONTEXT, e) 
 
             else:
                 log_exception("No request ID in response", MODULE_CONTEXT, None)
                 out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
                 # return out.get_res_json_data(), 500
-                return JSONResponse(status_code=500, content=out.get_res_json_data())
+                try:
+                    return JSONResponse(status_code=500, content=out.get_res_json_data())
+                except:
+                   log_exception("Exception in else block of response while returning jsonresponse", MODULE_CONTEXT, e) 
 
         else:
             log_exception("No response for search", MODULE_CONTEXT, None)
             out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
             # return out.get_res_json_data(), 500
-            return JSONResponse(status_code=500, content=out.get_res_json_data())
+            try:
+                return JSONResponse(status_code=500, content=out.get_res_json_data())
+            except Exception as e2:
+               log_exception("exception in except block jsonresponse", MODULE_CONTEXT, e) 
 
     except Exception as e:
         log_exception("Something went wrong", MODULE_CONTEXT, e)
         out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
         # return out.get_res_json_data(), 500
-        return JSONResponse(status_code=500, content=out.get_res_json_data())
-
+        try:
+            return JSONResponse(status_code=500, content=out.get_res_json_data())
+        except Exception as e2:
+            log_exception("exception in except block jsonresponse", MODULE_CONTEXT, e2) 
+        # return JSONResponse(status_code=500, content=out.get_res_json_data())

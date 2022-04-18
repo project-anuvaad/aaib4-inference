@@ -32,12 +32,13 @@ async def redis_write(api_input = Body(...)):
 @router.post(config.MODULE_NAME + "/v0" + config.model_to_load + "/translation/dummy")
 async def dummy(api_input = Body(...)):
 
-    log_info("Inside the dummy router", MODULE_CONTEXT) 
+    log_info("Inside the dummy router", MODULE_CONTEXT)
+    log_info(f"recieved api input {api_input}", MODULE_CONTEXT)
 
     if not isinstance( api_input, dict):
         log_info("Non dict input recieved", MODULE_CONTEXT)
         try:
-            return JSONResponse(status_code=500, content={'no_dict_error' : type(api_input)})
+            return JSONResponse(status_code=500, content={'no_dict_error' : str(type(api_input))})
         except Exception as e:
             log_exception("Exception in isinstance of response while returning jsonresponse", MODULE_CONTEXT, e) 
 

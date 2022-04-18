@@ -31,7 +31,7 @@ async def redis_write(api_input = Body(...)):
         return write_to_redis(api_input)
 
 @router.post(config.MODULE_NAME + "/v0" + config.model_to_load + "/translation/dummy")
-def dummy(api_input = Body(...)):
+async def dummy(api_input = Body(...)):
 
     # log_info("Inside the dummy router", MODULE_CONTEXT)
     # log_info(f"recieved api input {api_input}", MODULE_CONTEXT)

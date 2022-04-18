@@ -76,7 +76,7 @@ if isinstance(internal_cron_enabled, str):
     else:
         internal_cron_enabled = False
 
-use_fast_api_gunicorn = os.environ.get('USE_FASTAPI_GUNICORN', True)
+use_fast_api_gunicorn = os.environ.get('USE_FASTAPI_GUNICORN', False)
 if isinstance(use_fast_api_gunicorn, str):
     if use_fast_api_gunicorn.casefold() == "TRUE".casefold():
         use_fast_api_gunicorn = True

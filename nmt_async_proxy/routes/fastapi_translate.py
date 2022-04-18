@@ -31,21 +31,21 @@ async def redis_write(api_input = Body(...)):
         return write_to_redis(api_input)
 
 @router.post(config.MODULE_NAME + "/v0" + config.model_to_load + "/translation/dummy")
-async def dummy(api_input = Body(...)):
+def dummy(api_input = Body(...)):
 
-    log_info("Inside the dummy router", MODULE_CONTEXT)
-    log_info(f"recieved api input {api_input}", MODULE_CONTEXT)
+    # log_info("Inside the dummy router", MODULE_CONTEXT)
+    # log_info(f"recieved api input {api_input}", MODULE_CONTEXT)
     if not isinstance( api_input, dict):
-        log_info("Non dict input recieved", MODULE_CONTEXT)
+        # log_info("Non dict input recieved", MODULE_CONTEXT)
         try:
             # return JSONResponse(status_code=500, content={'no_dict_error' : str(type(api_input))})
             api_input = json.loads(api_input)
-            log_info(f"recieved modefied api input {api_input}", MODULE_CONTEXT)
+            # log_info(f"recieved modefied api input {api_input}", MODULE_CONTEXT)
         except Exception as e:
             log_exception("Exception in isinstance of response while returning jsonresponse", MODULE_CONTEXT, e) 
 
     try:
-        log_info("Inside the try block", MODULE_CONTEXT) 
+        # log_info("Inside the try block", MODULE_CONTEXT) 
         if config.use_redis_fifo_queue:
             response, code = write_to_fifo_redis(api_input)
         else:

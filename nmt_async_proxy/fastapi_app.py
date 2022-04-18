@@ -36,7 +36,7 @@ if __name__ == "__main__":
         
     log_info('starting FastApi', MODULE_CONTEXT)
     uvicorn.run(
-        "fastapi_app:app", host=config.HOST, port=config.PORT,  reload=True
+        "fastapi_app:app", host=config.HOST, port=config.PORT,  reload=False
     )
 
 

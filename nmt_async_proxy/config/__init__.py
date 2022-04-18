@@ -19,7 +19,7 @@ MODULE_NAME = "/nmt-async-proxy"
 trunc_limit = 200
 
 ## max number of input sentences per batch (for inference service, specific to GPU type)
-translation_batch_limit = os.environ.get('TRANSLATION_BATCH_LIMIT', 75)
+translation_batch_limit = os.environ.get('TRANSLATION_BATCH_LIMIT', 16)
 if isinstance(translation_batch_limit, str):
     translation_batch_limit = eval(translation_batch_limit)
 
@@ -76,7 +76,7 @@ if isinstance(internal_cron_enabled, str):
     else:
         internal_cron_enabled = False
 
-use_fast_api_gunicorn = os.environ.get('USE_FASTAPI_GUNICORN', True)
+use_fast_api_gunicorn = os.environ.get('USE_FASTAPI_GUNICORN', False)
 if isinstance(use_fast_api_gunicorn, str):
     if use_fast_api_gunicorn.casefold() == "TRUE".casefold():
         use_fast_api_gunicorn = True

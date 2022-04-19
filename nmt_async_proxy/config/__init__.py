@@ -19,7 +19,7 @@ MODULE_NAME = "/nmt-async-proxy"
 trunc_limit = 200
 
 ## max number of input sentences per batch (for inference service, specific to GPU type)
-translation_batch_limit = os.environ.get('TRANSLATION_BATCH_LIMIT', 32)
+translation_batch_limit = os.environ.get('TRANSLATION_BATCH_LIMIT', 64)
 if isinstance(translation_batch_limit, str):
     translation_batch_limit = eval(translation_batch_limit)
 

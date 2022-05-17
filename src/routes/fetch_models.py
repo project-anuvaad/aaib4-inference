@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask_restful import Api
 import config
 
-from resources import CreateModelResource,UpdateModelsResource,DeleteModelResource,FetchModelsResource,FetchSingleModelResource,FetchModelsResource_v2,FetchSingleModelIDResource
+from resources import CreateModelResource,UpdateModelsResource,DeleteModelResource,FetchModelsResource,FetchModelsResource_v2
 
 CREATE_MODELS_BLUEPRINT = Blueprint("create-models",__name__)
 
@@ -26,12 +26,4 @@ Api(FETCH_MODELS_BLUEPRINT).add_resource(
 
 Api(FETCH_MODELS_BLUEPRINT).add_resource(
     FetchModelsResource_v2, config.MODULE_NAME + "/v2/fetch-models"
-)
-
-Api(FETCH_MODELS_BLUEPRINT).add_resource(
-    FetchSingleModelResource, config.MODULE_NAME + "/v2/fetch-models/<string:id>"
-)
-
-Api(FETCH_MODELS_BLUEPRINT).add_resource(
-    FetchSingleModelIDResource, config.MODULE_NAME + "/v2/fetch-models/<int:model_id>"
 )

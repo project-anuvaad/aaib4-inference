@@ -99,9 +99,26 @@ def write_to_fifo_redis(api_input):
                 fifo_db_key = 'indic-indic'
             status = fifo_redis_client.rpush_redis(fifo_db_key, api_input)
             if status:
-                return {"requestId": key}, 202
+                status_return = {"requestId": key}, 202
+                # return {"requestId": key}, 202
             else:
                 log_info("Push to fifo redis FAILED!", MODULE_CONTEXT)
+                out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
+                return out.get_res_json(), 500
+        except Exception as e:
+            status = Status.SYSTEM_ERR.value
+            status['message'] = str(e)
+            log_exception("Exception caught in : {}".format(e), MODULE_CONTEXT, e)
+            out = CustomResponse(status, api_input)
+            return out.get_res_json_data(), 500
+        try:
+            api_input["requestId"] = key
+            api_input["cronId"] = config.get_cron_id()
+            status = redisclient.upsert_redis(key, api_input, True)
+            if status:
+                return {"requestId": key}, 202
+            else:
+                log_info("Write to redis FAILED!", MODULE_CONTEXT)
                 out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
                 return out.get_res_json(), 500
         except Exception as e:

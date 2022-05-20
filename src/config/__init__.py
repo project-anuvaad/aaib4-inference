@@ -16,9 +16,6 @@ APP_BASE_PATH = "src/"
 MODULE_NAME = "/aai4b-nmt-inference"
 # MODULE_NAME_2 = "/nmt-inference"
 
-## config file 
-ICONFG_FILE = os.path.join(APP_BASE_PATH, 'config/iconf.json')
-
 ## fetch model details
 FETCH_MODEL_CONFG = os.path.join(APP_BASE_PATH, "config/fetch_models.json")
 

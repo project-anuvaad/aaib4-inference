@@ -171,7 +171,7 @@ class UpdateModelsResource(Resource):
                     out = CustomResponse(Status.INCOMPLETE_API_REQUEST.value, None)
                     return out.get_res_json(),401 
                 elif check.count()>0:
-                    if body['is_primary'] and body['is_primary'] == True:
+                    if 'is_primary' in body.keys() and body['is_primary'] == True:
                         update_models = CreateModel.objects(uuid=id)
                         for update_model in update_models:
                     ## changing the primary model      

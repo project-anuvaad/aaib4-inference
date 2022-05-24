@@ -22,8 +22,66 @@ class FetchModelsResource(Resource):
             status['why'] = str(e)
             out = CustomResponse(status, None)                  
             return out.getres()
-    
+
 class FetchModelsResource_v2(Resource):
+    def get(self):
+        log_info("FetchModelsResource_v2 api called",MODULE_CONTEXT)
+        try:
+            fetch_model = CreateModel.objects().exclude("id").exclude("created_on")
+            i = fetch_model.to_json()
+            json_data = json.loads(i)
+            out = CustomResponse(Status.SUCCESS.value, json_data)
+            return out.get_res_json(),200
+        except Exception as e:
+            log_exception("Error in FetchModelsResource_v2: {}".format(e),MODULE_CONTEXT,e)
+            status = Status.SYSTEM_ERR.value
+            status['message'] = str(e)
+            out = CustomResponse(status, None)                  
+            return out.get_res_json(),500
+
+class FetchSingleModelResource(Resource):
+    def get(self,id):
+        log_info("FetchSingleModelResource api called",MODULE_CONTEXT)
+        try:
+            if request.method == 'GET':
+                data = CreateModel.objects(uuid=id).exclude("id").exclude("created_on")
+                if data.count()>0:
+                    i = data.to_json()
+                    json_data = json.loads(i)
+                    out = CustomResponse(Status.SUCCESS.value, json_data)
+                    return out.get_res_json(),200
+                else:
+                    out = CustomResponse(Status.No_File_DB.value, None)
+                    return out.get_res_json(),401
+        except Exception as e:
+            log_exception("Error in FetchSingleModelResource: {}".format(e),MODULE_CONTEXT,e)
+            status = Status.SYSTEM_ERR.value
+            status['message'] = str(e)
+            out = CustomResponse(status, None)                  
+            return out.get_res_json(),500
+
+class FetchSingleModelIDResource(Resource):
+    def get(self,model_id):
+        log_info("FetchSingleModelIDResource api called",MODULE_CONTEXT)
+        try:
+            if request.method == 'GET':
+                data = CreateModel.objects(model_id=model_id).exclude("id").exclude("created_on")
+                if data.count()>0:
+                    i = data.to_json()
+                    json_data = json.loads(i)
+                    out = CustomResponse(Status.SUCCESS.value, json_data)
+                    return out.get_res_json(),200
+                else:
+                    out = CustomResponse(Status.No_File_DB.value, None)
+                    return out.get_res_json(),401
+        except Exception as e:
+            log_exception("Error in FetchSingleModelIDResource: {}".format(e),MODULE_CONTEXT,e)
+            status = Status.SYSTEM_ERR.value
+            status['message'] = str(e)
+            out = CustomResponse(status, None)                  
+            return out.get_res_json(),500        
+    
+class FetchModelsResource_v3(Resource):
     def post(self):
         log_info("FetchModelsResource_v2 api called",MODULE_CONTEXT)
         inputs = request.get_json(force=True)

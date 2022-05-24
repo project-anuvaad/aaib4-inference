@@ -1,2 +1,4 @@
 from .translate import TRANSLATE_BLUEPRINT
-from .fetch_models import CREATE_MODELS_BLUEPRINT, FETCH_MODELS_BLUEPRINT
+from .labse_aligner import LABSE_ALIGNER_BLUEPRINT
+from .fetch_models import CREATE_MODELS_BLUEPRINT,FETCH_MODELS_BLUEPRINT
+from .health import HEALTH_BLUEPRINT

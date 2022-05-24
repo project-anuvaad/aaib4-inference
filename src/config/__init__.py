@@ -22,6 +22,9 @@ FETCH_MODEL_CONFG = os.path.join(APP_BASE_PATH, "config/fetch_models.json")
 ## truncation limit for sentence length
 trunc_limit = 200
 
+# LABSE_PATH = os.path.join(APP_BASE_PATH, 'available_nmt_models/sbert.net_models_LaBSE')
+LABSE_PATH = 'sentence-transformers/LaBSE'
+
 ## max number of input sentences per batch (for inference service, specific to GPU type)
 translation_batch_limit = os.environ.get('TRANSLATION_BATCH_LIMIT', 75)
 

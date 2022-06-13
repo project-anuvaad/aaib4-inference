@@ -3,3 +3,4 @@ from .model_loader import Loadmodels
 load_models = Loadmodels()
 from .fairseq_translate import FairseqTranslateService, FairseqAutoCompleteTranslateService
 from .fairseq_document_translate import FairseqDocumentTranslateService
+from .labse_aligner import LabseAlignerService

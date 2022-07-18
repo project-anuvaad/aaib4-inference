@@ -89,9 +89,17 @@ class TranslateResourceV1(Resource):
                     raise Exception(f"Number of sentences per request exceeded the limit of:{translation_batch_limit} sentences per batch")
                 translation_batch = {'id':inputs.get('model_id'),'src_list': src_list}
                 output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
-                output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i],
-                                                    'tagged_tgt':output_batch['tagged_tgt_list'][i],'tagged_src':output_batch['tagged_src_list'][i]}
-                                                    for i in range(len(input_src_list))]
+                if 'token_maps' in output_batch.keys():
+                    output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i],
+                                                        'tagged_tgt':output_batch['tagged_tgt_list'][i],
+                                                        'tagged_src':output_batch['tagged_src_list'][i],
+                                                        'token_maps': output_batch['token_maps']}
+                                                        for i in range(len(input_src_list))]
+                else:
+                    output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i],
+                                                        'tagged_tgt':output_batch['tagged_tgt_list'][i],
+                                                        'tagged_src':output_batch['tagged_src_list'][i]}
+                                                        for i in range(len(input_src_list))]
                 for j,k in enumerate(input_src_list):
                     k.update(output_batch_dict_list[j])
                     response_body.append(k)

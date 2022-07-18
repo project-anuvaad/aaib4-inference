@@ -72,9 +72,10 @@ class FairseqDocumentTranslateService:
                 )
 
             out = {
-                "tgt_list": translation_array,
+                "tgt_list": translation_array['translations'],
                 "tagged_src_list": input_sentence_array_prepd,
-                "tagged_tgt_list": translation_array,
+                "tagged_tgt_list": translation_array['translations'],
+                "token_maps": translation_array['token_maps']
             }
         except Exception as e:
             log_exception(
@@ -125,7 +126,8 @@ class FairseqDocumentTranslateService:
                 )
 
             out = {
-                "tgt_list": translation_array
+                "tgt_list": translation_array['translations'],
+                "token_maps": translation_array['token_maps']
             }
         except Exception as e:
             log_exception(
@@ -147,8 +149,9 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
         inputs = apply_bpe(inputs, source_bpe)
         i_final = sentence_processor.apply_lang_tags(inputs, src_lang, tgt_lang)
         i_final = truncate_long_sentences(i_final)
-        translation = translator.translate(i_final)
-        translation = sentence_processor.postprocess(translation, tgt_lang)
+        # translation = translator.translate(i_final)
+        translation = translator.translate_with_tokenmap(i_final)
+        translation['translations'] = sentence_processor.postprocess(translation['translations'], tgt_lang)
         return translation
 
     except Exception as e:

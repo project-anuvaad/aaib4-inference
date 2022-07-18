@@ -7,14 +7,30 @@
 Translate raw text with a trained model. Batches data on-the-fly.
 """
 
+INDIC_NLP_LIB_HOME = "src/tools/indic_nlp_library"
+INDIC_NLP_RESOURCES = "src/tools/indic_nlp_resources"
+import sys
+
+sys.path.append(r"{}".format(INDIC_NLP_LIB_HOME))
+from indicnlp import common
+
+common.set_resources_path(INDIC_NLP_RESOURCES)
+from indicnlp import loader
+loader.load()
+
 import ast
 from collections import namedtuple
+from pprint import pformat, pprint
+import numpy as np
 
 import torch
 from fairseq import checkpoint_utils, options, tasks, utils
 from fairseq.dataclass.utils import convert_namespace_to_omegaconf
 from fairseq.token_generation_constraints import pack_constraints, unpack_constraints
 from fairseq_cli.generate import get_symbols_to_strip_from_output
+from indicnlp.transliterate import unicode_transliterate
+from indicnlp.tokenize import indic_detokenize
+from sacremoses import MosesDetokenizer
 
 import codecs
 
@@ -78,7 +94,44 @@ def make_batches(
             src_lengths=src_lengths,
             constraints=constraints,
         )
-
+def get_hypo_word(in_map, hypo_word, lang, common_lang='hi' ):
+    final_word = ''
+    if in_map >= len(hypo_word):
+        final_word =  ''
+    elif in_map < 0:
+        final_word =  ''
+    elif hypo_word[in_map].endswith('@@'):
+        final_word = final_word + hypo_word[in_map][:-2]
+        i = 1
+        while in_map + i < len(hypo_word):
+            if hypo_word[in_map + i].endswith('@@'):
+                final_word = final_word + hypo_word[in_map+i][:-2]
+            else:
+                final_word = final_word + hypo_word[in_map +i]
+                break
+            i += 1
+    else:
+        final_word = final_word + hypo_word[in_map]
+    i = 1
+    while in_map -i >= 0:
+        if hypo_word[in_map-i].endswith('@@'):
+            final_word = hypo_word[in_map-i][:-2] + final_word
+        else:
+            break
+        i += 1
+    # if in_map < len(hypo_word):
+    #     print(f"\n{in_map}-{hypo_word[in_map]}-{final_word}\n")
+    # else:
+    #     print(f"\n{in_map}-<eos>-{final_word}\n")
+    if lang == "en":
+        en_detok = MosesDetokenizer(lang="en")
+        final_word = en_detok.detokenize(final_word.strip().split(" "))
+    else:
+        xliterator = unicode_transliterate.UnicodeIndicTransliterator()
+        final_word = indic_detokenize.trivial_detokenize(
+            xliterator.transliterate(final_word.strip(), common_lang, lang), lang
+        )
+    return final_word
 
 class Translator:
     def __init__(
@@ -97,6 +150,7 @@ class Translator:
                 constraints="ordered",
                 batch_size=batch_size,
                 buffer_size=batch_size + 1,
+                print_alignment = "soft",
             )
         else:
             self.parser.set_defaults(
@@ -105,6 +159,7 @@ class Translator:
                 num_wokers=-1,
                 batch_size=batch_size,
                 buffer_size=batch_size + 1,
+                print_alignment = "soft",
             )
         args = options.parse_args_and_arch(self.parser, input_args=[data_dir])
         # we are explictly setting src_lang and tgt_lang here
@@ -296,8 +351,142 @@ class Translator:
                 )
                 detok_hypo_str = self.decode_fn(hypo_str)
                 final_translations.append(detok_hypo_str)
-        return final_translations
+        return {'translations':final_translations}
 
+
+    def translate_with_tokenmap(self, inputs, constraints=None):
+        if self.constrained_decoding and constraints is None:
+            raise ValueError("Constraints cant be None in constrained decoding mode")
+        if not self.constrained_decoding and constraints is not None:
+            raise ValueError("Cannot pass constraints during normal translation")
+        if constraints:
+            constrained_decoding = True
+            modified_inputs = []
+            for _input, constraint in zip(inputs, constraints):
+                modified_inputs.append(_input + f"\t{constraint}")
+            inputs = modified_inputs
+        else:
+            constrained_decoding = False
+
+        start_id = 0
+        results = []
+        final_translations = []
+        token_map_list = []
+        for batch in make_batches(
+            inputs,
+            self.cfg,
+            self.task,
+            self.max_positions,
+            self.encode_fn,
+            constrained_decoding,
+        ):
+            bsz = batch.src_tokens.size(0)
+            src_tokens = batch.src_tokens
+            src_lengths = batch.src_lengths
+            constraints = batch.constraints
+            if self.use_cuda:    
+                src_tokens = src_tokens.cuda()
+                src_lengths = src_lengths.cuda()
+                if constraints is not None:
+                    constraints = constraints.cuda()
+                        
+
+            sample = {
+                "net_input": {
+                    "src_tokens": src_tokens,
+                    "src_lengths": src_lengths,
+                },
+            }               
+                
+            translations = self.task.inference_step(
+                self.generator, self.models, sample, constraints=constraints
+            )
+
+            list_constraints = [[] for _ in range(bsz)]
+            if constrained_decoding:
+                list_constraints = [unpack_constraints(c) for c in constraints]
+            for i, (id, hypos) in enumerate(zip(batch.ids.tolist(), translations)):
+                src_tokens_i = utils.strip_pad(src_tokens[i], self.tgt_dict.pad())
+                constraints = list_constraints[i]
+                results.append(
+                    (
+                        start_id + id,
+                        src_tokens_i,
+                        hypos,
+                        {
+                            "constraints": constraints,
+                        },
+                    )
+                )
+
+        # sort output to match input order
+        for id_, src_tokens, hypos, _ in sorted(results, key=lambda x: x[0]):
+            src_str = ""
+            if self.src_dict is not None:
+                src_str = self.src_dict.string(
+                    src_tokens, self.cfg.common_eval.post_process
+                )
+
+            # Process top predictions
+            for hypo in hypos[: min(len(hypos), self.cfg.generation.nbest)]:
+                hypo_tokens, hypo_str, alignment = utils.post_process_prediction(
+                    hypo_tokens=hypo["tokens"].int().cpu(),
+                    src_str=src_str,
+                    alignment=hypo["alignment"],
+                    align_dict=self.align_dict,
+                    tgt_dict=self.tgt_dict,
+                    remove_bpe="subword_nmt",
+                    extra_symbols_to_ignore=get_symbols_to_strip_from_output(
+                        self.generator
+                    ),
+                )
+                detok_hypo_str = self.decode_fn(hypo_str)
+                final_translations.append(detok_hypo_str)
+                hypo_tokens, hypo_str, alignment = utils.post_process_prediction(
+                    hypo_tokens=hypo["tokens"].int().cpu(),
+                    src_str=src_str,
+                    alignment=hypo["alignment"],
+                    align_dict=self.align_dict,
+                    tgt_dict=self.tgt_dict,
+                    remove_bpe=self.cfg.common_eval.post_process,
+                    extra_symbols_to_ignore=get_symbols_to_strip_from_output(
+                        self.generator
+                    ), 
+                )
+                atten_src_token = np.array(alignment).T
+                src_token_map = np.argmax(atten_src_token, axis=1).tolist()
+                # print(f"Source token map is {src_token_map} with length {len(src_token_map)}")
+                # print("source string", src_str, len(src_str.split()))
+                # print("target_str", hypo_str, len(hypo_str.split()))
+                src_word = src_str.split()
+                hypo_word = hypo_str.split()
+                target_language_code = src_word[1].split('__')[-2]
+                # Exluding last token as its end of sentence tag
+                skip = False
+                assemble_word = ''
+                token_map = []
+                for i,in_map in enumerate(src_token_map[:-1]):
+                    if skip and src_word[i].endswith('@@'): 
+                        assemble_word = assemble_word + src_word[i][:-2]
+                        continue
+                    elif assemble_word:
+                        assemble_word = assemble_word + src_word[i]
+                        # print(f"{assemble_word}-{assemble_word_tgt}")
+                        token_map.append((assemble_word, assemble_word_tgt))
+                        assemble_word = ''
+                        skip = False
+                        continue
+                    if src_word[i].endswith("@@"):
+                        skip = True
+                        assemble_word = assemble_word + src_word[i][:-2]
+                        assemble_word_tgt = get_hypo_word(in_map, hypo_word, target_language_code)
+                        continue
+                    # print(f"{src_word[i]}-{get_hypo_word(in_map, hypo_word, target_language_code)}")
+                    token_map.append((src_word[i],get_hypo_word(in_map, hypo_word, target_language_code)))
+                token_map_list.append(token_map[2:])
+        if not len(final_translations) == len(token_map_list):
+            raise ValueError('no of sentences translated dosent match no of token map generated. Check Code base in Translator Class') 
+        return {'translations': final_translations, 'token_maps': token_map_list}
 
 def load_vocab(vocab_path, bpe_codes_path):
     vocabulary = read_vocabulary(codecs.open(vocab_path, encoding="utf-8"), 5)

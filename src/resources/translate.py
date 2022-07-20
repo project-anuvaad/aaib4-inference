@@ -1,5 +1,6 @@
 from flask_restful import fields, marshal_with, reqparse, Resource
 from flask import request
+from repository_redis import RedisRepo
 from services import FairseqTranslateService, FairseqAutoCompleteTranslateService, FairseqDocumentTranslateService
 from models import CustomResponse, Status
 from utilities import MODULE_CONTEXT
@@ -7,8 +8,11 @@ from anuvaad_auditor.loghandler import log_info, log_exception
 import datetime
 from config import translation_batch_limit
 from config import supported_languages
+from config import model_attention_score_tmx_enabled
 from html import escape
+import hashlib
 
+redisclient = RedisRepo()
         
 class NMTTranslateResource(Resource):
     def post(self):
@@ -89,11 +93,15 @@ class TranslateResourceV1(Resource):
                     raise Exception(f"Number of sentences per request exceeded the limit of:{translation_batch_limit} sentences per batch")
                 translation_batch = {'id':inputs.get('model_id'),'src_list': src_list}
                 output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
-                if 'token_maps' in output_batch.keys():
+                if 'token_maps' in output_batch.keys() and model_attention_score_tmx_enabled:
+                    for i, src_sent in enumerate(src_list):
+                        src_hash_key = hashlib.sha256(src_sent.encode('utf-16')).hexdigest()
+                        src_hash_value = output_batch['token_maps'][i]
+                        # print(output_batch['token_maps'][i])
+                        redisclient.upsert_redis(src_hash_key, src_hash_value, True)
                     output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i],
                                                         'tagged_tgt':output_batch['tagged_tgt_list'][i],
-                                                        'tagged_src':output_batch['tagged_src_list'][i],
-                                                        'token_maps': output_batch['token_maps']}
+                                                        'tagged_src':output_batch['tagged_src_list'][i]}
                                                         for i in range(len(input_src_list))]
                 else:
                     output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i],

@@ -19,7 +19,7 @@ MODULE_NAME = "/nmt-async-proxy"
 trunc_limit = 200
 
 ## max number of input sentences per batch (for inference service, specific to GPU type)
-translation_batch_limit = os.environ.get('TRANSLATION_BATCH_LIMIT', 8)
+translation_batch_limit = os.environ.get('TRANSLATION_BATCH_LIMIT', 16)
 if isinstance(translation_batch_limit, str):
     translation_batch_limit = eval(translation_batch_limit)
 
@@ -54,7 +54,7 @@ record_expiry_in_sec = os.environ.get('NMT_PROXY_REDIS_EXPIRY', 300)
 if isinstance(record_expiry_in_sec, str):
     record_expiry_in_sec = eval(record_expiry_in_sec)
 
-nmt_cron_interval_sec = os.environ.get('NMT_CRON_INTERVAL_SEC', 0.1)
+nmt_cron_interval_sec = os.environ.get('NMT_CRON_INTERVAL_SEC', 1)
 if isinstance(nmt_cron_interval_sec, str):
     nmt_cron_interval_sec = eval(nmt_cron_interval_sec)
 

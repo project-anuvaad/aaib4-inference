@@ -10,6 +10,7 @@ import uuid
 import config
 import json
 from repository import RedisRepo, RedisFifoQueue
+import copy
 
 redisclient = RedisRepo()
 fifo_redis_client = RedisFifoQueue(config.redis_fifo_queue_db) 
@@ -34,6 +35,8 @@ def get_translation(api_input):
                     if response['translation_status'] == "Done":
                         del response['translation_status']
                         return response, 200
+                    elif response['translation_status'] == "In-Progress":
+                        return {"status": "Translation in progress"}, 202
                     else:
                         statusCode = response["statusCode"]
                         del response['translation_status']
@@ -58,7 +61,7 @@ class NMTTranslateRedisWriteResource(Resource):
     def post(self):
         api_input = request.get_json(force=True)
         if config.use_redis_fifo_queue:
-            return write_to_fifo_redis(api_input)
+            return write_to_fifo_redis_and_redis(api_input)
         else:
             return write_to_redis(api_input)
 
@@ -84,7 +87,13 @@ def write_to_redis(api_input):
             out = CustomResponse(status, api_input)
             return out.get_res_json_data(), 500
 
-def write_to_fifo_redis(api_input):
+def write_to_fifo_redis_and_redis(api_input):
+    ''' Code changes Navneet Kumar
+    Here we write to both RedisFifoQueue and RedisRepo
+    For Fifo_Queue we iterate through input batch and and push 1 sentence ata a time
+    For RedisRepo we write the whole request
+    We also add length of batch so input to check later whether all request in batch got processed'''
+    
     if len(api_input) > 0 and all(v in api_input for v in ['input', 'config']) and "modelId" in api_input.get(
             'config'):
         try:
@@ -97,14 +106,20 @@ def write_to_fifo_redis(api_input):
                 fifo_db_key = 'indic-en'
             else:
                 fifo_db_key = 'indic-indic'
-            status = fifo_redis_client.rpush_redis(fifo_db_key, api_input)
-            if status:
-                status_return = {"requestId": key}, 202
-                # return {"requestId": key}, 202
-            else:
-                log_info("Push to fifo redis FAILED!", MODULE_CONTEXT)
-                out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
-                return out.get_res_json(), 500
+            inputs_list = api_input["input"]
+            for entry_dict in inputs_list:
+                # print(api_input)
+                api_input_dummy = copy.deepcopy(api_input)
+                api_input_dummy["input"] = [entry_dict]
+                print(api_input)
+                status = fifo_redis_client.rpush_redis(fifo_db_key, api_input_dummy)
+                if status:
+                    status_return = {"requestId": key}, 202
+                    # return {"requestId": key}, 202
+                else:
+                    log_info("Push to fifo redis FAILED!", MODULE_CONTEXT)
+                    out = CustomResponse(Status.SYSTEM_ERR.value, api_input)
+                    return out.get_res_json(), 500
         except Exception as e:
             status = Status.SYSTEM_ERR.value
             status['message'] = str(e)
@@ -114,6 +129,7 @@ def write_to_fifo_redis(api_input):
         try:
             api_input["requestId"] = key
             api_input["cronId"] = config.get_cron_id()
+            api_input['batch_length'] = len(api_input['input'])
             status = redisclient.upsert_redis(key, api_input, True)
             if status:
                 return {"requestId": key}, 202
@@ -133,7 +149,7 @@ class TranslationDummy(Resource):
         api_input = request.get_json(force=True)
         try:
             if config.use_redis_fifo_queue:
-                response, code = write_to_fifo_redis(api_input)
+                response, code = write_to_fifo_redis_and_redis(api_input)
             else:
                 response, code = write_to_redis(api_input)
             if response:

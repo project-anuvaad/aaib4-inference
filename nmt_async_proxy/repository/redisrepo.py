@@ -134,14 +134,14 @@ class RedisFifoQueue:
 
     def get_batch(self, queue_key, batch_size):
         try:
-            values = {}
+            values = []
             client = self.get_redis_instance()
             db_data = client.lpop(name=queue_key, count=batch_size)
             if db_data:
                 for entry in db_data:
                     json_entry = json.loads(entry)
                     if "requestId" in json_entry.keys():
-                        values[json_entry['requestId']] = json_entry
+                        values.append((json_entry['requestId'], json_entry))
                 return values
         except Exception as e:
             log_exception(f'Exception ocuured in popping the batch size from fifo queue: {e}', MODULE_CONTEXT, e)

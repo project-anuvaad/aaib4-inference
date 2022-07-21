@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Body
-from resources.translate import get_translation, write_to_fifo_redis, write_to_redis
+from resources.translate import get_translation, write_to_fifo_redis_and_redis, write_to_redis
 import config 
 from config import poll_api_interval_sec
 import time

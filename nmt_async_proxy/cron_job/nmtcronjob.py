@@ -180,9 +180,7 @@ class TranslateUtils:
             if not max_queue_length:
                 # log_info(f'Length of queue with max length is {max_queue_length}', MODULE_CONTEXT)
                 return None
-            values = fifo_redis_client.get_batch(max_queue_key, min(translation_batch_limit, max_queue_length))
-            if values:
-                redis_data = [(k, v) for k, v in values.items()]
+            redis_data = fifo_redis_client.get_batch(max_queue_key, min(translation_batch_limit, max_queue_length))
             if redis_data:
                 log_info(f'CRON Total Size of Redis Fetch: {len(redis_data)}', MODULE_CONTEXT)
                 db_df = self.create_dataframe(redis_data)
@@ -194,8 +192,14 @@ class TranslateUtils:
                 db_df.loc[db_df.tgt_language == 'en', 'model_to_load'] = 'indic-en'
                 db_group = db_df.groupby(by=['model_to_load'])
                 for gb_key in db_group.groups.keys():
+                    '''
+                    This for loop is not necessary now as we have separate queu for each model(value of model_to_load
+                    '''
                     sub_df = db_group.get_group(gb_key)
                     for i in range(0, sub_df.shape[0], translation_batch_limit):
+                        '''
+                        This loop here is also redundant as db_df size will never exceed translation_batch_limit
+                        '''
                         batch_no += 1
                         sent_list = sub_df.iloc[i:i + translation_batch_limit].sentence.values.tolist()
                         db_key_list = sub_df.iloc[i:i + translation_batch_limit].db_key.values.tolist()
@@ -212,21 +216,62 @@ class TranslateUtils:
                             MODULE_CONTEXT)
                         op_dict = {}
                         if output:
+                            '''
+                            Since db_key values are not unique so we have to group by db_key to update redis
+                            '''
+
                             if 'tgt_list' in output:
-                                for i, tgt_sent in enumerate(output['tgt_list']):
-                                    sg_out = [{"source": sent_list[i], "target": tgt_sent}]
+                                sub_df['tgt_list'] = output['tgt_list']
+                                db_key_group = sub_df.groupby(by=['db_key'])
+                                for gb_key_2 in db_key_group.groups.keys():
+                                    sub_mapping = db_key_group.get_group(gb_key_2)
+                                    sent_list_sub = sub_mapping.sentence.values.tolist()
+                                    src_lang_list_sub = sub_mapping.src_language.values.tolist()
+                                    tgt_lang_list_sub = sub_mapping.tgt_language.values.tolist()
+                                    modelid_list_sub = sub_mapping.modelid.values.tolist()
+                                    tgt_list_sub = sub_mapping.tgt_list.values.tolist()
+                                    sg_out = []
+                                    for i3, tgt_sent in enumerate(tgt_list_sub):
+                                        sg_out.append({"source":sent_list_sub[i3], "target": tgt_sent})
                                     sg_config = sample_json['config']
-                                    sg_config['modelId'] = modelid_list[i]
-                                    sg_config['language']['sourceLanguage'] = src_lang_list[i]
-                                    sg_config['language']['targetLanguage'] = tgt_lang_list[i]
-                                    final_output = {'config': sg_config, 'output': sg_out,
-                                                    'translation_status': "Done"}
-                                    op_dict[db_key_list[i]] = final_output
+                                    sg_config['modelId'] = modelid_list_sub[0]
+                                    sg_config['language']['sourceLanguage'] = src_lang_list_sub[0]
+                                    sg_config['language']['targetLanguage'] = tgt_lang_list_sub[0]
+                                    
+                                    db_entry_value = redisclient.search_redis(gb_key_2)
+                                    if db_entry_value:
+                                        db_entry_value = db_entry_value[0]
+                                        input_batch_size = db_entry_value['batch_length']
+                                        if 'translation_status' in db_entry_value.keys():
+                                            if db_entry_value['translation_status'] == 'In-Progress':
+                                                current_batch_length = len(db_entry_value['output'])
+                                                current_output = db_entry_value['output']
+                                                if len(tgt_list_sub) + current_batch_length == input_batch_size:
+                                                    sg_out = current_output + sg_out
+                                                    final_output = {'config': sg_config, 'output': sg_out,
+                                                                    'translation_status': "Done"}
+                                                    op_dict[gb_key_2] = final_output
+                                                else:
+                                                    sg_out = current_output + sg_out
+                                                    final_output = {'config': sg_config, 'output': sg_out,
+                                                                    'batch_length': input_batch_size,
+                                                                    'translation_status': "In-Progress"}
+                                                    op_dict[gb_key_2] = final_output
+                                        else:
+                                            if len(tgt_list_sub) < input_batch_size:
+                                                final_output = {'config': sg_config, 'output': sg_out,
+                                                                'batch_length': input_batch_size,
+                                                                'translation_status': "In-Progress"}
+                                                op_dict[gb_key_2] = final_output
+                                            else:
+                                                final_output = {'config': sg_config, 'output': sg_out,
+                                                                'translation_status': "Done"}
+                                                op_dict[gb_key_2] = final_output
                             elif 'error' in output:
-                                for i, _ in enumerate(sent_list):
+                                for i2, _ in enumerate(sent_list):
                                     final_output = output['error']
                                     final_output['translation_status'] = 'Failure'
-                                    op_dict[db_key_list[i]] = final_output
+                                    op_dict[db_key_list[i2]] = final_output
                             redisclient.bulk_upsert_redis(op_dict)
                             counter += 1
                 log_info(f'CRON - {cron_id} Total no of BATCHES: {counter}', MODULE_CONTEXT)
@@ -234,7 +279,8 @@ class TranslateUtils:
             log_exception("Async ULCA Batch Translation Cron-job | Exception in Cornjob: " + str(e), MODULE_CONTEXT, e)
 
     def create_dataframe(self, redis_data):
-        """Create and return dataframe from response of check_schema_ULCA function + redis_db key"""
+        """Create and return dataframe from response of check_schema_ULCA function + redis_db key
+        This fuction will pickup only the first sentence in the input list"""
 
         db_key_list, input_dict_list = zip(*redis_data)
         db_key_list = list(db_key_list)

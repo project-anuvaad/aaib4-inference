@@ -9,6 +9,7 @@ class Status(enum.Enum):
     ID_MISSING = { "ok": "false", "statusCode": 404 , "why": "No ID found in the request" }
     LANGUAGE_MISSING = { "ok": "false", "statusCode": 404 , "why": "No language found in the request" }
     MANDATORY_PARAM_MISSING = { "ok": "false", "statusCode": 401 , "why": "missing mandatory input parameters: src_phrases or tgt" }
+    MANDATORY_PARAM_MISSING_2 = { "ok": "false", "statusCode": 401 , "why": "missing mandatory input parameters: src or src_phrases or tgt" }
     TYPE_OR_LANGUAGE_MISSING = { "ok": "false", "statusCode": 404 , "why": "either type or language missing in form data" }
     INVALID_TYPE = { "ok": "false",  "statusCode": 401 , "why": "Invalid file type of file to be downloaded/uploaded !" }
     SYSTEM_ERR = { "ok": "false",  "statusCode": 500 , "why": "Something went wrong on the server !" }

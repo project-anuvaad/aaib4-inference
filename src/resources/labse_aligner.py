@@ -52,7 +52,7 @@ class LabseAlignerWithModelAttentionResource(Resource):
                         out = CustomResponse(Status.SUCCESS.value, response_list)                    
                     else:
                         log_info("Missing mandatory Parameters for labse-aligner:src or src_phrases or tgt",MODULE_CONTEXT) 
-                        out = CustomResponse(Status.MANDATORY_PARAM_MISSING.value, []) 
+                        out = CustomResponse(Status.MANDATORY_PARAM_MISSING_2.value, []) 
                         return out.getres()
             except Exception as e:
                 status = Status.SYSTEM_ERR.value

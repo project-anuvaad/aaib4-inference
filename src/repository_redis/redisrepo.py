@@ -4,7 +4,7 @@ from anuvaad_auditor.loghandler import log_info, log_exception
 from utilities import MODULE_CONTEXT
 import json
 import config
-from config import redis_server_host, redis_server_port, redis_server_pass, redis_db, record_expiry_in_sec
+from config import redis_server_host, redis_server_port, redis_db, record_expiry_in_sec
 
 redis_client_datasets = None
 
@@ -15,8 +15,7 @@ class RedisRepo:
 
     def redis_instantiate(self):
         global redis_client_datasets
-        redis_client_datasets = redis.Redis(host=redis_server_host, port=redis_server_port, db=redis_db,
-                                            password=redis_server_pass)
+        redis_client_datasets = redis.Redis(host=redis_server_host, port=redis_server_port, db=redis_db)
         return redis_client_datasets
 
     def get_redis_instance(self):

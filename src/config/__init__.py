@@ -23,7 +23,7 @@ FETCH_MODEL_CONFG = os.path.join(APP_BASE_PATH, "config/fetch_models.json")
 trunc_limit = 200
 
 redis_server_host = os.environ.get('REDIS_URL', 'localhost')
-redis_server_pass = os.environ.get('REDIS_PASS', 'mypassword')
+# redis_server_pass = os.environ.get('REDIS_PASS', 'mypassword')
 redis_server_port = os.environ.get('REDIS_PORT', 6380)
 if isinstance(redis_server_port, str):
     redis_server_port = eval(redis_server_port)

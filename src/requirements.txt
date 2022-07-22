@@ -22,3 +22,4 @@ werkzeug==2.0.2
 GPUtil
 sentence-transformers==0.3.8
 redis==4.2.1
+wheel==0.37.1

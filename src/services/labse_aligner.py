@@ -58,18 +58,23 @@ class LabseAlignerWithModelAttentionService:
         try:
             #log_info("Performing phrase alignenment using LABSE",MODULE_CONTEXT)
             #log_info("Input for phrase_aligner:{}".format(inputs),MODULE_CONTEXT)
+            if not config.model_attention_score_tmx_enabled:
+                log_info("Model attention score tmx is disabled doing only Labse alignment", MODULE_CONTEXT)
+                out = LabseAlignerService.phrase_aligner(inputs)
+                return out
+
             src, src_phrases, tgt = inputs.get("src",), inputs.get("src_phrases"), inputs.get("tgt")
             for src_phrase in src_phrases:
                 if src_phrase not in src:
                     log_info("Error Source phrase is not present in src sentence : LAbseAlignerWithModelAteentionService", MODULE_CONTEXT)
                     return {"tgt":tgt,"src_phrases":src_phrases,"aligned_phrases":aligned_phrases}
             src_hash_key = hashlib.sha256(src.encode('utf-16')).hexdigest()
-            token_maps = redisclient.search_redis(src_hash_key)[0]
+            token_maps = redisclient.search_redis(src_hash_key)
             if not token_maps:
                 log_info("No token map for source sentence found doing only Labse alignment", MODULE_CONTEXT)
-                out = LabseAlignerService.phrase_aligner(input)
+                out = LabseAlignerService.phrase_aligner(inputs)
                 return out
-            # print(token_maps)
+            token_maps = token_maps[0]
             token_map_tgt_list = []
             for src_phrase in src_phrases:
                 token_map_tgt = []

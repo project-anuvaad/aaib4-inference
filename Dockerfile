@@ -14,8 +14,9 @@ RUN pip3 install --upgrade pip
 RUN pip3 install -r src/requirements.txt
 # RUN apt-get -y install git
 RUN git clone https://github.com/pytorch/fairseq.git
-COPY /app/src/utilities/hub_utils.py /app/fairseq/fairseq
-WORKDIR fairseq
+WORKDIR /app/src/utilities
+COPY hub_utils.py /app/fairseq/fairseq
+WORKDIR /app/fairseq
 RUN pip3 install ./
 WORKDIR /app/src/tools
 RUN git clone https://github.com/anoopkunchukuttan/indic_nlp_library.git 

@@ -150,7 +150,7 @@ class Translator:
                 constraints="ordered",
                 batch_size=batch_size,
                 buffer_size=batch_size + 1,
-                print_alignment = "soft",
+                # print_alignment = "soft",
             )
         else:
             self.parser.set_defaults(

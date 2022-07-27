@@ -42,12 +42,13 @@ def get_src_and_tgt_langs_dict():
 
 class FairseqTranslateService:
     @staticmethod
-    def simple_translation(inputs):
+    def simple_translation(inputs, get_token_map=False):
         out = {}
         i_src, tgt = list(), list()
         tagged_tgt = list()
         tagged_src = list()
         sentence_id = list()
+        token_map = list()
         tp_tokenizer = None
 
         try:
@@ -64,13 +65,13 @@ class FairseqTranslateService:
 
                 if i["id"] == 100:
                     "hindi-english"
-                    translation = encode_translate_decode(i, "hi", "en")
+                    translation = encode_translate_decode(i, "hi", "en", get_token_map)
                 elif i["id"] == 101:
                     "bengali-english"
-                    translation = encode_translate_decode(i, "bn", "en")
+                    translation = encode_translate_decode(i, "bn", "en", get_token_map)
                 elif i["id"] == 102:
                     "tamil-english"
-                    translation = encode_translate_decode(i, "ta", "en")
+                    translation = encode_translate_decode(i, "ta", "en", get_token_map)
 
                 else:
                     log_info(
@@ -81,27 +82,43 @@ class FairseqTranslateService:
                         "Unsupported Model ID - id: {} for given input".format(i["id"])
                     )
 
-                tag_tgt = translation[0]
+                tag_tgt = translation['translations'][0]
                 log_info(
                     "simple translation-experiment-{} output: {}".format(
                         i["id"], translation
                     ),
                     MODULE_CONTEXT,
                 )
-                tgt.append(translation[0])
+                tgt.append(translation['translations'][0])
                 tagged_tgt.append(tag_tgt)
                 tagged_src.append(tag_src)
+                if 'token_maps' in translation.keys():
+                    token_map.append(translation['token_maps'])
 
-            out["response_body"] = [
-                {
-                    "tgt": tgt[i],
-                    "tagged_tgt": tagged_tgt[i],
-                    "tagged_src": tagged_src[i],
-                    "s_id": sentence_id[i],
-                    "src": i_src[i],
-                }
-                for i in range(len(tgt))
-            ]
+            if not len(token_map):
+                out["response_body"] = [
+                    {
+                        "tgt": tgt[i],
+                        "tagged_tgt": tagged_tgt[i],
+                        "tagged_src": tagged_src[i],
+                        "s_id": sentence_id[i],
+                        "src": i_src[i],
+                    }
+                    for i in range(len(tgt))
+                ]
+            else:
+                out["response_body"] = [
+                    {
+                        "tgt": tgt[i],
+                        "tagged_tgt": tagged_tgt[i],
+                        "tagged_src": tagged_src[i],
+                        "s_id": sentence_id[i],
+                        "src": i_src[i],
+                        'token_map': token_map[i],
+                    }
+                    for i in range(len(tgt))
+                ]
+
             out = CustomResponse(Status.SUCCESS.value, out["response_body"])
         except Exception as e:
             status = Status.SYSTEM_ERR.value
@@ -204,7 +221,7 @@ def encode_itranslate_decode(i, src_lang, tgt_lang):
         # apply bpe to constraints with target bpe
         prefix = apply_bpe(i["target_prefix"], target_bpe)
         i_final = sentence_processor.apply_lang_tags(i["src"], src_lang, tgt_lang)
-        translation = translator.translate(i_final, constraints=prefix)
+        translation = translator.translate(i_final, constraints=prefix)["translations"]
         translation = sentence_processor.postprocess(translation, tgt_lang)
         return translation
 
@@ -219,7 +236,7 @@ def encode_itranslate_decode(i, src_lang, tgt_lang):
         raise
 
 
-def encode_translate_decode(i, src_lang, tgt_lang):
+def encode_translate_decode(i, src_lang, tgt_lang, get_token_map=False):
     try:
         i["src"] = [i["src"]]
         print(i["src"])
@@ -229,8 +246,11 @@ def encode_translate_decode(i, src_lang, tgt_lang):
         i["src"] = sentence_processor.preprocess(i["src"], src_lang)
         i["src"] = apply_bpe(i["src"], source_bpe)
         i_final = sentence_processor.apply_lang_tags(i["src"], src_lang, tgt_lang)
-        translation = translator.translate(i_final)
-        translation = sentence_processor.postprocess(translation, tgt_lang)
+        if not get_token_map:
+            translation = translator.translate(i_final)
+        else:
+            translation = translation.translate_with_tokenmap(i_final)
+        translation['translations'] = sentence_processor.postprocess(translation['translations'], tgt_lang)
         return translation
 
     except Exception as e:

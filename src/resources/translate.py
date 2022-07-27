@@ -92,7 +92,7 @@ class TranslateResourceV1(Resource):
                 if len(src_list) > translation_batch_limit:
                     raise Exception(f"Number of sentences per request exceeded the limit of:{translation_batch_limit} sentences per batch")
                 translation_batch = {'id':inputs.get('model_id'),'src_list': src_list}
-                output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
+                output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch, model_attention_score_tmx_enabled)
                 if 'token_maps' in output_batch.keys() and model_attention_score_tmx_enabled:
                     for i, src_sent in enumerate(src_list):
                         src_hash_key = hashlib.sha256(src_sent.encode('utf-16')).hexdigest()

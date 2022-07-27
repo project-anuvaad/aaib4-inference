@@ -29,7 +29,7 @@ def get_src_and_tgt_langs_dict():
 
 class FairseqDocumentTranslateService:
     @staticmethod
-    def batch_translator(input_dict):
+    def batch_translator(input_dict, get_token_map=False):
         model_id = input_dict["id"]
         src_list = input_dict["src_list"]
         num_sentence = len(src_list)
@@ -61,6 +61,7 @@ class FairseqDocumentTranslateService:
                     tgt_lang,
                     translator,
                     source_bpe,
+                    get_token_map,
                 )
             else:
                 log_info(
@@ -70,13 +71,19 @@ class FairseqDocumentTranslateService:
                 raise Exception(
                     "Unsupported Model ID - id: {} for given input".format(model_id)
                 )
-
-            out = {
-                "tgt_list": translation_array['translations'],
-                "tagged_src_list": input_sentence_array_prepd,
-                "tagged_tgt_list": translation_array['translations'],
-                "token_maps": translation_array['token_maps']
-            }
+            if 'token_maps' in translation_array.keys():
+                out = {
+                    "tgt_list": translation_array['translations'],
+                    "tagged_src_list": input_sentence_array_prepd,
+                    "tagged_tgt_list": translation_array['translations'],
+                    "token_maps": translation_array['token_maps']
+                }
+            else:
+                out = {
+                    "tgt_list": translation_array['translations'],
+                    "tagged_src_list": input_sentence_array_prepd,
+                    "tagged_tgt_list": translation_array['translations'],
+                }
         except Exception as e:
             log_exception(
                 "Exception caught in NMTTranslateService:batch_translator:%s and %s"
@@ -88,7 +95,7 @@ class FairseqDocumentTranslateService:
 
         return out
     
-    def indic_to_indic_translator(input_dict):
+    def indic_to_indic_translator(input_dict, get_token_map=False):
         model_id = input_dict["id"]
         src_list = input_dict["src_list"]
         num_sentence = len(src_list)
@@ -115,6 +122,7 @@ class FairseqDocumentTranslateService:
                     tgt_lang,
                     translator,
                     source_bpe,
+                    get_token_map
                 )
             else:
                 log_info(
@@ -124,11 +132,13 @@ class FairseqDocumentTranslateService:
                 raise Exception(
                     "Unsupported Model ID - id: {} for given input".format(model_id)
                 )
-
-            out = {
-                "tgt_list": translation_array['translations'],
-                "token_maps": translation_array['token_maps']
-            }
+            if 'token_maps' in translation_array.keys():
+                out = {
+                    "tgt_list": translation_array['translations'],
+                    "token_maps": translation_array['token_maps']
+                }
+            else:
+                out = {"tgt_list": translation_array['translations']}
         except Exception as e:
             log_exception(
                 "Exception caught in NMTTranslateService:indic_to_indic_translator:%s and %s"
@@ -141,7 +151,7 @@ class FairseqDocumentTranslateService:
         return out
 
 
-def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
+def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe, get_token_map=False):
     try:
         if src_lang == 'en':  
             inputs = [i.title() if i.isupper() else  i for i in inputs]            
@@ -149,8 +159,10 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
         inputs = apply_bpe(inputs, source_bpe)
         i_final = sentence_processor.apply_lang_tags(inputs, src_lang, tgt_lang)
         i_final = truncate_long_sentences(i_final)
-        # translation = translator.translate(i_final)
-        translation = translator.translate_with_tokenmap(i_final)
+        if not get_token_map:
+            translation = translator.translate(i_final)
+        else:
+            translation = translator.translate_with_tokenmap(i_final)
         translation['translations'] = sentence_processor.postprocess(translation['translations'], tgt_lang)
         return translation
 

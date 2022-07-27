@@ -7,20 +7,19 @@
 Translate raw text with a trained model. Batches data on-the-fly.
 """
 
-INDIC_NLP_LIB_HOME = "src/tools/indic_nlp_library"
-INDIC_NLP_RESOURCES = "src/tools/indic_nlp_resources"
-import sys
+# INDIC_NLP_LIB_HOME = "src/tools/indic_nlp_library"
+# INDIC_NLP_RESOURCES = "src/tools/indic_nlp_resources"
+# import sys
 
-sys.path.append(r"{}".format(INDIC_NLP_LIB_HOME))
-from indicnlp import common
+# sys.path.append(r"{}".format(INDIC_NLP_LIB_HOME))
+# from indicnlp import common
 
-common.set_resources_path(INDIC_NLP_RESOURCES)
-from indicnlp import loader
-loader.load()
+# common.set_resources_path(INDIC_NLP_RESOURCES)
+# from indicnlp import loader
+# loader.load()
 
 import ast
 from collections import namedtuple
-from pprint import pformat, pprint
 import numpy as np
 
 import torch
@@ -28,9 +27,7 @@ from fairseq import checkpoint_utils, options, tasks, utils
 from fairseq.dataclass.utils import convert_namespace_to_omegaconf
 from fairseq.token_generation_constraints import pack_constraints, unpack_constraints
 from fairseq_cli.generate import get_symbols_to_strip_from_output
-from indicnlp.transliterate import unicode_transliterate
-from indicnlp.tokenize import indic_detokenize
-from sacremoses import MosesDetokenizer
+import utilities.fairseq_sentence_processor as sentence_processor
 
 import codecs
 
@@ -123,15 +120,16 @@ def get_hypo_word(in_map, hypo_word, lang, common_lang='hi' ):
     #     print(f"\n{in_map}-{hypo_word[in_map]}-{final_word}\n")
     # else:
     #     print(f"\n{in_map}-<eos>-{final_word}\n")
-    if lang == "en":
-        en_detok = MosesDetokenizer(lang="en")
-        final_word = en_detok.detokenize(final_word.strip().split(" "))
-    else:
-        xliterator = unicode_transliterate.UnicodeIndicTransliterator()
-        final_word = indic_detokenize.trivial_detokenize(
-            xliterator.transliterate(final_word.strip(), common_lang, lang), lang
-        )
-    return final_word
+    final_word = sentence_processor.postprocess([final_word], lang, common_lang)
+    # if lang == "en":
+    #     en_detok = MosesDetokenizer(lang="en")
+    #     final_word = en_detok.detokenize(final_word.strip().split(" "))
+    # else:
+    #     xliterator = unicode_transliterate.UnicodeIndicTransliterator()
+    #     final_word = indic_detokenize.trivial_detokenize(
+    #         xliterator.transliterate(final_word.strip(), common_lang, lang), lang
+    #     )
+    return final_word[0]
 
 class Translator:
     def __init__(
@@ -159,7 +157,7 @@ class Translator:
                 num_wokers=-1,
                 batch_size=batch_size,
                 buffer_size=batch_size + 1,
-                # print_alignment = "soft",
+                print_alignment = "soft",
             )
         args = options.parse_args_and_arch(self.parser, input_args=[data_dir])
         # we are explictly setting src_lang and tgt_lang here

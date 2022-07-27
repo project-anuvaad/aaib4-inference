@@ -70,6 +70,7 @@ class LabseAlignerWithModelAttentionService:
                     return {"tgt":tgt,"src_phrases":src_phrases,"aligned_phrases":aligned_phrases}
             src_hash_key = hashlib.sha256(src.encode('utf-16')).hexdigest()
             token_maps = redisclient.search_redis(src_hash_key)
+            log_info(f"Token map for Source sentence - {token_maps}", MODULE_CONTEXT)
             if not token_maps:
                 log_info("No token map for source sentence found doing only Labse alignment", MODULE_CONTEXT)
                 out = LabseAlignerService.phrase_aligner(inputs)
@@ -89,23 +90,28 @@ class LabseAlignerWithModelAttentionService:
                             found = True
                             break
                 if found:
-                    log_info(f"Found the target token map for src phrase {src_phrase} and appended to list", MODULE_CONTEXT)
+                    log_info(f"Found the target token map for src phrase-{src_phrase} and appended to list", MODULE_CONTEXT)
                 else:
-                    log_info(f"Did not Found the target token map for src phrase {src_phrase} and appended to list", MODULE_CONTEXT)
+                    log_info(f"Did not Found the target token map for src phrase-{src_phrase} and appended to list", MODULE_CONTEXT)
                 token_map_tgt_list.append(token_map_tgt)
 
                 length_src_phrase = len(src_phrase.split())        
                 tgt_token_list = split_tgt(length_src_phrase,tgt)
                 # print(len(tgt_token_list))
-                tgt_token_list =[i for i in tgt_token_list if all([m in i for m in token_map_tgt])]
+                sub_tgt_token_list =[i for i in tgt_token_list if all([m in i for m in token_map_tgt])]
                 # print(len(tgt_token_list))
-                if len(tgt_token_list) == 0:
-                    continue
-                embeddings_src_phrase, embeddings_tgt_tokens = generate_embeddings([src_phrase],tgt_token_list)
-                alignments = get_target_sentence(embeddings_tgt_tokens, embeddings_src_phrase, length_src_phrase)
-            
-                if alignments is not None:
-                    aligned_phrases[src_phrase] = tgt_token_list[alignments[0]]
+                if len(sub_tgt_token_list) == 0:
+                    embeddings_src_phrase, embeddings_tgt_tokens = generate_embeddings([src_phrase],tgt_token_list)
+                    alignments = get_target_sentence(embeddings_tgt_tokens, embeddings_src_phrase, length_src_phrase)
+                    if alignments is not None and alignments[2] is "MATCH":
+                        aligned_phrases[src_phrase] = tgt_token_list[alignments[0]]
+                    elif alignments is not None and alignments[2] is "NOMATCH": 
+                        log_info("No exact match found for:{} . Possible alignment {}".format(src_phrase,tgt_token_list[alignments[0]]),MODULE_CONTEXT)  
+                else:
+                    embeddings_src_phrase, embeddings_tgt_tokens = generate_embeddings([src_phrase],sub_tgt_token_list)
+                    alignments = get_target_sentence(embeddings_tgt_tokens, embeddings_src_phrase, length_src_phrase)
+                    if alignments is not None:
+                        aligned_phrases[src_phrase] = sub_tgt_token_list[alignments[0]]
                             
             log_info("Aligned Phrases: {}".format(aligned_phrases),MODULE_CONTEXT)
             out = {"tgt":tgt,"src_phrases":src_phrases,"aligned_phrases":aligned_phrases}     

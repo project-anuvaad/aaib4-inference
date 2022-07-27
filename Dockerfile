@@ -15,7 +15,7 @@ RUN pip3 install -r src/requirements.txt
 # RUN apt-get -y install git
 RUN git clone https://github.com/pytorch/fairseq.git
 # WORKDIR /app/src/utilities
-# RUN cp /app/src/utilities/hub_utils.py /app/fairseq/fairseq
+RUN cp /app/src/utilities/hub_utils.py /app/fairseq/fairseq
 WORKDIR /app/fairseq
 RUN pip3 install ./
 WORKDIR /app/src/tools

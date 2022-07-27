@@ -1,7 +1,7 @@
 tqdm==4.30.*
 # torch==1.7.0
 # torch==1.9.1
-torchtext==0.10.1
+torchtext==0.4.0
 Flask-Cors==3.0.9
 Flask-RESTful==0.3.8
 six==1.15.0
@@ -22,4 +22,4 @@ werkzeug==2.0.2
 GPUtil
 sentence-transformers==0.3.8
 redis==4.2.1
-wheel==0.37.1
+# wheel==0.37.1

@@ -159,7 +159,7 @@ class Translator:
                 num_wokers=-1,
                 batch_size=batch_size,
                 buffer_size=batch_size + 1,
-                print_alignment = "soft",
+                # print_alignment = "soft",
             )
         args = options.parse_args_and_arch(self.parser, input_args=[data_dir])
         # we are explictly setting src_lang and tgt_lang here

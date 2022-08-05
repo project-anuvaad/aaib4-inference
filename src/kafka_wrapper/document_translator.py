@@ -2,11 +2,16 @@ from kafka_wrapper.producer import get_producer
 from kafka_wrapper.consumer import get_consumer
 from models import CustomResponse, Status
 import config
+import hashlib
+from repository_redis import RedisRepo
 from anuvaad_auditor.loghandler import log_info, log_exception
 from utilities import MODULE_CONTEXT
 import sys
 import datetime
 from services import FairseqDocumentTranslateService
+from config import model_attention_score_tmx_enabled
+
+redisclient = RedisRepo()
 
 class KafkaTranslate:
                 
@@ -38,7 +43,13 @@ class KafkaTranslate:
                         message = inputs.get('message')
                         src_list = [i.get('src') for i in message]
                         translation_batch = {'id':inputs.get('id'),'src_list': src_list}
-                        output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
+                        output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch, model_attention_score_tmx_enabled)
+                        if 'token_maps' in output_batch.keys() and model_attention_score_tmx_enabled:
+                            for i, src_sent in enumerate(src_list):
+                                src_hash_key = hashlib.sha256(src_sent.encode('utf-16')).hexdigest()
+                                src_hash_value = output_batch['token_maps'][i]
+                                # print(output_batch['token_maps'][i])
+                                redisclient.upsert_redis(src_hash_key, src_hash_value, True)
                         log_info("Output of translation batch service at :{}".format(datetime.datetime.now()),MODULE_CONTEXT)                        
                         output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i],
                                                 'tagged_tgt':output_batch['tagged_tgt_list'][i],'tagged_src':output_batch['tagged_src_list'][i]}

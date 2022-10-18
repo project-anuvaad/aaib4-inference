@@ -138,7 +138,7 @@ class FairseqDocumentTranslateService:
                 e,
             )
             raise e
-
+            
         return out
 
 #The new encode_translate_decode for partial translation issue.

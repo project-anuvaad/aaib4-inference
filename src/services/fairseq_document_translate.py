@@ -10,9 +10,6 @@ import utilities.fairseq_sentence_processor as sentence_processor
 import config
 import datetime
 from services import load_models
-from services import paragraph_sentence_tokenizer
-
-
 
 
 def get_src_and_tgt_langs_dict():
@@ -141,35 +138,7 @@ class FairseqDocumentTranslateService:
 
         return out
 
-#The new encode_translate_decode for partial translation issue.
-def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
-    #sent_count = []
-    try:
-        if src_lang == 'en':  
-            inputs = [i.title() if i.isupper() else  i for i in inputs]
-            inputs, sent_count = paragraph_sentence_tokenizer.sentence_tokenize_indic(inputs, src_lang)
-        else:
-            #new_inputs = inputs.copy()
-            inputs, sent_count = paragraph_sentence_tokenizer.sentence_tokenize_indic(inputs, src_lang)           
-        inputs = sentence_processor.preprocess(inputs, src_lang)
-        inputs = apply_bpe(inputs, source_bpe)
-        i_final = sentence_processor.apply_lang_tags(inputs, src_lang, tgt_lang)
-        i_final = truncate_long_sentences(i_final)
-        translation = translator.translate(i_final)
-        translation = sentence_processor.postprocess(translation, tgt_lang)
-        return paragraph_sentence_tokenizer.sentence_detokenize_paragraph(translation, sent_count)
-        
-    except Exception as e:
-        log_exception(
-            "Unexpexcted error in encode_translate_decode: {} and {}".format(
-                e, sys.exc_info()[0]
-            ),
-            MODULE_CONTEXT,
-            e,
-        )
-        raise
 
-"""
 def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
     try:
         if src_lang == 'en':  
@@ -192,7 +161,7 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
         )
         raise
 
-"""
+
 def apply_bpe(sents, bpe):
     return [bpe.process_line(sent) for sent in sents]
 
@@ -200,7 +169,6 @@ def truncate_long_sentences(sents):
     new_sents = []
     for sent in sents:
         num_words = len(sent.split())
-        print("---------------------------------------", sent, num_words)
         if num_words > config.trunc_limit:
             log_info("Sentence truncated as it exceeds maximum length limit of- {} tokens".format(config.trunc_limit),MODULE_CONTEXT)
             updated_sent = sent.split()[:config.trunc_limit]

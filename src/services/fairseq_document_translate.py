@@ -13,7 +13,6 @@ from services import load_models
 from services import paragraph_sentence_tokenizer
 
 
-
 def get_src_and_tgt_langs_dict():
     model_id2src_tgt = {}
     with open(config.FETCH_MODEL_CONFG) as f:

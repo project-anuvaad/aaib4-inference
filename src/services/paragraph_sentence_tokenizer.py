@@ -3,7 +3,6 @@ import nltk
 from nltk.tokenize import sent_tokenize
 nltk.download("punkt")
 
-
 def sentence_tokenize_indic(org_inputs, src_lang):
     """
     This function is used to tokenize a paragraph on the sentence level for indic languages.

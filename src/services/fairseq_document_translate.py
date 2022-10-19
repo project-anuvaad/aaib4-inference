@@ -10,6 +10,7 @@ import utilities.fairseq_sentence_processor as sentence_processor
 import config
 import datetime
 from services import load_models
+from services import paragraph_sentence_tokenizer
 
 
 def get_src_and_tgt_langs_dict():
@@ -138,59 +139,35 @@ class FairseqDocumentTranslateService:
 
         return out
 
-    def batch_translator_multilingual(input_dict):
-        model_id = input_dict['model_id_list'][0]
-        src_list = input_dict["src_list"]
-        src_lang_list = input_dict['src_lang_list']
-        tgt_lang_list = input_dict['tgt_lang_list']
-        num_sentence = len(src_list)
-        out = {}
+#The new encode_translate_decode for partial translation issue.
+def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
+    #sent_count = []
+    try:
+        if src_lang == 'en':  
+            inputs = [i.title() if i.isupper() else  i for i in inputs]
+            inputs, sent_count = paragraph_sentence_tokenizer.sentence_tokenize_indic(inputs, src_lang)
+        else:
+            #new_inputs = inputs.copy()
+            inputs, sent_count = paragraph_sentence_tokenizer.sentence_tokenize_indic(inputs, src_lang)           
+        inputs = sentence_processor.preprocess(inputs, src_lang)
+        inputs = apply_bpe(inputs, source_bpe)
+        i_final = sentence_processor.apply_lang_tags(inputs, src_lang, tgt_lang)
+        i_final = truncate_long_sentences(i_final)
+        translation = translator.translate(i_final)
+        translation = sentence_processor.postprocess(translation, tgt_lang)
+        return paragraph_sentence_tokenizer.sentence_detokenize_paragraph(translation, sent_count)
+        
+    except Exception as e:
+        log_exception(
+            "Unexpexcted error in encode_translate_decode: {} and {}".format(
+                e, sys.exc_info()[0]
+            ),
+            MODULE_CONTEXT,
+            e,
+        )
+        raise
 
-        translator = load_models.loaded_models[model_id]
-        source_bpe = load_models.bpes[model_id][0]
-
-        input_sentence_array_prepd = [None] * num_sentence
-
-        _, ids = get_src_and_tgt_langs_dict()
-        log_info("Translation inputs collected from request", MODULE_CONTEXT)
-        try:
-            for i, sent in enumerate(src_list):   
-                input_sentence_array_prepd[i] = sent
-            log_info("translating using NMT-model:{}".format(config.model_to_load), MODULE_CONTEXT)
-
-            if model_id in ids:
-                log_info("src_lang_list-{0},tgt_lang-{1}".format(src_lang_list,tgt_lang_list),MODULE_CONTEXT)
-                translation_array = encode_translate_decode_multilingual(
-                    input_sentence_array_prepd,
-                    src_lang_list,
-                    tgt_lang_list,
-                    translator,
-                    source_bpe,
-                )
-            else:
-                log_info(
-                    "Unsupported model id: {} for given input".format(model_id),
-                    MODULE_CONTEXT,
-                )
-                raise Exception(
-                    "Unsupported Model ID - id: {} for given input".format(model_id)
-                )
-
-            out = {
-                "tgt_list": translation_array
-            }
-        except Exception as e:
-            log_exception(
-                "Exception caught in NMTTranslateService: Batch_multilingual:%s and %s"
-                % (e, sys.exc_info()[0]),
-                MODULE_CONTEXT,
-                e,
-            )
-            raise e
-
-        return out
-
-
+"""
 def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
     try:
         if src_lang == 'en':  
@@ -213,40 +190,15 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
         )
         raise
 
-def encode_translate_decode_multilingual(inputs, src_lang_list, tgt_lang_list, translator, source_bpe):
-    try:
-        if src_lang_list[0] == 'en':  
-            log_info("Upper case handled in case of english as src language", MODULE_CONTEXT) 
-            inputs = [i.title() if i.isupper() else  i for i in inputs]            
-        inputs = sentence_processor.preprocess_multilingual(inputs, src_lang_list)
-        inputs = apply_bpe(inputs, source_bpe)
-        i_final = sentence_processor.apply_lang_tags_multilingual(inputs, src_lang_list, tgt_lang_list)
-        i_final = truncate_long_sentences(i_final)
-        log_info("Running the multilingual batch translation kernel on gpu ...", MODULE_CONTEXT) 
-        translation = translator.translate(i_final)
-        translation = sentence_processor.postprocess_multilingual(translation, tgt_lang_list)
-        return translation
-
-    except Exception as e:
-        log_exception(
-            "Unexpexcted error in encode_translate_decode_multilingual: {} and {}".format(
-                e, sys.exc_info()[0]
-            ),
-            MODULE_CONTEXT,
-            e,
-        )
-        raise
-
-
+"""
 def apply_bpe(sents, bpe):
-    log_info("BPE of sentences started ...", MODULE_CONTEXT) 
     return [bpe.process_line(sent) for sent in sents]
 
 def truncate_long_sentences(sents):
-    log_info("Truncation function for long of sentences checking...", MODULE_CONTEXT)
     new_sents = []
     for sent in sents:
         num_words = len(sent.split())
+        print("---------------------------------------", sent, num_words)
         if num_words > config.trunc_limit:
             log_info("Sentence truncated as it exceeds maximum length limit of- {} tokens".format(config.trunc_limit),MODULE_CONTEXT)
             updated_sent = sent.split()[:config.trunc_limit]

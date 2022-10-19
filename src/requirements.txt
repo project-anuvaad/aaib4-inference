@@ -14,6 +14,7 @@ anuvaad-auditor==0.1.6
 sacremoses==0.0.43
 joblib
 pandas
+nltk
 redis==4.2.1
 APScheduler==3.5.3
 tzlocal==2.1

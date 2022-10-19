@@ -1,20 +1,28 @@
 tqdm==4.30.*
-# torch==1.7.0
-# torch==1.9.1
+#torch==1.7.0
+torch==1.9.1
 torchtext==0.4.0
 Flask-Cors==3.0.9
 Flask-RESTful==0.3.8
 six==1.15.0
 kafka-python==2.0.2
-MarkupSafe==1.1.1
+#MarkupSafe==1.1.1
+MarkupSafe==2.0
 itsdangerous==2.0.1
 Flask==1.1.2
-sentencepiece==0.1.90
+#sentencepiece==0.1.90
+sentencepiece==0.1.96
 anuvaad-auditor==0.1.6
 sacremoses==0.0.43
+itsdangerous==2.0.1
+Jinja2==3.0.3
+werkzeug==2.0.2
+mongoengine==0.23.0
 joblib
 pandas
 nltk
 redis==4.2.1
 APScheduler==3.5.3
 tzlocal==2.1
+GPUtil
+sentence-transformers==0.3.8

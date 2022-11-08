@@ -140,7 +140,7 @@ class FairseqDocumentTranslateService:
             raise e
 
         return out
-
+"""
 #The new encode_translate_decode for partial translation issue.
 def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
     #sent_count = []
@@ -192,7 +192,7 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
         )
         raise
 
-"""
+
 def apply_bpe(sents, bpe):
     return [bpe.process_line(sent) for sent in sents]
 
@@ -200,7 +200,6 @@ def truncate_long_sentences(sents):
     new_sents = []
     for sent in sents:
         num_words = len(sent.split())
-        print("---------------------------------------", sent, num_words)
         if num_words > config.trunc_limit:
             log_info("Sentence truncated as it exceeds maximum length limit of- {} tokens".format(config.trunc_limit),MODULE_CONTEXT)
             updated_sent = sent.split()[:config.trunc_limit]

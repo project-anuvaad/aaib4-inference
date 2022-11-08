@@ -1,5 +1,5 @@
-FROM anuvaadio/aai4b-nmt-inference:74-7375528
-# FROM nvidia/cuda:11.0-base
+#FROM anuvaadio/aai4b-nmt-inference:74-7375528
+FROM nvidia/cuda:11.0-base
 CMD nvidia-smi
 RUN apt-get -y update 
 # RUN apt-get -y install python3

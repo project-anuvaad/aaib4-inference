@@ -2,7 +2,7 @@
 #FROM nvidia/cuda:11.0-base
 FROM nvidia/cuda:11.8.0-runtime-ubuntu22.04
 CMD nvidia-smi
-#RUN apt clean && apt update 
+RUN apt -y update 
 # RUN apt-get -y install python3
 # RUN apt-get -y install python3-pip
 RUN apt-get install -y locales locales-all

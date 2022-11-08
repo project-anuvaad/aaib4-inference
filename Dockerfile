@@ -2,7 +2,7 @@
 #FROM nvidia/cuda:11.0-base
 FROM nvidia/cuda:11.2.1-base-ubuntu18.04
 CMD nvidia-smi
-RUN apt -y update 
+RUN apt clean && apt -y update && apt upgrade -y
 RUN apt-get -y install python3
 RUN apt-get -y install python3-pip
 RUN apt-get install -y locales locales-all

@@ -168,8 +168,8 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
             e,
         )
         raise
-
 """
+
 def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
     try:
         if src_lang == 'en':  

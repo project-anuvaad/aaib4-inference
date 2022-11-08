@@ -1,5 +1,6 @@
 #FROM anuvaadio/aai4b-nmt-inference:74-7375528
-FROM nvidia/cuda:11.0-base
+#FROM nvidia/cuda:11.0-base
+FROM nvidia/cuda:11.8.0-base-ubuntu22.04
 CMD nvidia-smi
 RUN apt-get -y update 
 # RUN apt-get -y install python3

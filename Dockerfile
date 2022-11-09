@@ -1,10 +1,10 @@
 #FROM anuvaadio/aai4b-nmt-inference:74-7375528
 #FROM nvidia/cuda:11.0-base
-FROM nvidia/cuda:11.8.0-base-ubuntu22.04
+FROM nvidia/cuda:11.8.0-base-ubuntu20.04
 CMD nvidia-smi
-RUN apt clean && apt -y update
-RUN apt-get -y install python3.8
-RUN apt-get -y install python3-pip
+RUN rm -rf /var/lib/apt/lists/*
+RUN apt update && apt install software-properties-common -y
+RUN apt-get -y install python3.8 python3.8-dev python3.8-venv python3.8-distutils python3-pip 
 RUN python3 --version && pip3 --version
 RUN apt-get install -y locales locales-all
 ENV LC_ALL en_US.UTF-8

@@ -11,6 +11,7 @@ import config
 import datetime
 from services import load_models
 from services import paragraph_sentence_tokenizer
+import torch
 
 
 
@@ -33,6 +34,7 @@ def get_src_and_tgt_langs_dict():
 class FairseqDocumentTranslateService:
     @staticmethod
     def batch_translator(input_dict):
+        torch.cuda.empty_cache()
         model_id = input_dict["id"]
         src_list = input_dict["src_list"]
         num_sentence = len(src_list)
@@ -91,6 +93,7 @@ class FairseqDocumentTranslateService:
         return out
     
     def indic_to_indic_translator(input_dict):
+        torch.cuda.empty_cache()
         model_id = input_dict["id"]
         src_list = input_dict["src_list"]
         num_sentence = len(src_list)

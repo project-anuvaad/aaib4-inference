@@ -26,7 +26,7 @@ class CreateModel(Document):
     uuid = UUIDField(default=uuid.uuid4, binary=False)
     is_primary = BooleanField(required = True,default=False)
     #model_id = IntField(required=True,unique=True)
-    model_id = IntField(required=True)
+    model_id = IntField(required=True,unique=False)
     model_name = StringField(Max_length=30)
     source_language_code = StringField(required=True,choices=source)
     source_language_name = StringField(required = True,Max_length=30)

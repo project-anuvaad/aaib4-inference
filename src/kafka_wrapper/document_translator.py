@@ -38,7 +38,8 @@ class KafkaTranslate:
                         message = inputs.get('message')
                         src_list = [i.get('src') for i in message]
                         translation_batch = {'id':inputs.get('id'),'src_list': src_list}
-                        output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
+                        #output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
+                        output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
                         log_info("Output of translation batch service at :{}".format(datetime.datetime.now()),MODULE_CONTEXT)                        
                         output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i],
                                                 'tagged_tgt':output_batch['tagged_tgt_list'][i],'tagged_src':output_batch['tagged_src_list'][i]}

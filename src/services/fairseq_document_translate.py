@@ -91,7 +91,8 @@ class FairseqDocumentTranslateService:
             raise e
 
         return out
-    
+        
+    @staticmethod
     def indic_to_indic_translator(input_dict):
         torch.cuda.empty_cache()
         model_id = input_dict["id"]

@@ -91,7 +91,7 @@ class FairseqDocumentTranslateService:
             raise e
 
         return out
-        
+    """   
     @staticmethod
     def indic_to_indic_translator(input_dict):
         torch.cuda.empty_cache()
@@ -130,7 +130,6 @@ class FairseqDocumentTranslateService:
                 raise Exception(
                     "Unsupported Model ID - id: {} for given input".format(model_id)
                 )
-
             out = {
                 "tgt_list": translation_array
             }
@@ -144,6 +143,66 @@ class FairseqDocumentTranslateService:
             raise e
             
         return out
+    """
+    #This indic to indic has been utilized for X-X, En-X, X-En, implemented on 21-03-2023, previously before 
+    @staticmethod
+    def indic_to_indic_translator(input_dict):
+        torch.cuda.empty_cache()
+        model_id = input_dict["id"]
+        src_list = input_dict["src_list"]
+        num_sentence = len(src_list)
+        out = {}
+
+        translator = load_models.loaded_models[model_id]
+        source_bpe = load_models.bpes[model_id][0]
+
+        input_sentence_array_prepd = [None] * num_sentence
+
+        _, ids = get_src_and_tgt_langs_dict()
+
+        try:
+            for i, sent in enumerate(src_list):   
+                input_sentence_array_prepd[i] = sent
+            log_info("translating using any to any NMT-model:{}".format(model_id), MODULE_CONTEXT)
+
+            if model_id in ids:
+                src_lang, tgt_lang = (input_dict['src_lang'],input_dict['tgt_lang'])
+                log_info("src_lang-{0},tgt_lang-{1}".format(src_lang,tgt_lang),MODULE_CONTEXT)
+                translation_array = encode_translate_decode(
+                    input_sentence_array_prepd,
+                    src_lang,
+                    tgt_lang,
+                    translator,
+                    source_bpe,
+                )
+            else:
+                log_info(
+                    "Unsupported model id: {} for given input".format(model_id),
+                    MODULE_CONTEXT,
+                )
+                raise Exception(
+                    "Unsupported Model ID - id: {} for given input".format(model_id)
+                )
+            
+            #out = {
+            #    "tgt_list": translation_array
+            #}
+            out = {
+                "tgt_list": translation_array,
+                "tagged_src_list": input_sentence_array_prepd,
+                "tagged_tgt_list": translation_array,
+            }
+        except Exception as e:
+            log_exception(
+                "Exception caught in NMTTranslateService:indic_to_indic_translator:%s and %s"
+                % (e, sys.exc_info()[0]),
+                MODULE_CONTEXT,
+                e,
+            )
+            raise e
+            
+        return out
+
 """
 #The new encode_translate_decode for partial translation issue.
 def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):

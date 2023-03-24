@@ -15,7 +15,7 @@ COPY / /app
 WORKDIR /app
 RUN pip3 install --upgrade pip
 RUN pip3 install -r src/requirements.txt
-RUN apt-get -y install git
+RUN apt update && apt-get -y install git --fix-missing
 RUN git clone https://github.com/pytorch/fairseq.git
 WORKDIR fairseq
 #RUN git reset --hard b5e7b250913120409b872a940fbafec4d43c7b13

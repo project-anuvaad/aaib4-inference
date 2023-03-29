@@ -7,7 +7,7 @@ docker run \
     -e SONAR_LOGIN="sqa_471ce2535eb4a193f0edea61be1151ac53b65cd0" \
     -v "${PWD}:/usr/src" \
     sonarsource/sonar-scanner-cli \
-    -Dsonar.projectKey=individual.mystic \
+    -Dsonar.projectKey=$image_name \
     -Dsonar.sonar.projectName="$image_name" \
     -Dsonar.sonar.projectVersion=1.0 \
     -Dsonar.sonar.sourceEncoding=UTF-8

@@ -4,7 +4,7 @@ echo $commit_id> commit_id.txt
 docker run \
     --rm \
     -e SONAR_HOST_URL="https://sonarqube.anuvaad.org" \
-    -e SONAR_LOGIN="sqa_471ce2535eb4a193f0edea61be1151ac53b65cd0" \
+    -e SONAR_LOGIN=$sonar_key \
     -v "${PWD}:/usr/src" \
     sonarsource/sonar-scanner-cli \
     -Dsonar.projectKey=$image_name \

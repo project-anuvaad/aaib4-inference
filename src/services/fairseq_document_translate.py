@@ -232,7 +232,100 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
         )
         raise
 """
+#To handle the punctuation in the start and ending of the text.
+def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
+    my_punct = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '.',
+           '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', 
+           '`', '{', '|', '}', '~', '»', '«', '“', '”', '-']
+    punct_pattern = re.compile("[" + re.escape("".join(my_punct)) + "]")
+    punct_pattern_str = "".join(my_punct)
+    start_punct_pattern = re.compile("^[" + re.escape("".join(my_punct)) + "]")
+    end_punct_pattern = re.compile("[" + re.escape("".join(my_punct)) + "]$")
+    try:
+        if src_lang == 'en':  
+            inputs = [i.title() if i.isupper() else  i for i in inputs]
+        #newly added for punctuation
+        punct_sen_index = []
+        punct_in_sent = []
+        punct_sen_index_last = []
+        punct_in_sent_last = []
+        punct_sen_index_ele1 = []
+        for i, ele in enumerate(inputs):
+            if len(ele) == 1:
+                if 33 <= ord(ele) <= 47 or  58 <= ord(ele) <= 64 or 91 <= ord(ele) <= 96 or ord(ele) == 8221:
+                    print("sentence contains only punctuation: {}".format(ele))
+                    punct_sen_index_ele1.append(i)
+            else:
+                count_punct = 0
+                for ch in ele:
+                    if 33 <= ord(ch) <= 47 or  58 <= ord(ch) <= 64 or 91 <= ord(ch) <= 96:
+                        count_punct += 1
+                other_char = len(ele) - count_punct
+                if count_punct > other_char:
+                #If punctuations are in the beginning
+                    if re.search(start_punct_pattern, ele) and not(re.search(end_punct_pattern, ele)):
+                        print("punctuation start found", ele)
+                        srt_ind = end_ind = 0
+                        for j, ch in enumerate(ele):
+                            if 48 <= ord(ch) <= 57 or  65 <= ord(ch) <= 90 or 97 <= ord(ch) <= 122:
+                                break
+                            end_ind = j
+                        new_ele = ele.strip(punct_pattern_str)
+                        inputs[i] = new_ele
+                        punct_sen_index.append(i)
+                        punct_in_sent.append(ele[0:end_ind+1])
+                  #End of punctuation in the beginning
+                #If punctuations are in the end
+                    if not(re.search(start_punct_pattern, ele)) and re.search(end_punct_pattern, ele):
+                        print("punctuation end found", ele)
+                        srt_ind = end_ind = 0
+                        for j, ch in enumerate(ele):
+                            if 33 <= ord(ch) <= 47 or  58 <= ord(ch) <= 64 or 91 <= ord(ch) <= 96:
+                                break
+                            srt_ind = j
+                        srt_ind = srt_ind + 1
+                        new_ele = ele.strip(punct_pattern_str)
+                        inputs[i] = new_ele
+                        punct_sen_index_last.append(i)
+                        punct_in_sent_last.append(ele[srt_ind:])
+                #End of punctuation in the end
+        #end for punctuation
+        print("updated inputs:", inputs)
+        inputs = sentence_processor.preprocess(inputs, src_lang)
+        inputs = apply_bpe(inputs, source_bpe)
+        i_final = sentence_processor.apply_lang_tags(inputs, src_lang, tgt_lang)
+        i_final = truncate_long_sentences(i_final)
+        translation = translator.translate(i_final)
+        print(translation)
+        translation = sentence_processor.postprocess(translation, tgt_lang)
+        #again postprocessing for punctuation
+        punct_in_sent = sentence_processor.postprocess(punct_in_sent, tgt_lang)
+        #For single element
+        for k, el in enumerate(punct_sen_index_ele1):
+            translation[el] = inputs[el]
+        #For prefix part
+        for k, el in enumerate(punct_sen_index):
+            #translation[el] = inputs[el]
+            translation[el] = punct_in_sent[k] + translation[el]
+            print("Replacement in Prefix:",el, translation[el], inputs[el])
+        #For suffix part
+        for k, el in enumerate(punct_sen_index_last):
+            #translation[el] = inputs[el]
+            translation[el] =  translation[el] + punct_in_sent_last[k]
+            print("Replacement in Sufffix:",el, translation[el], inputs[el])
+        #end postprocessing
+        return translation
 
+    except Exception as e:
+        log_exception(
+            "Unexpexcted error in encode_translate_decode: {} and {}".format(
+                e, sys.exc_info()[0]
+            ),
+            MODULE_CONTEXT,
+            e,
+        )
+        raise
+"""
 def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
     try:
         if src_lang == 'en':  
@@ -255,7 +348,7 @@ def encode_translate_decode(inputs, src_lang, tgt_lang, translator, source_bpe):
         )
         raise
 
-
+"""
 def apply_bpe(sents, bpe):
     return [bpe.process_line(sent) for sent in sents]
 

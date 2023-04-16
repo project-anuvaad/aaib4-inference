@@ -4,17 +4,23 @@
 Inference pipeline to deploy IndicTrans NMT models on top of Flask server.
 
 ## Prerequisites
-- python 3.6 +
-- ubuntu 16.04 +
+- Python 3.6 +
+- Ubuntu 16.04 +
 
-Install various python libraries as mentioned in requirements.txt file
+Install various python libraries as mentioned in `requirements.txt` file
 
 ```bash
 pip install -r src/requirements.txt
 ```
 
 ## APIs and Documentation
-Run app.py to start the service with all the packages installed
+
+- Put all the models in `src/nmt_models` folder as per the specs in `config/fetch_models.json`
+- Run `app.py` to start the service with all the packages installed
+
+```bash
+python src/app.py
+```
 
 ## Languages
 
@@ -61,9 +67,6 @@ IndicTrans-v2 supports all [22 scheduled langauges of India](https://en.wikipedi
 |te |Telugu - తెలుగు      |
 |ur |Urdu - اُردُو         |
 
-```bash
-python src/app.py
-```
 ## Training Repository
 https://github.com/AI4Bharat/indicTrans
 

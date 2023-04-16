@@ -6,7 +6,7 @@ from utilities import MODULE_CONTEXT
 from anuvaad_auditor.loghandler import log_info, log_exception
 import datetime
 from config import translation_batch_limit
-from config import supported_languages
+from config import v1_supported_languages
 from html import escape
 
         
@@ -33,7 +33,7 @@ class NMTTranslateResource(Resource):
                 if model_id == 144:                   
                     translation_batch = {'id':model_id,'src_lang':language['sourceLanguage'],
                                      'tgt_lang':language['targetLanguage'],'src_list': src_list}
-                    output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
+                    output_batch = FairseqDocumentTranslateService.many_to_many_translator(translation_batch)
                 else:
                     translation_batch = {'id':model_id,'src_list': src_list}
                     output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
@@ -73,6 +73,7 @@ class InteractiveMultiTranslateResourceNew(Resource):
             log_info("null inputs in request in v0/interactive-translation API",MODULE_CONTEXT)
             out = CustomResponse(Status.INVALID_API_REQUEST.value,None)
             return out.jsonify_res()        
+
 """
 class TranslateResourceV1(Resource):
     def post(self):
@@ -129,7 +130,7 @@ class TranslateResourceV1(Resource):
                 if  inputs.get('model_id') == 144:
                     translation_batch = {'id': inputs.get('model_id'), 'src_lang': inputs.get('source_language_code'),
                                      'tgt_lang': inputs.get('target_language_code'), 'src_list': src_list}
-                    output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
+                    output_batch = FairseqDocumentTranslateService.many_to_many_translator(translation_batch)
                 else:
                     translation_batch = {'id':inputs.get('model_id'),'src_list': src_list}
                     output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
@@ -171,7 +172,7 @@ class TranslateResourcem2m(Resource):
             return out.get_res_json(), 406, {'Content-Type': content_type,'X-Content-Type-Options':'nosniff'}
             
         if len(inputs)>0 and all(v in inputs for v in ['src_list','source_language_code','target_language_code']):
-            if (inputs.get('source_language_code') not in supported_languages) or (inputs.get('target_language_code') not in supported_languages):
+            if (inputs.get('source_language_code') not in v1_supported_languages) or (inputs.get('target_language_code') not in v1_supported_languages):
                 status = Status.UNSUPPORTED_LANGUAGE.value
                 log_exception("v1.1 translate API | Unsupported input language code",MODULE_CONTEXT,status['message'])
                 out = CustomResponse(status,html_encode(inputs))
@@ -190,7 +191,7 @@ class TranslateResourcem2m(Resource):
                 m_id = get_model_id(inputs.get('source_language_code'),inputs.get('target_language_code'))
                 translation_batch = {'id':m_id,'src_lang':inputs.get('source_language_code'),
                                      'tgt_lang':inputs.get('target_language_code'),'src_list': src_list}
-                output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
+                output_batch = FairseqDocumentTranslateService.many_to_many_translator(translation_batch)
                 output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i]}
                                                     for i in range(len(input_src_list))]
                 for j,k in enumerate(input_src_list):

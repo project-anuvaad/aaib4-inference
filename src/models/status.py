@@ -13,7 +13,7 @@ class Status(enum.Enum):
     INVALID_TYPE = { "ok": "false",  "statusCode": 401 , "why": "Invalid file type of file to be downloaded/uploaded !" }
     SYSTEM_ERR = { "ok": "false",  "statusCode": 500 , "why": "Something went wrong on the server !" }
     SEVER_MODEL_ERR = { "ok": "false",  "statusCode": 500 , "why": "Something went wrong on the server !" }
-    UNSUPPORTED_LANGUAGE = { "ok": "false", "statusCode": 400 , "message": "Unsupported language code. Follwing are supported: ['en','hi','ta','te','kn','pa','mr','as','or','ml','gu','bn']" }
+    UNSUPPORTED_LANGUAGE = { "ok": "false", "statusCode": 400 , "message": "Unsupported language code." }
     No_File_DB = { "ok": "false",  "statusCode": 401 , "why": "no file found in the db for the given id" }
     ID_OR_SRC_MISSING = { "ok": "false",  "statusCode": 401 , "why": "Either id or src missing for some inputs in the request","message": "Either id or src missing for some inputs in the request" }
     INCORRECT_ID = { "ok": "false",  "statusCode": 401 , "why": "wrong model id for some input" }

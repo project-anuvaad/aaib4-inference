@@ -80,7 +80,7 @@ def make_batches(
         )
 
 
-class Translator:
+class TranslatorV1:
     def __init__(
         self, data_dir, checkpoint_path, batch_size=25, constrained_decoding=False
     ):
@@ -299,7 +299,7 @@ class Translator:
         return final_translations
 
 
-def load_vocab(vocab_path, bpe_codes_path):
+def load_vocab_v1(vocab_path, bpe_codes_path):
     vocabulary = read_vocabulary(codecs.open(vocab_path, encoding="utf-8"), 5)
     bpe = BPE(
         codecs.open(bpe_codes_path, encoding="utf-8"),

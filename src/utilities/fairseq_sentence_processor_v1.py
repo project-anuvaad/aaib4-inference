@@ -27,6 +27,8 @@ from indicnlp.transliterate import unicode_transliterate
 en_tok = MosesTokenizer(lang="en")
 en_normalizer = MosesPunctNormalizer()
 
+def apply_vocab_processing(sents, vocab_processor):
+    return [vocab_processor.process_line(sent) for sent in sents]
 
 def add_token(sent, tag_infos):
     """add special tokens specified by tag_infos to each element in list
@@ -99,7 +101,7 @@ def apply_lang_tags(sents, src_lang, tgt_lang):
     return tagged_sents
 
 
-def postprocess(sents, lang, common_lang="hi"):
+def postprocess(sents, lang, vocab_processor, common_lang="hi", original_sents=None):
     """
     parse fairseq interactive output, convert script back to native Indic script (in case of Indic languages) and detokenize.
 

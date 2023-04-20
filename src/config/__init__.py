@@ -17,7 +17,8 @@ MODULE_NAME = "/aai4b-nmt-inference"
 # MODULE_NAME_2 = "/nmt-inference"
 
 ## fetch model details
-FETCH_MODEL_CONFG = os.path.join(APP_BASE_PATH, "config/fetch_models.json")
+#FETCH_MODEL_CONFG = os.path.join(APP_BASE_PATH, "config/fetch_models.json")
+FETCH_MODEL_CONFG = os.path.join(APP_BASE_PATH, "config/fetch_models_v2.json")
 
 ## truncation limit for sentence length
 trunc_limit = 200

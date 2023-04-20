@@ -1,7 +1,7 @@
 {
     "models": [
         {
-            "disabled": false,
+            "disabled": true,
             "version": 2,
             "model_id": "v2/en-indic",
             "source_language_code": "ENGLISH",
@@ -87,7 +87,7 @@
             "tgt_bpe_codes_path": "src/nmt_models/v2/indic-en/vocab/vocab.TGT"
         },
         {
-            "disabled": false,
+            "disabled": true,
             "version": 2,
             "model_id": "v2/en-indic/constrained",
             "source_language_code": "ENGLISH",
@@ -171,6 +171,34 @@
             "tgt_vocab_path": "src/nmt_models/v2/indic-en/vocab/model.TGT",
             "src_bpe_codes_path": "src/nmt_models/v2/indic-en/vocab/vocab.SRC",
             "tgt_bpe_codes_path": "src/nmt_models/v2/indic-en/vocab/vocab.TGT"
+        },
+        {
+      	    "source_language_code": "hi",
+      	    "target_language_code": "mr",
+      	    "model_id": 144,
+      	    "is_constrained": false,
+      	    "model_name": "Fairseq AAI4B m2m model",
+      	    "model_path": "src/nmt_models/m2m_v0.1/checkpoint_best.pt",
+      	    "dict_path": "src/nmt_models/m2m_v0.1/dictionaries",
+      	    "src_vocab_path": "src/nmt_models/m2m_v0.1/vocab/vocab.SRC",
+      	    "tgt_vocab_path": "src/nmt_models/m2m_v0.1/vocab/vocab.TGT",
+            "src_bpe_codes_path": "src/nmt_models/m2m_v0.1/vocab/bpe_codes.32k.SRC_TGT",
+      	    "tgt_bpe_codes_path": "src/nmt_models/m2m_v0.1/vocab/bpe_codes.32k.SRC_TGT"
+
+    	},
+    	{
+      	    "source_language_code": "hi",
+      	    "target_language_code": "mr",
+      	    "model_id": 244,
+      	    "is_constrained": true,
+      	    "model_name": "Fairseq AAI4B m2m model",
+      	    "model_path": "src/nmt_models/m2m_v0.1/checkpoint_best.pt",
+      	    "dict_path": "src/nmt_models/m2m_v0.1/dictionaries",
+      	    "src_vocab_path": "src/nmt_models/m2m_v0.1/vocab/vocab.SRC",
+      	    "tgt_vocab_path": "src/nmt_models/m2m_v0.1/vocab/vocab.TGT",
+      	    "src_bpe_codes_path": "src/nmt_models/m2m_v0.1/vocab/bpe_codes.32k.SRC_TGT",
+      	    "tgt_bpe_codes_path": "src/nmt_models/m2m_v0.1/vocab/bpe_codes.32k.SRC_TGT"
+
         }
     ]
 }

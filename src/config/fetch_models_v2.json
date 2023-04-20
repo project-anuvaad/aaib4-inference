@@ -1,7 +1,7 @@
 {
     "models": [
         {
-            "disabled": true,
+            "disabled": false,
             "version": 2,
             "model_id": "v2/en-indic",
             "source_language_code": "ENGLISH",
@@ -87,7 +87,7 @@
             "tgt_bpe_codes_path": "src/nmt_models/v2/indic-en/vocab/vocab.TGT"
         },
         {
-            "disabled": true,
+            "disabled": false,
             "version": 2,
             "model_id": "v2/en-indic/constrained",
             "source_language_code": "ENGLISH",

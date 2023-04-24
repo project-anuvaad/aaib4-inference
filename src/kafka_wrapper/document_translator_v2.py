@@ -8,6 +8,8 @@ import sys
 import datetime
 from services import FairseqDocumentTranslateService
 
+import functools
+
 class KafkaTranslate_v2:
 
     @functools.lru_cache(maxsize=None, typed=True)

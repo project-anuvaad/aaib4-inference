@@ -10,21 +10,22 @@ from services import FairseqDocumentTranslateService
 
 import functools
 
+@functools.lru_cache(maxsize=None, typed=True)
+def get_model_id(source_language_code, target_language_code, is_constrained=False, version=2):
+    if source_language_code == "en":
+        direction = "en-indic"
+    elif target_language_code == "en":
+        direction = "indic-en"
+    else:
+        direction = "indic-indic"
+    
+    model_id = f"v{version}/{direction}"
+    if is_constrained:
+        model_id += "/constrained"
+    return model_id
+
 class KafkaTranslate_v2:
 
-    @functools.lru_cache(maxsize=None, typed=True)
-    def get_model_id(source_language_code, target_language_code, is_constrained=False, version=2):
-        if source_language_code == "en":
-            direction = "en-indic"
-        elif target_language_code == "en":
-            direction = "indic-en"
-        else:
-            direction = "indic-indic"
-    
-        model_id = f"v{version}/{direction}"
-        if is_constrained:
-            model_id += "/constrained"
-        return model_id
                 
     @staticmethod
     def batch_translator(c_topic):

@@ -44,7 +44,7 @@
             "tgt_bpe_codes_path": "src/nmt_models/v2/en-indic/vocab/vocab.TGT"
         },
         {
-            "disabled": true,
+            "disabled": false,
             "version": 2,
             "model_id": "v2/indic-en",
             "source_language_code": "INDIC",

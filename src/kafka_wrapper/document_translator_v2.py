@@ -19,10 +19,10 @@ class KafkaTranslate_v2:
         else:
             direction = "indic-indic"
     
-    model_id = f"v{version}/{direction}"
-    if is_constrained:
-        model_id += "/constrained"
-    return model_id
+        model_id = f"v{version}/{direction}"
+        if is_constrained:
+            model_id += "/constrained"
+        return model_id
                 
     @staticmethod
     def batch_translator(c_topic):

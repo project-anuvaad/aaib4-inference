@@ -58,12 +58,16 @@ class KafkaTranslate_v2:
                         #output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)
                         #Added for indic otherwise above two
                         model_id_v2 = get_model_id(inputs.get('source_language_code'), inputs.get('target_language_code'))
-                        translation_batch = {'id': model_id_v2, 'src_lang': inputs.get('source_language_code'),
-                                     'tgt_lang': inputs.get('target_language_code'), 'src_list': src_list}
-                        #translation_batch = {'id': inputs.get('id'), 'src_lang': inputs.get('source_language_code'),
+                        #translation_batch = {'id': model_id_v2, 'src_lang': inputs.get('source_language_code'),
                         #             'tgt_lang': inputs.get('target_language_code'), 'src_list': src_list}
-                        #output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
-                        output_batch = FairseqDocumentTranslateService.many_to_many_translator(translation_batch)
+                        if "indic-indic" in model_id_v2:
+                            output_batch, _, _ = KafkaTranslate_v2.get_pivoted_translation_response(inputs)
+                        else:
+                            #translation_batch = {'id': inputs.get('id'), 'src_lang': inputs.get('source_language_code'),
+                            #             'tgt_lang': inputs.get('target_language_code'), 'src_list': src_list}
+                            #output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
+                            #output_batch = FairseqDocumentTranslateService.many_to_many_translator(translation_batch)
+                            output_batch, _, _ = KafkaTranslate_v2.get_translation_response(inputs, model_id_v2)
                         #End for indic2indic
                         log_info("Output of translation batch service at :{}".format(datetime.datetime.now()),MODULE_CONTEXT)                        
                         output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i],
@@ -101,9 +105,98 @@ class KafkaTranslate_v2:
             '''includes simplejson.decoder.JSONDecodeError '''
             log_exception("JSON decoding failed in KafkaTranslate-batch_translator method: {}".format(e),MODULE_CONTEXT,e)
             log_info("Reconnecting kafka c/p after exception handling",MODULE_CONTEXT)
-            KafkaTranslate.batch_translator(c_topic)  
+            KafkaTranslate_v2.batch_translator(c_topic)  
         except Exception as e:
             log_exception("Exception caught in KafkaTranslate-batch_translator method: {}".format(e),MODULE_CONTEXT,e)
             log_info("Reconnecting kafka c/p after exception handling",MODULE_CONTEXT)
-            KafkaTranslate.batch_translator(c_topic)        
+            KafkaTranslate_v2.batch_translator(c_topic)
+            
+            
+    def get_translation_response(inputs, model_id):
+        source_language_code, target_language_code = inputs.get('source_language_code'), inputs.get('target_language_code')
+
+        # Check if the model supports the given lang-pair
+        if not is_language_pair_supported(source_language_code, target_language_code, model_id):
+            status = Status.UNSUPPORTED_LANGUAGE.value
+            log_exception("kafka translate document | Unsupported input language code", MODULE_CONTEXT, status['message'])
+            out = CustomResponse(status, html_encode(inputs))
+            return out.get_res_json(), 400, {'Content-Type': DEFAULT_CONTENT_TYPE, 'X-Content-Type-Options': 'nosniff'}
+        
+        try:  
+            log_info("Making kafka translate call", MODULE_CONTEXT)
+            log_info("kafka translate  | input--- {}".format(inputs), MODULE_CONTEXT)
+            input_src_list = inputs.get('src_list')
+            
+            translation_batch = {
+                'id': model_id,
+                'src_lang': source_language_code,
+                'tgt_lang': target_language_code,
+                'src_list': [item.get('src') for item in input_src_list],
+            }
+            output_batch = FairseqDocumentTranslateService.many_to_many_translator(translation_batch)
+
+            # Stitch the translated sentences along with source sentences
+            response_body = []
+            for i, item in enumerate(input_src_list):
+                item.update(
+                    {'tgt': output_batch['tgt_list'][i]}
+                )
+                response_body.append(item)
+            
+            # Construct output payload
+            out = CustomResponse(Status.SUCCESS.value, response_body) 
+            log_info("Final output kafka translate call | {}".format(out.get_res_json()), MODULE_CONTEXT)     
+            return out.get_res_json(), 200, {'Content-Type': DEFAULT_CONTENT_TYPE, 'X-Content-Type-Options': 'nosniff'}   
+        
+        except Exception as e:
+            status = Status.SYSTEM_ERR.value
+            status['message'] = str(e)
+            log_exception("Exception caught in kafka resource child block: {}".format(e), MODULE_CONTEXT, e) 
+            out = CustomResponse(status, html_encode(inputs))
+            return out.get_res_json(), 500, {'Content-Type': DEFAULT_CONTENT_TYPE, 'X-Content-Type-Options': 'nosniff'}
+
     
+    
+    
+    
+    @staticmethod        
+    def get_pivoted_translation_response(inputs, pivot_language_code="en"):
+        source_language_code, target_language_code = inputs.get('source_language_code'), inputs.get('target_language_code')
+
+        # First translate source to intermediate lang
+        model_id = get_model_id(source_language_code, pivot_language_code)
+        inputs["target_language_code"] = pivot_language_code
+        response_json, status_code, http_headers = KafkaTranslate_v2.get_translation_response(inputs, model_id)
+        if status_code != 200:
+            # If error, just return it directly
+            return response_json, status_code, http_headers
+
+        # Now use intermediate translations as source
+        intermediate_inputs = {
+            "source_language_code": pivot_language_code,
+            "target_language_code": target_language_code,
+            "src_list": [{"src": item["tgt"]} for item in response_json["data"]],
+        }
+        model_id = get_model_id(pivot_language_code, target_language_code)
+        response_json, status_code, http_headers = KafkaTranslate_v2.get_translation_response(intermediate_inputs, model_id)
+        if status_code != 200:
+            # If error, just return it directly
+            return response_json, status_code, http_headers
+
+        # Put original source sentences back and send the response
+        for i, item in enumerate(inputs["src_list"]):
+            response_json["data"][i]["src"] = item["src"]
+        return response_json, status_code, http_headers
+        
+
+def html_encode(request_json_obj):
+    try:
+        request_json_obj["source_language_code"] = escape(request_json_obj["source_language_code"])
+        request_json_obj["target_language_code"] = escape(request_json_obj["target_language_code"])
+        for item in request_json_obj['src_list']:
+            item['src'] = escape(item['src'])
+    except Exception as e:
+        log_exception("Exception caught in v2 translate API html encoding: {}".format(e),MODULE_CONTEXT,e)
+
+    return request_json_obj
+

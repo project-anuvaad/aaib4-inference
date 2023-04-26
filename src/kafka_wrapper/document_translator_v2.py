@@ -6,8 +6,12 @@ from anuvaad_auditor.loghandler import log_info, log_exception
 from utilities import MODULE_CONTEXT
 import sys
 import datetime
-from services import FairseqDocumentTranslateService
+from services import FairseqDocumentTranslateService, FairseqAutoCompleteTranslateService
 
+import json
+from flask_restful import Resource
+from flask import request
+from html import escape
 import functools
 
 @functools.lru_cache(maxsize=None)

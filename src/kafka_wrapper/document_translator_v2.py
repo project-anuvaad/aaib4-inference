@@ -167,7 +167,8 @@ class KafkaTranslate_v2:
                 'src_list': [item.get('src') for item in message],
             }
             output_batch = FairseqDocumentTranslateService.many_to_many_translator(translation_batch)
-
+            return output_batch
+		
             # Stitch the translated sentences along with source sentences
             """
             response_body = []

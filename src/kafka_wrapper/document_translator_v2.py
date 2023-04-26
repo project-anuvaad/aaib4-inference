@@ -10,6 +10,18 @@ from services import FairseqDocumentTranslateService
 
 import functools
 
+@functools.lru_cache(maxsize=None)
+def get_v2_models():
+    with open(config.FETCH_MODEL_CONFG) as f:
+        confs = json.load(f)
+    id2model = {
+        model["model_id"]: model
+        for model in confs["models"]
+        if "version" in model and model["version"] >= 2
+    }
+    return 
+    
+
 @functools.lru_cache(maxsize=None, typed=True)
 def get_model_id(source_language_code, target_language_code, is_constrained=False, version=2):
     if source_language_code == "en":
@@ -23,6 +35,21 @@ def get_model_id(source_language_code, target_language_code, is_constrained=Fals
     if is_constrained:
         model_id += "/constrained"
     return model_id
+    
+
+@functools.lru_cache(maxsize=None, typed=True)
+def is_language_pair_supported(source_language_code, target_language_code, model_id):
+    id2model = get_v2_models()
+    if model_id not in id2model:
+        return False
+    
+    model = id2model[model_id]
+    supported_source_language_codes = model["source_language_codes"]
+    supported_target_language_codes = model["target_language_codes"]
+
+    return source_language_code in supported_source_language_codes and target_language_code in supported_target_language_codes
+
+DEFAULT_CONTENT_TYPE = 'application/json'
 
 class KafkaTranslate_v2:
 

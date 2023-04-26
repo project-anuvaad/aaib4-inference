@@ -212,7 +212,7 @@ class KafkaTranslate_v2:
         intermediate_inputs = {
             "source_language_code": pivot_language_code,
             "target_language_code": target_language_code,
-            "message": [response_json['tgt_list'][i] for i in range('tgt_list')]
+            "message": [response_json['tgt_list'][i] for i in range(len(response_json['tgt_list']))]
             #"message": [{"src": item["tgt"]} for item in response_json["data"]],
         }
         model_id = get_model_id(pivot_language_code, target_language_code)

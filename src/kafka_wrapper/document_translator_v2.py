@@ -212,7 +212,7 @@ class KafkaTranslate_v2:
         intermediate_inputs = {
             "source_language_code": pivot_language_code,
             "target_language_code": target_language_code,
-            "message": [response_json['tgt_list'][i] for i in range(len(response_json['tgt_list']))]
+            "message": [{"src": response_json['tgt_list'][i]} for i in range(len(response_json['tgt_list']))]
             #"message": [{"src": item["tgt"]} for item in response_json["data"]],
         }
         model_id = get_model_id(pivot_language_code, target_language_code)
@@ -236,7 +236,8 @@ def html_encode(request_json_obj):
     try:
         request_json_obj["source_language_code"] = escape(request_json_obj["source_language_code"])
         request_json_obj["target_language_code"] = escape(request_json_obj["target_language_code"])
-        for item in request_json_obj['src_list']:
+        #for item in request_json_obj['src_list']:
+        for item in request_json_obj['message']:
             item['src'] = escape(item['src'])
     except Exception as e:
         log_exception("Exception caught in v2 translate API html encoding: {}".format(e),MODULE_CONTEXT,e)

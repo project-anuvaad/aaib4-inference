@@ -98,7 +98,7 @@ class KafkaTranslate_v2:
                             #             'tgt_lang': inputs.get('target_language_code'), 'src_list': src_list}
                             #output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
                             #output_batch = FairseqDocumentTranslateService.many_to_many_translator(translation_batch)
-                            output_batch, _, _ = KafkaTranslate_v2.get_translation_response(inputs, model_id_v2)
+                            output_batch = KafkaTranslate_v2.get_translation_response(inputs, model_id_v2)
                         #End for indic2indic
                         log_info("Output of translation batch service at :{}".format(datetime.datetime.now()),MODULE_CONTEXT)                        
                         output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i],
@@ -169,6 +169,7 @@ class KafkaTranslate_v2:
             output_batch = FairseqDocumentTranslateService.many_to_many_translator(translation_batch)
 
             # Stitch the translated sentences along with source sentences
+            """
             response_body = []
             for i, item in enumerate(message):
                 item.update(
@@ -180,13 +181,14 @@ class KafkaTranslate_v2:
             out = CustomResponse(Status.SUCCESS.value, response_body) 
             log_info("Final output kafka translate call | {}".format(out.get_res_json()), MODULE_CONTEXT)     
             return out.get_res_json(), 200, {'Content-Type': DEFAULT_CONTENT_TYPE, 'X-Content-Type-Options': 'nosniff'}   
-        
+            """
         except Exception as e:
             status = Status.SYSTEM_ERR.value
             status['message'] = str(e)
             log_exception("Exception caught in kafka resource child block: {}".format(e), MODULE_CONTEXT, e) 
             out = CustomResponse(status, html_encode(inputs))
-            return out.get_res_json(), 500, {'Content-Type': DEFAULT_CONTENT_TYPE, 'X-Content-Type-Options': 'nosniff'}
+            #return out.get_res_json(), 500, {'Content-Type': DEFAULT_CONTENT_TYPE, 'X-Content-Type-Options': 'nosniff'}
+            return out.get_res_json()
 
     
     

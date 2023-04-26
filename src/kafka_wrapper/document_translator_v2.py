@@ -202,27 +202,34 @@ class KafkaTranslate_v2:
         # First translate source to intermediate lang
         model_id = get_model_id(source_language_code, pivot_language_code)
         inputs["target_language_code"] = pivot_language_code
-        response_json, status_code, http_headers = KafkaTranslate_v2.get_translation_response(inputs, model_id)
-        if status_code != 200:
+        #response_json, status_code, http_headers = KafkaTranslate_v2.get_translation_response(inputs, model_id)
+        response_json = KafkaTranslate_v2.get_translation_response(inputs, model_id)
+        #if status_code != 200:
             # If error, just return it directly
-            return response_json, status_code, http_headers
+        #    return response_json, status_code, http_headers
 
         # Now use intermediate translations as source
         intermediate_inputs = {
             "source_language_code": pivot_language_code,
             "target_language_code": target_language_code,
-            "message": [{"src": item["tgt"]} for item in response_json["data"]],
+            "message": [response_json['tgt_list'][i] for i in range('tgt_list')]
+            #"message": [{"src": item["tgt"]} for item in response_json["data"]],
         }
         model_id = get_model_id(pivot_language_code, target_language_code)
-        response_json, status_code, http_headers = KafkaTranslate_v2.get_translation_response(intermediate_inputs, model_id)
-        if status_code != 200:
+        #response_json, status_code, http_headers = KafkaTranslate_v2.get_translation_response(intermediate_inputs, model_id)
+        response_json = KafkaTranslate_v2.get_translation_response(intermediate_inputs, model_id)
+        #if status_code != 200:
             # If error, just return it directly
-            return response_json, status_code, http_headers
+        #    return response_json, status_code, http_headers
 
         # Put original source sentences back and send the response
+        src_list = []
         for i, item in enumerate(inputs["message"]):
-            response_json["data"][i]["src"] = item["src"]
-        return response_json, status_code, http_headers
+            #response_json["data"][i]["src"] = item["src"]
+            src_list.append(item)
+        response_json["tagged_src_list"] = src_list
+        #return response_json, status_code, http_headers
+        return response_json
         
 
 def html_encode(request_json_obj):

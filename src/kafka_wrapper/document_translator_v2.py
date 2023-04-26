@@ -217,7 +217,7 @@ class KafkaTranslate_v2:
             return response_json, status_code, http_headers
 
         # Put original source sentences back and send the response
-        for i, item in enumerate(inputs["src_list"]):
+        for i, item in enumerate(inputs["message"]):
             response_json["data"][i]["src"] = item["src"]
         return response_json, status_code, http_headers
         

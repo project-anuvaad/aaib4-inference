@@ -23,7 +23,7 @@ def get_v2_models():
         for model in confs["models"]
         if "version" in model and model["version"] >= 2
     }
-    return 
+    return id2model
     
 
 @functools.lru_cache(maxsize=None, typed=True)

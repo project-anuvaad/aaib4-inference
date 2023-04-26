@@ -169,7 +169,7 @@ class KafkaTranslate_v2:
 
             # Stitch the translated sentences along with source sentences
             response_body = []
-            for i, item in enumerate(input_src_list):
+            for i, item in enumerate(src_list):
                 item.update(
                     {'tgt': output_batch['tgt_list'][i]}
                 )

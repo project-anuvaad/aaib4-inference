@@ -83,7 +83,7 @@ class KafkaTranslate_v2:
                         log_info("Input for Record Id:{} at {}".format(inputs.get('record_id'),input_time),MODULE_CONTEXT)
                         log_info("Running batch-translation on  {}".format(inputs),MODULE_CONTEXT) 
                         record_id = inputs.get('record_id')
-                        #message = inputs.get('message')
+                        message = inputs.get('message')
                         #src_list = [i.get('src') for i in message]
                         #translation_batch = {'id':inputs.get('id'),'src_list': src_list}
                         #output_batch = FairseqDocumentTranslateService.batch_translator(translation_batch)

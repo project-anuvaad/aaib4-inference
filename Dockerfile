@@ -12,9 +12,9 @@ ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 
-RUN apt-get -y install python3.8 python3.8-dev python3.8-venv python3.8-distutils python3-pip 
-RUN python3 --version && pip3 --version
-RUN pip3 install --upgrade pip
+#RUN apt-get -y install python3.8 python3.8-dev python3.8-venv python3.8-distutils python3-pip 
+#RUN python3 --version && pip3 --version
+#RUN pip3 install --upgrade pip
 
 WORKDIR /app
 RUN git clone https://github.com/pytorch/fairseq.git

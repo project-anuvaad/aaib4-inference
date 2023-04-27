@@ -10,7 +10,8 @@ from anuvaad_auditor.loghandler import log_info, log_exception
 import config
 
 from services import load_models
-from services import paragraph_sentence_tokenizer
+from services import paragraph_sentence_tokenizer, dhruva_api
+#from resources import translate_v2
 
 from utilities import MODULE_CONTEXT
 import utilities.fairseq_sentence_processor_v1 as sentence_processor_v1
@@ -145,7 +146,7 @@ class FairseqDocumentTranslateService:
             
         return out
     """
-    
+    """
     #This indic to indic has been utilized for X-X, En-X, X-En, implemented on 21-03-2023, previously before 
     @staticmethod
     def many_to_many_translator(input_dict):
@@ -154,7 +155,7 @@ class FairseqDocumentTranslateService:
         src_list = input_dict["src_list"]
         num_sentence = len(src_list)
         out = {}
-
+        print("model_id.....", model_id)
         translator = load_models.loaded_models[model_id]
         source_vocab = load_models.vocab[model_id][0]
         target_vocab = load_models.vocab[model_id][1]
@@ -181,6 +182,74 @@ class FairseqDocumentTranslateService:
                     target_vocab,
                     sentence_processor=sentence_processor_v2 if version >= 2 else sentence_processor_v1
                 )
+            else:
+                log_info(
+                    "Unsupported model id: {} for given input".format(model_id),
+                    MODULE_CONTEXT,
+                )
+                raise Exception(
+                    "Unsupported Model ID - id: {} for given input".format(model_id)
+                )
+            
+            out = {
+                "tgt_list": translation_array,
+                "tagged_src_list": input_sentence_array_prepd,
+                "tagged_tgt_list": translation_array,
+            }
+        except Exception as e:
+            log_exception(
+                "Exception caught in NMTTranslateService:indic_to_indic_translator:%s and %s"
+                % (e, sys.exc_info()[0]),
+                MODULE_CONTEXT,
+                e,
+            )
+            raise e
+            
+        return out
+        
+    """
+    #This many_to_many_translator works with Dhruva API, for local server please refere to above many_to_many_translator    
+    @staticmethod
+    def many_to_many_translator(input_dict):
+        torch.cuda.empty_cache()
+        model_id = input_dict["id"]
+        src_list = input_dict["src_list"]
+        num_sentence = len(src_list)
+        out = {}
+        print("model_id.....", model_id)
+        translator = load_models.loaded_models[model_id]
+        source_vocab = load_models.vocab[model_id][0]
+        target_vocab = load_models.vocab[model_id][1]
+
+        input_sentence_array_prepd = [None] * num_sentence
+
+        _, id2version = get_src_and_tgt_langs_dict()
+
+        try:
+            for i, sent in enumerate(src_list):   
+                input_sentence_array_prepd[i] = sent
+            log_info("translating using any to any NMT-model:{}".format(model_id), MODULE_CONTEXT)
+
+            if model_id in id2version:
+                version = id2version[model_id]
+                src_lang, tgt_lang = input_dict['src_lang'], input_dict['tgt_lang']
+                log_info("src_lang-{0},tgt_lang-{1}".format(src_lang,tgt_lang),MODULE_CONTEXT)
+                """
+                translation_array = encode_translate_decode(
+                    input_sentence_array_prepd,
+                    src_lang,
+                    tgt_lang,
+                    translator,
+                    source_vocab,
+                    target_vocab,
+                    sentence_processor=sentence_processor_v2 if version >= 2 else sentence_processor_v1
+                )
+                """
+                #Added for calling the dhruva api
+                log_info("Dhruva API has been called: src_lang-{0},tgt_lang-{1}".format(src_lang,tgt_lang),MODULE_CONTEXT)
+                translation_array = dhruva_api.dhruva_api_request(input_sentence_array_prepd, src_lang, tgt_lang)
+                log_info("Dhruva API Call has been finished: {}".format(translation_array),MODULE_CONTEXT)
+                #End
             else:
                 log_info(
                     "Unsupported model id: {} for given input".format(model_id),

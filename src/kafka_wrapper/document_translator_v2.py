@@ -92,7 +92,7 @@ class KafkaTranslate_v2:
                         #translation_batch = {'id': model_id_v2, 'src_lang': inputs.get('source_language_code'),
                         #             'tgt_lang': inputs.get('target_language_code'), 'src_list': src_list}
                         if "indic-indic" in model_id_v2:
-                            output_batch, _, _ = KafkaTranslate_v2.get_pivoted_translation_response(inputs)
+                            output_batch = KafkaTranslate_v2.get_pivoted_translation_response(inputs)
                         else:
                             #translation_batch = {'id': inputs.get('id'), 'src_lang': inputs.get('source_language_code'),
                             #             'tgt_lang': inputs.get('target_language_code'), 'src_list': src_list}
@@ -226,7 +226,7 @@ class KafkaTranslate_v2:
         src_list = []
         for i, item in enumerate(inputs["message"]):
             #response_json["data"][i]["src"] = item["src"]
-            src_list.append(item)
+            src_list.append(item['src'])
         response_json["tagged_src_list"] = src_list
         #return response_json, status_code, http_headers
         return response_json

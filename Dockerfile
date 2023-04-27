@@ -3,7 +3,7 @@
 FROM python:3.8-slim
 #### Commented lines below are added to the base image ###
 #FROM anuvaadio/ai4b-nmt-inference-base-image:2
-CMD nvidia-smi
+#CMD nvidia-smi
 
 RUN rm -rf /var/lib/apt/lists/*
 ENV DEBIAN_FRONTEND noninteractive

@@ -5,12 +5,12 @@ FROM python:3.8-slim
 #FROM anuvaadio/ai4b-nmt-inference-base-image:2
 #CMD nvidia-smi
 
-RUN rm -rf /var/lib/apt/lists/*
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt update --fix-missing && apt install -y software-properties-common git locales locales-all --fix-missing
-ENV LC_ALL en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
+#RUN rm -rf /var/lib/apt/lists/*
+#ENV DEBIAN_FRONTEND noninteractive
+#RUN apt update --fix-missing && apt install -y software-properties-common git locales locales-all --fix-missing
+#ENV LC_ALL en_US.UTF-8
+#ENV LANG en_US.UTF-8
+#ENV LANGUAGE en_US.UTF-8
 
 RUN apt-get update && apt-get -y install python3.8 python3.8-dev python3.8-venv python3.8-distutils python3-pip 
 RUN python3 --version && pip3 --version

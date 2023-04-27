@@ -4,11 +4,10 @@ import json as js
 from anuvaad_auditor.loghandler import log_info, log_exception
 from utilities import MODULE_CONTEXT
 
-DHURVA_URL = "https://dhruva-api.bhashini.gov.in/services/inference/pipeline"
+dhurva_url = os.environ.get('DHURVA_URL')
 def dhruva_api_call(src_list, source_language_code, target_language_code):
 
 	access_token = os.environ.get('DHRUVA_ACCESS_TOKEN')
-	log_info("Dhruva API Request has beed called, successful | {}".format(access_token), MODULE_CONTEXT)
 	data_json = {
     		"pipelineTasks": [
         		{
@@ -32,7 +31,7 @@ def dhruva_api_call(src_list, source_language_code, target_language_code):
 	
 	headers={'Content-Type':'application/json', 
 		'Authorization': access_token}	
-	response = requests.post(DHURVA_URL, headers=headers, json=data_json)
+	response = requests.post(dhurva_url, headers=headers, json=data_json)
 	return response
 
 

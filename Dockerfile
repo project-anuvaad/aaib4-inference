@@ -1,6 +1,6 @@
 #FROM anuvaadio/aai4b-nmt-inference:74-7375528
-FROM nvidia/cuda:11.2.0-base-ubuntu20.04
-#FROM python:3.10-slim-buster
+#FROM nvidia/cuda:11.2.0-base-ubuntu20.04
+FROM python:3.10-slim-buster
 #### Commented lines below are added to the base image ###
 #FROM anuvaadio/ai4b-nmt-inference-base-image:2
 #CMD nvidia-smi
@@ -17,6 +17,10 @@ RUN python3 --version && pip3 --version
 RUN pip3 install --upgrade pip
 
 WORKDIR /app
+COPY src/requirements.txt ./src/requirements.txt
+RUN pip3 install --default-timeout=100 -r src/requirements.txt
+
+WORKDIR /app
 RUN git clone https://github.com/pytorch/fairseq.git
 WORKDIR fairseq
 #RUN git reset --hard b5e7b250913120409b872a940fbafec4d43c7b13
@@ -26,9 +30,9 @@ WORKDIR /app/src/tools
 RUN git clone https://github.com/anoopkunchukuttan/indic_nlp_library.git 
 RUN git clone https://github.com/anoopkunchukuttan/indic_nlp_resources.git 
 
-WORKDIR /app
-COPY src/requirements.txt ./src/requirements.txt
-RUN pip3 install --default-timeout=100 -r src/requirements.txt
+#WORKDIR /app
+#COPY src/requirements.txt ./src/requirements.txt
+#RUN pip3 install --default-timeout=100 -r src/requirements.txt
 
 COPY download_deps.py ./download_deps.py
 RUN python3 download_deps.py

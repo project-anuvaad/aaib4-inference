@@ -1,6 +1,6 @@
 #FROM anuvaadio/aai4b-nmt-inference:74-7375528
 #FROM nvidia/cuda:11.2.0-base-ubuntu20.04
-FROM python:3.8-slim
+FROM python:3.10-slim-buster
 #### Commented lines below are added to the base image ###
 #FROM anuvaadio/ai4b-nmt-inference-base-image:2
 #CMD nvidia-smi
@@ -12,7 +12,7 @@ FROM python:3.8-slim
 #ENV LANG en_US.UTF-8
 #ENV LANGUAGE en_US.UTF-8
 
-RUN apt-get update && apt-get -y install python3.8 python3.8-dev python3.8-venv python3.8-distutils python3-pip 
+#RUN apt-get update && apt-get -y install python3.8 python3.8-dev python3.8-venv python3.8-distutils python3-pip 
 RUN python3 --version && pip3 --version
 RUN pip3 install --upgrade pip
 

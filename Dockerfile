@@ -1,5 +1,6 @@
 #FROM anuvaadio/aai4b-nmt-inference:74-7375528
-FROM nvidia/cuda:11.2.0-base-ubuntu20.04
+#FROM nvidia/cuda:11.2.0-base-ubuntu20.04
+FROM python:3.8-slim
 #### Commented lines below are added to the base image ###
 #FROM anuvaadio/ai4b-nmt-inference-base-image:2
 CMD nvidia-smi

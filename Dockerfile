@@ -7,7 +7,7 @@ FROM python:3.10-slim-buster
 
 #RUN rm -rf /var/lib/apt/lists/*
 #ENV DEBIAN_FRONTEND noninteractive
-#RUN apt update --fix-missing && apt install -y software-properties-common git locales locales-all --fix-missing
+RUN apt update --fix-missing && apt install -y software-properties-common git locales locales-all --fix-missing
 #ENV LC_ALL en_US.UTF-8
 #ENV LANG en_US.UTF-8
 #ENV LANGUAGE en_US.UTF-8

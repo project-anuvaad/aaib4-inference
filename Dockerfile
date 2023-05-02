@@ -12,13 +12,11 @@ ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 
-RUN apt-get update && apt-get -y install python3.8 python3.8-dev python3.8-venv python3.8-distutils python3-pip 
+#RUN apt-get update && apt-get -y install python3.8 python3.8-dev python3.8-venv python3.8-distutils python3-pip 
+RUN apt-get update && apt-get -y install  python3-virtualenv python3-dev  python3-distutils python3-pip
+
 RUN python3 --version && pip3 --version
 RUN pip3 install --upgrade pip
-
-WORKDIR /app
-COPY src/requirements.txt ./src/requirements.txt
-RUN pip3 install --default-timeout=100 -r src/requirements.txt
 
 WORKDIR /app
 RUN git clone https://github.com/pytorch/fairseq.git
@@ -30,9 +28,9 @@ WORKDIR /app/src/tools
 RUN git clone https://github.com/anoopkunchukuttan/indic_nlp_library.git 
 RUN git clone https://github.com/anoopkunchukuttan/indic_nlp_resources.git 
 
-#WORKDIR /app
-#COPY src/requirements.txt ./src/requirements.txt
-#RUN pip3 install --default-timeout=100 -r src/requirements.txt
+WORKDIR /app
+COPY src/requirements.txt ./src/requirements.txt
+RUN pip3 install --default-timeout=100 -r src/requirements.txt
 
 COPY download_deps.py ./download_deps.py
 RUN python3 download_deps.py

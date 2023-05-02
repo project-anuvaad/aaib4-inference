@@ -1,4 +1,3 @@
-
 from flask import Flask
 from flask.blueprints import Blueprint
 from flask_cors import CORS
@@ -10,11 +9,14 @@ import threading
 from kafka_wrapper import KafkaTranslate
 from db.database import connectmongo
 
+from kafka_wrapper import KafkaTranslate_v2
+
 server  = Flask(__name__)
 
 def kafka_function():
     log_info('starting kafka from nmt-server on thread-1',MODULE_CONTEXT)
-    KafkaTranslate.batch_translator([config.kafka_topic[0]['consumer']])     
+    #KafkaTranslate.batch_translator([config.kafka_topic[0]['consumer']]) 
+    KafkaTranslate_v2.batch_translator([config.kafka_topic[0]['consumer']])     
 
 if config.bootstrap_server_boolean:
     t1 = threading.Thread(target=kafka_function)

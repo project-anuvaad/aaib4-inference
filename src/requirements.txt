@@ -1,14 +1,16 @@
-tqdm==4.30.*
+tqdm==4.30.0
 # torch==1.7.0
-torch==1.9.1
+#torch==1.9.1
+torch==1.13.0
 torchtext==0.4.0
 Flask-Cors==3.0.9
 Flask-RESTful==0.3.8
 six==1.15.0
 kafka-python==2.0.2
 Flask==1.1.2
-sentencepiece==0.1.90
-anuvaad-auditor==0.1.6
+sentencepiece==0.1.97
+#anuvaad-auditor==0.1.6
+anuvaad-auditor==1.0.0
 sacremoses==0.0.43
 itsdangerous==2.0.1
 Jinja2==3.0.3

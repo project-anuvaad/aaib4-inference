@@ -1,1 +1,2 @@
 from .document_translator import KafkaTranslate
+from .document_translator_v2 import KafkaTranslate_v2

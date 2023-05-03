@@ -5,9 +5,11 @@ from anuvaad_auditor.loghandler import log_info, log_exception
 from utilities import MODULE_CONTEXT
 
 dhurva_url = os.environ.get('DHURVA_URL')
+	
 def dhruva_api_call(src_list, source_language_code, target_language_code):
 
 	access_token = os.environ.get('DHRUVA_ACCESS_TOKEN')
+	
 	data_json = {
     		"pipelineTasks": [
         		{

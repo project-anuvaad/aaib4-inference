@@ -92,13 +92,15 @@ class KafkaTranslate_v2:
                         #translation_batch = {'id': model_id_v2, 'src_lang': inputs.get('source_language_code'),
                         #             'tgt_lang': inputs.get('target_language_code'), 'src_list': src_list}
                         if "indic-indic" in model_id_v2:
-                            output_batch = KafkaTranslate_v2.get_pivoted_translation_response(inputs)
+                            output_batch, status_code, _ = KafkaTranslate_v2.get_pivoted_translation_response(inputs)
+                            log_info("Translation response in kafka batch translator v2, in-in, status: {}".format(status_code),MODULE_CONTEXT)
                         else:
                             #translation_batch = {'id': inputs.get('id'), 'src_lang': inputs.get('source_language_code'),
                             #             'tgt_lang': inputs.get('target_language_code'), 'src_list': src_list}
                             #output_batch = FairseqDocumentTranslateService.indic_to_indic_translator(translation_batch)
                             #output_batch = FairseqDocumentTranslateService.many_to_many_translator(translation_batch)
-                            output_batch = KafkaTranslate_v2.get_translation_response(inputs, model_id_v2)
+                            output_batch, status_code, _ = KafkaTranslate_v2.get_translation_response(inputs, model_id_v2)
+                            log_info("Translation response in kafka batch translator v2, en-in, status: {}".format(status_code),MODULE_CONTEXT)
                         #End for indic2indic
                         log_info("Output of translation batch service at :{}".format(datetime.datetime.now()),MODULE_CONTEXT)                        
                         output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i],
@@ -150,7 +152,8 @@ class KafkaTranslate_v2:
         if not is_language_pair_supported(source_language_code, target_language_code, model_id):
             status = Status.UNSUPPORTED_LANGUAGE.value
             log_exception("kafka translate document | Unsupported input language code", MODULE_CONTEXT, status['message'])
-            out = CustomResponse(status, html_encode(inputs))
+            #out = CustomResponse(status, html_encode(inputs))
+            out = CustomResponse(status, inputs.get('message'))
             return out.get_res_json(), 400, {'Content-Type': DEFAULT_CONTENT_TYPE, 'X-Content-Type-Options': 'nosniff'}
         
         try:  
@@ -167,7 +170,7 @@ class KafkaTranslate_v2:
                 'src_list': [item.get('src') for item in message],
             }
             output_batch = FairseqDocumentTranslateService.many_to_many_translator(translation_batch)
-            return output_batch
+            return output_batch, 200, {'Content-Type': DEFAULT_CONTENT_TYPE, 'X-Content-Type-Options': 'nosniff'}
 		
             # Stitch the translated sentences along with source sentences
             """
@@ -187,9 +190,10 @@ class KafkaTranslate_v2:
             status = Status.SYSTEM_ERR.value
             status['message'] = str(e)
             log_exception("Exception caught in kafka resource child block: {}".format(e), MODULE_CONTEXT, e) 
-            out = CustomResponse(status, html_encode(inputs))
-            #return out.get_res_json(), 500, {'Content-Type': DEFAULT_CONTENT_TYPE, 'X-Content-Type-Options': 'nosniff'}
-            return out.get_res_json()
+            #out = CustomResponse(status, html_encode(inputs))
+            out = CustomResponse(status, inputs.get('message'))
+            return out.get_res_json(), 500, {'Content-Type': DEFAULT_CONTENT_TYPE, 'X-Content-Type-Options': 'nosniff'}
+            #return out.get_res_json()
 
     
     
@@ -202,11 +206,11 @@ class KafkaTranslate_v2:
         # First translate source to intermediate lang
         model_id = get_model_id(source_language_code, pivot_language_code)
         inputs["target_language_code"] = pivot_language_code
-        #response_json, status_code, http_headers = KafkaTranslate_v2.get_translation_response(inputs, model_id)
-        response_json = KafkaTranslate_v2.get_translation_response(inputs, model_id)
-        #if status_code != 200:
+        response_json, status_code, http_headers = KafkaTranslate_v2.get_translation_response(inputs, model_id)
+        #response_json = KafkaTranslate_v2.get_translation_response(inputs, model_id)
+        if status_code != 200:
             # If error, just return it directly
-        #    return response_json, status_code, http_headers
+            return response_json, status_code, http_headers
 
         # Now use intermediate translations as source
         intermediate_inputs = {
@@ -216,11 +220,11 @@ class KafkaTranslate_v2:
             #"message": [{"src": item["tgt"]} for item in response_json["data"]],
         }
         model_id = get_model_id(pivot_language_code, target_language_code)
-        #response_json, status_code, http_headers = KafkaTranslate_v2.get_translation_response(intermediate_inputs, model_id)
-        response_json = KafkaTranslate_v2.get_translation_response(intermediate_inputs, model_id)
-        #if status_code != 200:
+        response_json, status_code, http_headers = KafkaTranslate_v2.get_translation_response(intermediate_inputs, model_id)
+        #response_json = KafkaTranslate_v2.get_translation_response(intermediate_inputs, model_id)
+        if status_code != 200:
             # If error, just return it directly
-        #    return response_json, status_code, http_headers
+            return response_json, status_code, http_headers
 
         # Put original source sentences back and send the response
         src_list = []
@@ -228,8 +232,8 @@ class KafkaTranslate_v2:
             #response_json["data"][i]["src"] = item["src"]
             src_list.append(item['src'])
         response_json["tagged_src_list"] = src_list
-        #return response_json, status_code, http_headers
-        return response_json
+        return response_json, status_code, http_headers
+        #return response_json
         
 
 def html_encode(request_json_obj):

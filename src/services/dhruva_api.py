@@ -5,9 +5,11 @@ from anuvaad_auditor.loghandler import log_info, log_exception
 from utilities import MODULE_CONTEXT
 
 dhurva_url = os.environ.get('DHURVA_URL')
+	
 def dhruva_api_call(src_list, source_language_code, target_language_code):
 
 	access_token = os.environ.get('DHRUVA_ACCESS_TOKEN')
+	
 	data_json = {
     		"pipelineTasks": [
         		{
@@ -32,6 +34,8 @@ def dhruva_api_call(src_list, source_language_code, target_language_code):
 	headers={'Content-Type':'application/json', 
 		'Authorization': access_token}	
 	response = requests.post(dhurva_url, headers=headers, json=data_json)
+	log_info("Dhruva has been called with content, request-url: {0}, body: {1}, auth_token:{2}".format(dhurva_url, data_json, access_token), MODULE_CONTEXT)
+	log_info("Dhruva returned content {0}-{1} |".format(response.status_code, response.text), MODULE_CONTEXT)
 	return response
 
 
@@ -45,7 +49,7 @@ def dhruva_api_request(src_list, source_language_code, target_language_code):
 		for transl in response_dict["pipelineResponse"][0]["output"]:
 			out.append(transl["target"])		
 	else:
-		log_info("Dhruva API Request has beed called, Not success {0}-{1} | {}".format(response.status_code, response.text), MODULE_CONTEXT)
+		log_info("Dhruva API Request has beed called, Not success {0}-{1} |".format(response.status_code, response.text), MODULE_CONTEXT)
 	return out
 	
 

@@ -15,8 +15,8 @@ def dhruva_api_call(src_list, source_language_code, target_language_code):
         		{
             			"taskType": "translation",
             			"config": {
+            			"serviceId": "ai4bharat/indictrans-fairseq-all-gpu--t4",
                 		"language": {
-                    			"serviceId": "ai4bharat/indictrans-fairseq-all-gpu--t4",
                     			"sourceLanguage": source_language_code,
                     			"targetLanguage": target_language_code
                 		}

@@ -9,7 +9,7 @@ import functools
 from anuvaad_auditor.loghandler import log_info, log_exception
 import config
 
-from services import load_models
+#from services import load_models
 from services import paragraph_sentence_tokenizer, dhruva_api
 #from resources import translate_v2
 
@@ -217,9 +217,9 @@ class FairseqDocumentTranslateService:
         num_sentence = len(src_list)
         out = {}
         print("model_id.....", model_id)
-        translator = load_models.loaded_models[model_id]
-        source_vocab = load_models.vocab[model_id][0]
-        target_vocab = load_models.vocab[model_id][1]
+        #translator = load_models.loaded_models[model_id]
+        #source_vocab = load_models.vocab[model_id][0]
+        #target_vocab = load_models.vocab[model_id][1]
 
         input_sentence_array_prepd = [None] * num_sentence
 

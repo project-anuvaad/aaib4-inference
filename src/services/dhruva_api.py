@@ -23,8 +23,8 @@ def dhruva_api_call(src_list, source_language_code, target_language_code):
         		{
             			"taskType": "translation",
             			"config": {
-            			"serviceId": serviceid,
                 		"language": {
+                			"serviceId": serviceid,
                     			"sourceLanguage": source_language_code,
                     			"targetLanguage": target_language_code
                 		}

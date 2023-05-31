@@ -102,7 +102,10 @@ class KafkaTranslate_v2:
                             output_batch, status_code, _ = KafkaTranslate_v2.get_translation_response(inputs, model_id_v2)
                             log_info("Translation response in kafka batch translator v2, en-in, status: {}".format(status_code),MODULE_CONTEXT)
                         #End for indic2indic
-                        log_info("Output of translation batch service at :{}".format(datetime.datetime.now()),MODULE_CONTEXT)                        
+                        log_info("Output of translation batch service at :{}".format(datetime.datetime.now()),MODULE_CONTEXT)
+                        time_taken =  (datetime.datetime.now() - input_time)
+                        #time_taken.total_seconds() 
+                        log_info("Total time taken in this batch translation :{}".format(time_taken.total_seconds()),MODULE_CONTEXT)                 
                         output_batch_dict_list = [{'tgt': output_batch['tgt_list'][i],
                                                 'tagged_tgt':output_batch['tagged_tgt_list'][i],'tagged_src':output_batch['tagged_src_list'][i]}
                                                 for i in range(len(message))]

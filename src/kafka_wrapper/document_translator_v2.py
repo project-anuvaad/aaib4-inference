@@ -90,7 +90,8 @@ class KafkaTranslate_v2:
         msg_count,msg_sent = 0,0
         consumer = get_consumer(c_topic)
         producer = get_producer()
-        KafkaTranslate_v2.create_topics(c_topic,consumer)
+        list_of_topics = [config.kafka_topic[0]['consumer'],config.kafka_topic[0]['producer']]
+        KafkaTranslate_v2.create_topics(list_of_topics,consumer)
         try:
             for msg in consumer:
                 producer_topic = [topic["producer"] for topic in config.kafka_topic if topic["consumer"] == msg.topic][0]

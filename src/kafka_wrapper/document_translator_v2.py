@@ -1,5 +1,6 @@
 from kafka_wrapper.producer import get_producer
 from kafka_wrapper.consumer import get_consumer
+from kafka.admin import KafkaAdminClient, NewTopic
 from models import CustomResponse, Status
 import config
 from anuvaad_auditor.loghandler import log_info, log_exception
@@ -57,6 +58,29 @@ DEFAULT_CONTENT_TYPE = 'application/json'
 
 class KafkaTranslate_v2:
 
+    @staticmethod
+    def create_topics(topic_names,consumer):
+        admin_client = KafkaAdminClient(
+                        bootstrap_servers=config.kafka_topics.bootstrap_server, 
+                        client_id='test'
+                    )
+        existing_topic_list = consumer.topics()
+        print("EXISTING TOPICS:",list(consumer.topics()))
+        topic_list = []
+        for topic in topic_names:
+            if topic not in existing_topic_list:
+                print('Topic : {} added '.format(topic))
+                topic_list.append(NewTopic(name=topic, num_partitions=3, replication_factor=3))
+            else:
+                print('Topic : {topic} already exist ')
+        try:
+            if topic_list:
+                admin_client.create_topics(new_topics=topic_list, validate_only=False)
+                print("Topic Created Successfully")
+            else:
+                print("Topic Exist")
+        except  Exception as e:
+            print(e)
                 
     @staticmethod
     def batch_translator(c_topic):
@@ -66,6 +90,7 @@ class KafkaTranslate_v2:
         msg_count,msg_sent = 0,0
         consumer = get_consumer(c_topic)
         producer = get_producer()
+        KafkaTranslate_v2.create_topics(c_topic,consumer)
         try:
             for msg in consumer:
                 producer_topic = [topic["producer"] for topic in config.kafka_topic if topic["consumer"] == msg.topic][0]

@@ -9,7 +9,7 @@ import functools
 from anuvaad_auditor.loghandler import log_info, log_exception
 import config
 
-#from services import load_models
+from services import load_models
 from services import paragraph_sentence_tokenizer, dhruva_api
 #from resources import translate_v2
 

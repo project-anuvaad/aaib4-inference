@@ -1,6 +1,6 @@
 #FROM anuvaadio/aai4b-nmt-inference:74-7375528
 #FROM nvidia/cuda:11.2.0-base-ubuntu20.04
-FROM python:3.7-slim
+FROM python:3.8-slim
 #### Commented lines below are added to the base image ###
 #FROM anuvaadio/ai4b-nmt-inference-base-image:2
 #CMD nvidia-smi
@@ -22,6 +22,7 @@ WORKDIR /app
 RUN git clone https://github.com/pytorch/fairseq.git
 WORKDIR fairseq
 #RUN git reset --hard b5e7b250913120409b872a940fbafec4d43c7b13
+#RUN git checkout af12c9c6407bbcf2bca0b2f1923cf78f3db8857c
 RUN pip3 install ./
 
 WORKDIR /app/src/tools

@@ -3,8 +3,8 @@ import json
 import os
 from anuvaad_auditor.loghandler import log_info, log_exception
 from utilities import MODULE_CONTEXT
-from services.model_vocab_loader_v1 import TranslatorV1, load_vocab_v1
 from services.model_vocab_loader_v2 import TranslatorV2, load_vocab_v2
+#from services.model_vocab_loader_v1 import TranslatorV1, load_vocab_v1
 
 
 class Loadmodels:

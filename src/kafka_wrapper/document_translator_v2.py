@@ -82,6 +82,7 @@ def process_message(msg):
             model_id_v2 = get_model_id(inputs.get('source_language_code'), inputs.get('target_language_code'))
             #translation_batch = {'id': model_id_v2, 'src_lang': inputs.get('source_language_code'),
             #             'tgt_lang': inputs.get('target_language_code'), 'src_list': src_list}
+            """
             if "indic-indic" in model_id_v2:
                 output_batch, status_code, _ = KafkaTranslate_v2.get_pivoted_translation_response(inputs)
                 log_info("Translation response in kafka batch translator v2, in-in, status: {}".format(status_code),MODULE_CONTEXT)
@@ -92,6 +93,10 @@ def process_message(msg):
                 #output_batch = FairseqDocumentTranslateService.many_to_many_translator(translation_batch)
                 output_batch, status_code, _ = KafkaTranslate_v2.get_translation_response(inputs, model_id_v2)
                 log_info("Translation response in kafka batch translator v2, en-in, status: {}".format(status_code),MODULE_CONTEXT)
+            """
+            output_batch, status_code, _ = KafkaTranslate_v2.get_translation_response(inputs, model_id_v2)
+            log_info("Translation response in kafka batch translator v2, src_lang-{0},tgt_lang-{1}, status: {2}".format(inputs.get('source_language_code'), inputs.get('target_language_code'), status_code),MODULE_CONTEXT)
+            log_info("src_lang-{0},tgt_lang-{1}".format(src_lang,tgt_lang),MODULE_CONTEXT)
             #End for indic2indic
             log_info("Output of translation batch service at :{}".format(datetime.datetime.now()),MODULE_CONTEXT)
             time_taken =  datetime.datetime.now() - input_time

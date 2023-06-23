@@ -91,7 +91,7 @@
             "version": 2,
             "model_id": "v2/indic-indic",
             "source_language_code": "INDIC",
-            "target_language_code": "ENGLISH",
+            "target_language_code": "INDIC",
             "source_language_codes": [
                 "as",
                 "bn",
@@ -244,9 +244,9 @@
         {
             "disabled": true,
             "version": 2,
-            "model_id": "v2/indic-indic",
+            "model_id": "v2/indic-indic/constrained",
             "source_language_code": "INDIC",
-            "target_language_code": "ENGLISH",
+            "target_language_code": "INDIC",
             "source_language_codes": [
                 "as",
                 "bn",
@@ -301,7 +301,7 @@
                 "te",
                 "ur"
             ],
-            "is_constrained": false,
+            "is_constrained": true,
             "model_name": "Fairseq AI4B Model v2 -- Indic to English",
             "model_path": "src/nmt_models/v2/indic-en/model/checkpoint_best.pt",
             "dict_path": "src/nmt_models/v2/indic-en/final_bin",

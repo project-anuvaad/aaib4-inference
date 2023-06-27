@@ -18,7 +18,8 @@ MODULE_NAME = "/aai4b-nmt-inference"
 
 ## fetch model details
 #FETCH_MODEL_CONFG = os.path.join(APP_BASE_PATH, "config/fetch_models.json")
-FETCH_MODEL_CONFG = os.path.join(APP_BASE_PATH, "config/fetch_models_v2.json")
+#FETCH_MODEL_CONFG = os.path.join(APP_BASE_PATH, "config/fetch_models_v2.json")
+FETCH_MODEL_CONFG = os.path.join(APP_BASE_PATH, "config/fetch_models_v2_in_in_supported.json")
 
 ## truncation limit for sentence length
 trunc_limit = 200
@@ -38,4 +39,6 @@ DB_NAME = os.environ.get('MONGO_NMT_DB', 'anvaad-nmt-inference')
 MONGO_NMT_MODELS_COLLECTION = os.environ.get('MONGO_NMT_MODELS_COLLECTION', 'anvaad-nmt-models')
 
 ## Supported languages (ISO-639 codes)
-source = ['en','hi','mr','ta','te','kn','gu','pa','bn','ml','as','brx','doi','ks', 'kok','gom', 'mai','mni','ne','or','sd','si','ur','sat','lus','njz','pnr','kha','grt','sa']
+#source = ['en','hi','mr','ta','te','kn','gu','pa','bn','ml','as','brx','doi','ks', 'kok','gom', 'mai','mni','ne','or','sd','si','ur','sat','lus','njz','pnr','kha','grt','sa']
+#for v2 supporting languages
+source = ['en','hi','mr','ta','te','kn','gu','pa','bn','ml','as','brx','doi','ks', 'ks_Deva', 'kok','gom', 'mai','mni', 'mni_Beng', 'ne','or','sd','si','ur','sat','lus','njz','pnr','kha','grt','sa']

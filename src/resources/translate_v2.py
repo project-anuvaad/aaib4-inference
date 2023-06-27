@@ -19,6 +19,7 @@ def get_v2_models():
         for model in confs["models"]
         if "version" in model and model["version"] >= 2
     }
+    print("id2model..............", id2model)
     return id2model
 
 @functools.lru_cache(maxsize=None, typed=True)
@@ -97,10 +98,13 @@ class TranslateResourceM2M_v2(Resource):
             return out.get_res_json(), 400, {'Content-Type': DEFAULT_CONTENT_TYPE, 'X-Content-Type-Options': 'nosniff'}
         
         model_id = get_model_id(inputs.get('source_language_code'), inputs.get('target_language_code'))
+        """
         if "indic-indic" in model_id:
             return self._get_pivoted_translation_response(inputs)
         else:
             return self._get_translation_response(inputs, model_id)
+        """
+        return self._get_translation_response(inputs, model_id)
     
     def _get_translation_response(self, inputs, model_id):
         source_language_code, target_language_code = inputs.get('source_language_code'), inputs.get('target_language_code')

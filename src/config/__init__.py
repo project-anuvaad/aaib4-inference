@@ -41,4 +41,4 @@ MONGO_NMT_MODELS_COLLECTION = os.environ.get('MONGO_NMT_MODELS_COLLECTION', 'anv
 ## Supported languages (ISO-639 codes)
 #source = ['en','hi','mr','ta','te','kn','gu','pa','bn','ml','as','brx','doi','ks', 'kok','gom', 'mai','mni','ne','or','sd','si','ur','sat','lus','njz','pnr','kha','grt','sa']
 #for v2 supporting languages
-source = ['en','hi','mr','ta','te','kn','gu','pa','bn','ml','as','brx','doi','ks', 'ks_Deva', 'kok','gom', 'mai','mni', 'mni_Beng', 'ne','or','sd','si','ur','sat','lus','njz','pnr','kha','grt','sa']
+source = ['en','hi','mr','ta','te','kn','gu','pa','bn','ml','as','brx','doi','ks', 'ks_Deva', 'kok','gom', 'mai','mni', 'mni_Beng', 'ne','or','sd', 'sd_Deva', 'si','ur','sat','lus','njz','pnr','kha','grt','sa']

@@ -60,7 +60,7 @@ def dhruva_api_request(src_list, source_language_code, target_language_code):
 	else:
 		log_info("Dhruva API Request has beed called, Not success {0}-{1} |".format(response.status_code, response.text), MODULE_CONTEXT)
 		for i in range(len(src_list)):
-			out.append("THERE ARE SOME ISSUES WITH TRANSLATION.")
+			out.append("")
 	return out
 	
 

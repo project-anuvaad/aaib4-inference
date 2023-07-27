@@ -3,7 +3,7 @@ import os
 import json as js
 from anuvaad_auditor.loghandler import log_info, log_exception
 from utilities import MODULE_CONTEXT
-from local_files import local_envn_variable
+#from local_files import local_envn_variable
 
 dhurva_url = os.environ.get('DHURVA_URL')
 	

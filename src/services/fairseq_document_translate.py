@@ -247,7 +247,8 @@ class FairseqDocumentTranslateService:
                 """
                 #Added for calling the dhruva api
                 log_info("Dhruva API has been called: src_lang-{0},tgt_lang-{1}".format(src_lang,tgt_lang),MODULE_CONTEXT)
-                translation_array = dhruva_api.dhruva_api_request(input_sentence_array_prepd, src_lang, tgt_lang)
+                #translation_array = dhruva_api.dhruva_api_request(input_sentence_array_prepd, src_lang, tgt_lang)
+                translation_array = dhruva_api.dhruva_api_call(input_sentence_array_prepd, src_lang, tgt_lang)
                 log_info("Dhruva API Call has been finished: {}".format(translation_array),MODULE_CONTEXT)
                 #End
             else:

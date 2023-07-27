@@ -50,7 +50,7 @@ def dhruva_api_call(src_list, source_language_code, target_language_code):
 def dhruva_api_request(src_list, source_language_code, target_language_code):
 	response = dhruva_api_call(src_list, source_language_code, target_language_code)
 	out = []
-	response.status_code = 502
+	#response.status_code = 502
 	if response.status_code == 200:
 		log_info("Dhruva API Request has beed called, successful | {}".format(response.status_code), MODULE_CONTEXT)
 		response_dict = js.loads(response.text)

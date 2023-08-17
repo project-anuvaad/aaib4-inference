@@ -248,13 +248,16 @@ class FairseqDocumentTranslateService:
                 #Added for calling the dhruva api
                 log_info("Dhruva API has been called: src_lang-{0},tgt_lang-{1}".format(src_lang,tgt_lang),MODULE_CONTEXT)
                 #translation_array = dhruva_api.dhruva_api_request(input_sentence_array_prepd, src_lang, tgt_lang)
-                input_sentence_array_prepd, start_pattern = capture_punctuation.capture_beginning_punctuations(input_sentence_array_prepd)
+                input_sentence_array_prepd, start_pattern, all_punc_flag = capture_punctuation.capture_beginning_punctuations(input_sentence_array_prepd)
                 print("Return from capturing the punctuation: ", input_sentence_array_prepd, start_pattern)
                 translation_array = dhruva_api.dhruva_api_call(input_sentence_array_prepd, src_lang, tgt_lang)
                 log_info("Dhruva API Call has been finished: {}".format(translation_array),MODULE_CONTEXT)
                 #End
                 for j in range(len(translation_array)):
-                    translation_array[j]=start_pattern[j]+translation_array[j]
+                    if all_punc_flag[j] == 0:
+                        translation_array[j]=start_pattern[j]+translation_array[j]
+                    else:
+                        translation_array[j] = start_pattern[j]
             else:
                 log_info(
                     "Unsupported model id: {} for given input".format(model_id),

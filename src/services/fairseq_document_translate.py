@@ -10,7 +10,7 @@ from anuvaad_auditor.loghandler import log_info, log_exception
 import config
 
 from services import load_models
-from services import paragraph_sentence_tokenizer, dhruva_api
+from services import paragraph_sentence_tokenizer, dhruva_api, capture_punctuation, character_exchange
 #from resources import translate_v2
 
 from utilities import MODULE_CONTEXT
@@ -248,9 +248,20 @@ class FairseqDocumentTranslateService:
                 #Added for calling the dhruva api
                 log_info("Dhruva API has been called: src_lang-{0},tgt_lang-{1}".format(src_lang,tgt_lang),MODULE_CONTEXT)
                 #translation_array = dhruva_api.dhruva_api_request(input_sentence_array_prepd, src_lang, tgt_lang)
+                input_sentence_array_prepd, start_pattern, all_punc_flag = capture_punctuation.capture_beginning_punctuations(input_sentence_array_prepd)
+                print("Return from capturing the punctuation: ", input_sentence_array_prepd, start_pattern)
                 translation_array = dhruva_api.dhruva_api_call(input_sentence_array_prepd, src_lang, tgt_lang)
                 log_info("Dhruva API Call has been finished: {}".format(translation_array),MODULE_CONTEXT)
                 #End
+                #Handling punctuation in the beginning of the text
+                for j in range(len(translation_array)):
+                    if all_punc_flag[j] == 0:
+                        translation_array[j]=start_pattern[j]+translation_array[j]
+                    else:
+                        translation_array[j] = start_pattern[j]
+                #Exchanging Oriya character "ଯ଼" with "ୟ")
+                if tgt_lang == "or":
+                    translation_array = character_exchange.exchng_ya_or(translation_array)
             else:
                 log_info(
                     "Unsupported model id: {} for given input".format(model_id),
@@ -275,6 +286,7 @@ class FairseqDocumentTranslateService:
             raise e
             
         return out
+
 
 """
 #The new encode_translate_decode for partial translation issue.

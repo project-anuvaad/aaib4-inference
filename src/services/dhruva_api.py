@@ -10,14 +10,7 @@ dhurva_url = os.environ.get('DHURVA_URL')
 def dhruva_api_call(src_list, source_language_code, target_language_code):
 
 	access_token = os.environ.get('DHRUVA_ACCESS_TOKEN')
-	if source_language_code == "en":
-		serviceid = os.environ.get('AAI4B_SERVICE_ID_EN_IN', 'ai4bharat/indictrans-fairseq-all-gpu--t4')
-	elif target_language_code == "en":
-		serviceid = os.environ.get('AAI4B_SERVICE_ID_IN_EN', 'ai4bharat/indictrans-fairseq-all-gpu--t4')
-	elif source_language_code != "en" and target_language_code != "en":
-		serviceid = os.environ.get('AAI4B_SERVICE_ID_IN_IN', 'ai4bharat/indictrans-fairseq-all-gpu--t4')
-	else:
-		serviceid = "ai4bharat/indictrans-fairseq-all-gpu--t4"
+	serviceid = os.environ.get('AAI4B_SERVICE_ID_ALL', 'ai4bharat/indictrans-fairseq-all-gpu--t4')
 	data_json = {
     		"pipelineTasks": [
         		{

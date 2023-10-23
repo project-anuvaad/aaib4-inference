@@ -165,7 +165,7 @@ class KafkaTranslate_v2:
         for topic in topic_names:
             if topic not in existing_topic_list:
                 print('Topic : {} added '.format(topic))
-                topic_list.append(NewTopic(name=topic, num_partitions=3, replication_factor=1))
+                topic_list.append(NewTopic(name=topic, num_partitions=6, replication_factor=1))
             else:
                 print('Topic : {} already exist '.format(topic))
         try:

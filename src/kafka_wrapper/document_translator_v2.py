@@ -128,6 +128,7 @@ def process_message(msg):
         if inputs.get('record_id'): out['record_id'] = inputs.get('record_id') 
         log_info("Empty input request or key parameter missing in Batch translation request: batch_translator",MODULE_CONTEXT)      
 
+    log_info(f"Pushing information to topic {producer_topic} and partition {partition}",MODULE_CONTEXT)
     producer.send(producer_topic, value={'out':out},partition=partition)
     producer.flush()
 

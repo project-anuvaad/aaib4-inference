@@ -38,8 +38,8 @@ def dhruva_api_call(src_list, source_language_code, target_language_code):
 		if response.status_code == 200:
 			log_info("Dhruva API Request has beed called, successful | {}".format(response.status_code), MODULE_CONTEXT)
 			response_dict = js.loads(response.text)
-			print(response_dict["pipelineResponse"][0]["output"])
-			for transl in response_dict["pipelineResponse"][0]["output"]:
+			print(response_dict["output"])
+			for transl in response_dict["output"]:
 				out.append(transl["target"])
 		else:
 			log_info("Dhruva API Request has beed called, Not success {0}-{1} |".format(response.status_code, response.text), MODULE_CONTEXT)

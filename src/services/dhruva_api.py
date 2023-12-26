@@ -12,25 +12,21 @@ def dhruva_api_call(src_list, source_language_code, target_language_code):
 	access_token = os.environ.get('DHRUVA_ACCESS_TOKEN')
 	serviceid = os.environ.get('AAI4B_SERVICE_ID_ALL', 'ai4bharat/indictrans--gpu-t4')
 	data_json = {
-    		"pipelineTasks": [
-        		{
-            			"taskType": "translation",
-            			"config": {
-                		"language": {
-                			"serviceId": serviceid,
-                    			"sourceLanguage": source_language_code,
-                    			"targetLanguage": target_language_code
-                		}
-            			}
-        		}
-    		],
-    		"inputData": {
-        		"input": []
-		}
-	}
+					"taskType": "translation",
+					"config": 
+					{
+							"language": 
+							{
+								"serviceId": serviceid,
+									"sourceLanguage": source_language_code,
+									"targetLanguage": target_language_code
+							}
+            		},
+        			"input": []
+				}
 	for src in src_list:
 		local_text = {"source": src}
-		data_json["inputData"]["input"].append(local_text)
+		data_json["input"].append(local_text)
 	
 	headers={'Content-Type':'application/json', 
 		'Authorization': access_token}

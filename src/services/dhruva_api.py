@@ -3,6 +3,7 @@ import os
 import json as js
 from anuvaad_auditor.loghandler import log_info, log_exception
 from utilities import MODULE_CONTEXT
+import time
 #from local_files import local_envn_variable
 
 dhurva_url = os.environ.get('DHURVA_URL')
@@ -42,6 +43,7 @@ def dhruva_api_call(src_list, source_language_code, target_language_code):
 				break
 			else:
 				log_info(f"Dhruva API Request has beed called, Not success {response.status_code}-{response.text} in trial {i} out of {max_retries}|", MODULE_CONTEXT)
+				time.sleep(30)
 		if response.status_code == 200:
 			log_info("Dhruva API Request has beed called, successful | {}".format(response.status_code), MODULE_CONTEXT)
 			response_dict = js.loads(response.text)

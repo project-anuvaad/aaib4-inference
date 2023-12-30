@@ -32,9 +32,16 @@ def dhruva_api_call(src_list, source_language_code, target_language_code):
 		'Authorization': access_token}
 	out = []
 	try:	
-		response = requests.post(dhurva_url, headers=headers, json=data_json, timeout=60)
-		log_info("Dhruva has been called with content, request-url: {0}, body: {1}, auth_token: {2}, serviceId: {3}".format(dhurva_url, data_json, access_token, serviceid), MODULE_CONTEXT)
-		log_info("Dhruva returned content {0}-{1} |".format(response.status_code, response.text), MODULE_CONTEXT)
+		max_retries = 5
+		response = None
+		for i in range(0,max_retries):
+			response = requests.post(dhurva_url, headers=headers, json=data_json, timeout=60)
+			log_info("Dhruva has been called with content, request-url: {0}, body: {1}, auth_token: {2}, serviceId: {3}".format(dhurva_url, data_json, access_token, serviceid), MODULE_CONTEXT)
+			log_info("Dhruva returned content {0}-{1} |".format(response.status_code, response.text), MODULE_CONTEXT)
+			if response.status_code >=200 and response.status_code <=204:
+				break
+			else:
+				log_info(f"Dhruva API Request has beed called, Not success {response.status_code}-{response.text} in trial {i} out of {max_retries}|", MODULE_CONTEXT)
 		if response.status_code == 200:
 			log_info("Dhruva API Request has beed called, successful | {}".format(response.status_code), MODULE_CONTEXT)
 			response_dict = js.loads(response.text)

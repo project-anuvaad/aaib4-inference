@@ -30,6 +30,16 @@ RUN git clone https://github.com/anoopkunchukuttan/indic_nlp_library.git
 RUN git clone https://github.com/anoopkunchukuttan/indic_nlp_resources.git 
 
 WORKDIR /app
+
+RUN if [ ! -d "src/nmt_models/v2" ]; then \
+    echo "Downloading and extracting v2 folder..."; \
+    wget -O /tmp/v2_april.zip https://dhruvaassets.blob.core.windows.net/models/NMT/AI4Bharat/IndicTrans/v2_april.zip && \
+    unzip /tmp/v2_april.zip -d src/nmt_models && \
+    rm /tmp/v2_april.zip; \
+    else \
+    echo "'v2' folder already exists"; \
+    fi
+
 COPY src/requirements.txt ./src/requirements.txt
 RUN pip3 install --default-timeout=100 -r src/requirements.txt
 
